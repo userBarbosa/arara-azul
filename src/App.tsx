@@ -1,5 +1,5 @@
 
-import { BrowserRouter } from "react-router-dom";
+import { BrowserRouter } from 'react-router-dom';
 import { AppRoutes } from './routes/index';
 import { AppThemeProvider } from './shared/contexts';
 
@@ -11,4 +11,4 @@ export const App = () => {
       </BrowserRouter>
     </AppThemeProvider>
   );
-}
+};

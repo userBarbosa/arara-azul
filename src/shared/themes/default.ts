@@ -1,4 +1,3 @@
-/* eslint-disable linebreak-style */
 import { createTheme } from '@mui/material';
 
 export const DefaultTheme = createTheme({

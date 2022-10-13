@@ -1,4 +1,4 @@
-import { Box, Button, Icon, Paper, Skeleton, useTheme } from "@mui/material";
+import { Box, Button, Icon, Paper, Skeleton, Typography, useTheme } from "@mui/material";
 
 interface IDetailToolsProps {
   showButtonSave?: boolean;
@@ -57,7 +57,14 @@ export const DetailTools: React.FC<IDetailToolsProps> = ({
           disableElevation
           startIcon={<Icon sx={{ color: '#F7F9FC' }}>save</Icon>}
         >
-          Salvar
+          <Typography
+            variant='button'
+            overflow='hidden'
+            whiteSpace='nowrap'
+            textOverflow='ellipsis'
+          >
+            Salvar
+          </Typography>
         </Button>)}
 
       {showButtonSaveLoading && (
@@ -71,7 +78,14 @@ export const DetailTools: React.FC<IDetailToolsProps> = ({
           disableElevation
           startIcon={<Icon sx={{ color: '#F7F9FC' }}>print</Icon>}
         >
-          Imprimir
+          <Typography
+            variant='button'
+            overflow='hidden'
+            whiteSpace='nowrap'
+            textOverflow='ellipsis'
+          >
+            Imprimir
+          </Typography>
         </Button>)}
 
       {showButtonPrintLoading && (
@@ -85,7 +99,14 @@ export const DetailTools: React.FC<IDetailToolsProps> = ({
           disableElevation
           startIcon={<Icon sx={{ color: '#F7F9FC' }}>library_books</Icon>}
         >
-          Prontuário
+          <Typography
+            variant='button'
+            overflow='hidden'
+            whiteSpace='nowrap'
+            textOverflow='ellipsis'
+          >
+            Prontuário
+          </Typography>
         </Button>)}
 
       {showButtonMedicalRecordLoading && (
@@ -99,7 +120,14 @@ export const DetailTools: React.FC<IDetailToolsProps> = ({
           disableElevation
           startIcon={<Icon sx={{ color: '#F7F9FC' }}>arrow_back</Icon>}
         >
-          Voltar
+          <Typography
+            variant='button'
+            overflow='hidden'
+            whiteSpace='nowrap'
+            textOverflow='ellipsis'
+          >
+            Voltar
+          </Typography>
         </Button>)}
 
       {showButtonReturnLoading && (

@@ -1,26 +1,40 @@
-import { Box, Button, Icon, Paper, useTheme } from "@mui/material";
+import { Box, Button, Icon, Paper, Skeleton, useTheme } from "@mui/material";
 
 interface IDetailToolsProps {
   showButtonSave?: boolean;
+  showButtonSaveLoading?: boolean;
   onClickButtonSave?: () => void;
-  showButtonReturn?: boolean;
-  onClickButtonReturn?: () => void;
+
   showButtonPrint?: boolean;
+  showButtonPrintLoading?: boolean;
   onClickButtonPrint?: () => void;
+
   showButtonMedicalRecord?: boolean;
+  showButtonMedicalRecordLoading?: boolean;
   onClickButtonMedicalRecord?: () => void;
+
+  showButtonReturn?: boolean;
+  showButtonReturnLoading?: boolean;
+  onClickButtonReturn?: () => void;
 }
 
 
 export const DetailTools: React.FC<IDetailToolsProps> = ({
-  showButtonSave = false,
+  showButtonSave = true,
+  showButtonSaveLoading = false,
   onClickButtonSave,
-  showButtonReturn = true,
-  onClickButtonReturn,
+
   showButtonPrint = false,
+  showButtonPrintLoading = false,
   onClickButtonPrint,
+
   showButtonMedicalRecord = false,
+  showButtonMedicalRecordLoading = false,
   onClickButtonMedicalRecord,
+
+  showButtonReturn = true,
+  showButtonReturnLoading = false,
+  onClickButtonReturn,
 }) => {
 
   const theme = useTheme();
@@ -36,7 +50,7 @@ export const DetailTools: React.FC<IDetailToolsProps> = ({
       alignItems='center'
       component={Paper}
     >
-      {showButtonSave && (
+      {(showButtonSave && !showButtonSaveLoading) && (
         <Button
           onClick={onClickButtonSave}
           variant="contained"
@@ -46,7 +60,11 @@ export const DetailTools: React.FC<IDetailToolsProps> = ({
           Salvar
         </Button>)}
 
-      {showButtonPrint && (
+      {showButtonSaveLoading && (
+        <Skeleton width={109} height={60} />
+      )}
+
+      {(showButtonPrint && !showButtonPrintLoading) && (
         <Button
           onClick={onClickButtonPrint}
           variant="contained"
@@ -56,7 +74,11 @@ export const DetailTools: React.FC<IDetailToolsProps> = ({
           Imprimir
         </Button>)}
 
-      {showButtonMedicalRecord && (
+      {showButtonPrintLoading && (
+        <Skeleton width={118} height={60} />
+      )}
+
+      {(showButtonMedicalRecord && !showButtonMedicalRecordLoading) && (
         <Button
           onClick={onClickButtonMedicalRecord}
           variant="contained"
@@ -66,7 +88,11 @@ export const DetailTools: React.FC<IDetailToolsProps> = ({
           Prontuário
         </Button>)}
 
-      {showButtonReturn && (
+      {showButtonMedicalRecordLoading && (
+        <Skeleton width={145} height={60} />
+      )}
+
+      {(showButtonReturn && !showButtonReturnLoading) && (
         <Button
           onClick={onClickButtonReturn}
           variant="contained"
@@ -75,6 +101,10 @@ export const DetailTools: React.FC<IDetailToolsProps> = ({
         >
           Voltar
         </Button>)}
+
+      {showButtonReturnLoading && (
+        <Skeleton width={110} height={60} />
+      )}
     </Box>
   );
 };

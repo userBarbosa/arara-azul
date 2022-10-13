@@ -30,6 +30,7 @@ export const BaseLayoutPage: React.FC<IBaseLayoutPageProps> = ({ children, title
           overflow='hidden'
           whiteSpace='nowrap'
           textOverflow='ellipsis'
+          color={theme.palette.primary.main}
         >
           {title}
         </Typography>

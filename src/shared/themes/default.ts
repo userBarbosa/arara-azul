@@ -32,6 +32,25 @@ export const DefaultTheme = createTheme({
           },
         },
       }
+    },
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          '&.Mui-selected': {
+            backgroundColor: '#144871',
+          },
+          '&.Mui-selected:hover': {
+            backgroundColor: '#144871',
+          },
+          '&:hover': {
+            backgroundColor: '#006BBF',
+          },
+          '& .MuiTypography-root': {
+            fontFamily: "'Poppins', sans-serif",
+            fontWeight: '600',
+          },
+        },
+      }
     }
   },
   typography: {

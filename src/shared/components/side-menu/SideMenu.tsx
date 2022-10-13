@@ -58,6 +58,16 @@ export const SideMenu: React.FC<ISideMenuProps> = ({ children }) => {
               ))}
             </List>
           </Box>
+          <Box>
+            <List component="nav">
+              <ListItemButton>
+                <ListItemIcon>
+                  <Icon sx={{ color: '#F7F9FC' }}>logout</Icon>
+                </ListItemIcon>
+                <ListItemText primary='Sair' />
+              </ListItemButton>
+            </List>
+          </Box>
         </Box>
       </Drawer>
 

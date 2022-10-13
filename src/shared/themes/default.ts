@@ -26,8 +26,15 @@ export const DefaultTheme = createTheme({
           '&:hover': {
             backgroundColor: '#006BBF',
           },
+          '& .MuiTypography-root': {
+            fontFamily: "'Poppins', sans-serif",
+            fontWeight: '600',
+          },
         },
       }
     }
+  },
+  typography: {
+    fontFamily: "'Poppins', sans-serif",
   }
 });

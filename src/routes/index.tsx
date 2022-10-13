@@ -1,18 +1,18 @@
 import { useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { Button } from '@mui/material';
 
 import { useSideMenuContext } from '../shared/contexts';
+import { Dashboard } from '../pages';
 
 export const AppRoutes = () => {
-  const { toggleSideMenuOpen, setSideMenuOptions } = useSideMenuContext();
+  const { setSideMenuOptions } = useSideMenuContext();
 
   useEffect(() => {
     setSideMenuOptions([
       {
         icon: 'home',
-        path: '/home',
-        label: 'Home',
+        path: '/dashboard',
+        label: 'Dashboard',
       },
       {
         icon: 'event_available',
@@ -39,13 +39,13 @@ export const AppRoutes = () => {
 
   return (
     <Routes>
-      <Route path="/home" element={<Button variant="contained" onClick={toggleSideMenuOpen} color="primary">home</Button>} />
-      <Route path="/consultas" element={<Button variant="contained" onClick={toggleSideMenuOpen} color="primary">consultas</Button>} />
-      <Route path="/pacientes" element={<Button variant="contained" onClick={toggleSideMenuOpen} color="primary">pacientes</Button>} />
-      <Route path="/tutores" element={<Button variant="contained" onClick={toggleSideMenuOpen} color="primary">tutores</Button>} />
-      <Route path="/funcionarios" element={<Button variant="contained" onClick={toggleSideMenuOpen} color="primary">funcionarios</Button>} />
+      <Route path="/dashboard" element={<Dashboard/>} />
+      <Route path="/consultas" />
+      <Route path="/pacientes" />
+      <Route path="/tutores" />
+      <Route path="/funcionarios" />
       
-      <Route path="*" element={<Navigate to="/home" />} />
+      <Route path="*" element={<Navigate to="/dashboard" />} />
     </Routes>
   );
 };

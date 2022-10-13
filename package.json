@@ -1,7 +1,9 @@
 {
   "name": "arara-azul",
-  "version": "0.1.0",
+  "version": "0.0.1",
   "private": true,
+  "description": "Scheduling system for pet shops and veterinary clinics.",
+  "main": "index.js",
   "scripts": {
     "start": "react-scripts start && npm run format",
     "build": "react-scripts build",
@@ -13,6 +15,12 @@
     "prettier:fix": "npm run prettier -- --write",
     "format": "npm run prettier:fix && npm run lint:fix"
   },
+  "repository": "https://github.com/userBarbosa/arara-azul.git",
+  "author": "Ana Alves <ana.alves41@fatec.sp.gov.br>",
+  "contributors": [
+    "Marcos Barbosa <marcos.barbosa@fatec.sp.gov.br>",
+    "Viktor Ferrer <viktor.ferrer@fatec.sp.gov.br>"
+  ],
   "dependencies": {
     "@emotion/react": "^11.10.4",
     "@emotion/styled": "^11.10.4",
@@ -31,11 +39,12 @@
     "@types/node": "^16.11.59",
     "@types/react": "^18.0.20",
     "@types/react-dom": "^18.0.6",
-    "@typescript-eslint/eslint-plugin": "^5.38.1",
-    "@typescript-eslint/parser": "^5.38.1",
+    "@typescript-eslint/eslint-plugin": "^5.40.0",
+    "@typescript-eslint/parser": "^5.40.0",
     "eslint": "^8.25.0",
     "eslint-plugin-react": "^7.31.8",
     "prettier": "2.7.1",
+    "standardx": "3.0.0",
     "typescript": "^4.8.3",
     "web-vitals": "^2.1.4"
   },
@@ -56,9 +65,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "main": "index.js",
-  "repository": "https://github.com/userBarbosa/arara-azul.git",
-  "author": "anabalves <ana.alves41@fatec.sp.gov.br>",
-  "license": "MIT"
+  }
 }

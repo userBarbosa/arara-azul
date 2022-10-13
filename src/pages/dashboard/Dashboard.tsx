@@ -1,17 +1,15 @@
-import { ListTools } from '../../shared/components';
+import { DetailTools } from '../../shared/components';
 import { BaseLayoutPage } from '../../shared/layouts';
 
 export const Dashboard: React.FC = () => {
   return (
-    <BaseLayoutPage 
-      title={'Dashboard'} 
+    <BaseLayoutPage
+      title={'Dashboard'}
       toolbar={(
-        <ListTools
-          showInputSearch
-        />
+        <DetailTools />
       )}
     >
-        Testando
+      Testando
     </BaseLayoutPage>
   );
 };

@@ -13,7 +13,8 @@
     "lint:fix": "npm run lint -- --fix",
     "prettier": "npx prettier src --check",
     "prettier:fix": "npm run prettier -- --write",
-    "format": "npm run prettier:fix && npm run lint:fix"
+    "format": "npm run prettier:fix && npm run lint:fix",
+    "mock": "json-server -w -p 3333 ./mock/database.json"
   },
   "repository": "https://github.com/userBarbosa/arara-azul.git",
   "author": "Ana Alves <ana.alves41@fatec.sp.gov.br>",
@@ -43,6 +44,7 @@
     "@typescript-eslint/parser": "^5.40.0",
     "eslint": "^8.25.0",
     "eslint-plugin-react": "^7.31.8",
+    "json-server": "^0.17.0",
     "prettier": "2.7.1",
     "standardx": "3.0.0",
     "typescript": "^4.8.3",

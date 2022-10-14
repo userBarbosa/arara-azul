@@ -27,7 +27,7 @@ export const DefaultTheme = createTheme({
             backgroundColor: '#006BBF',
           },
           '& .MuiTypography-root': {
-            fontFamily: "'Poppins', sans-serif",
+            fontFamily: '\'Poppins\', sans-serif',
             fontWeight: '600',
           },
         },
@@ -46,7 +46,7 @@ export const DefaultTheme = createTheme({
             backgroundColor: '#006BBF',
           },
           '& .MuiTypography-root': {
-            fontFamily: "'Poppins', sans-serif",
+            fontFamily: '\'Poppins\', sans-serif',
             fontWeight: '600',
           },
         },
@@ -54,6 +54,6 @@ export const DefaultTheme = createTheme({
     }
   },
   typography: {
-    fontFamily: "'Poppins', sans-serif",
+    fontFamily: '\'Poppins\', sans-serif',
   }
 });

@@ -1,4 +1,4 @@
-import { Box, Button, Icon, Paper, Skeleton, Typography, useTheme } from "@mui/material";
+import { Box, Button, Icon, Paper, Skeleton, Typography, useTheme } from '@mui/material';
 
 interface IDetailToolsProps {
   showButtonSave?: boolean;

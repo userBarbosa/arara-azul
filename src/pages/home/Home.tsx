@@ -1,10 +1,10 @@
 import { DetailTools } from '../../shared/components';
 import { BaseLayoutPage } from '../../shared/layouts';
 
-export const Dashboard: React.FC = () => {
+export const Home: React.FC = () => {
   return (
     <BaseLayoutPage
-      title={'Dashboard'}
+      title={'Home'}
       toolbar={(
         <DetailTools />
       )}

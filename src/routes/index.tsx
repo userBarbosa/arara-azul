@@ -2,10 +2,11 @@ import { useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 
 import { useSideMenuContext } from '../shared/contexts';
-import { Dashboard } from '../pages';
-import { Error404 } from '../pages/error-404/Error404';
-import { Error403 } from '../pages/error-403/Error403';
+import { Home } from '../pages';
+import { Error400 } from '../pages/error-400/Error400';
 import { Error401 } from '../pages/error-401/Error401';
+import { Error403 } from '../pages/error-403/Error403';
+import { Error404 } from '../pages/error-404/Error404';
 import { Error500 } from '../pages/error-500/Error500';
 
 export const AppRoutes = () => {
@@ -15,8 +16,8 @@ export const AppRoutes = () => {
     setSideMenuOptions([
       {
         icon: 'home',
-        path: '/dashboard',
-        label: 'Dashboard',
+        path: '/home',
+        label: 'Home',
       },
       {
         icon: 'event_available',
@@ -45,12 +46,13 @@ export const AppRoutes = () => {
     <Routes>
       <Route path="/" />
 
-      <Route path="/dashboard" element={<Dashboard />} />
+      <Route path="/home" element={<Home />} />
       <Route path="/consultas" />
       <Route path="/pacientes" />
       <Route path="/tutores" />
       <Route path="/funcionarios" />
 
+      <Route path="/400" element={<Error400 />} />
       <Route path="/401" element={<Error401 />} />
       <Route path="/403" element={<Error403 />} />
       <Route path="/404" element={<Error404 />} />

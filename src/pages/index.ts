@@ -2,15 +2,31 @@ export * from './login/Login';
 export * from './forgot-password/ForgotPassword';
 export * from './reset-password/ResetPassword';
 export * from './home/Home';
+
 export * from './appointments/AppointmentsList';
-export * from './appointments/AppointmentsDetails';
-export * from './medical-records/MedicalRecords';
+export * from './appointments/AppointmentInsert';
+export * from './appointments/AppointmentUpdate';
+export * from './appointments/AppointmentDetails';
+
+export * from './medical-records/MedicalRecordInsert';
+export * from './medical-records/MedicalRecordAppointment';
+export * from './medical-records/MedicalRecordsPatient';
+
 export * from './patients/PatientList';
-export * from './patients/PatientsDetails';
+export * from './patients/PatientInsert';
+export * from './patients/PatientUpdate';
+export * from './patients/PatientDetails';
+
 export * from './tutors/TutorsList';
-export * from './tutors/TutorsDetails';
-export * from './users/UsersList';
-export * from './users/UsersDetails';
+export * from './tutors/TutorInsert';
+export * from './tutors/TutorUpdate';
+export * from './tutors/TutorDetails';
+
+export * from './employees/EmployeesList';
+export * from './employees/EmployeeInsert';
+export * from './employees/EmployeeUpdate';
+export * from './employees/EmployeeDetails';
+
 export * from './error-400/Error400';
 export * from './error-401/Error401';
 export * from './error-403/Error403';

@@ -1,13 +1,45 @@
 import { useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 
-import { useSideMenuContext } from '../shared/contexts';
-import { Home } from '../pages';
-import { Error400 } from '../pages/error-400/Error400';
-import { Error401 } from '../pages/error-401/Error401';
-import { Error403 } from '../pages/error-403/Error403';
-import { Error404 } from '../pages/error-404/Error404';
-import { Error500 } from '../pages/error-500/Error500';
+import { useAuthContext, useSideMenuContext } from '../shared/contexts';
+import {
+  Home,
+
+  AppointmentsList,
+  AppointmentInsert,
+  AppointmentUpdate,
+  AppointmentDetails,
+
+  MedicalRecordInsert,
+  MedicalRecordAppointment,
+  MedicalRecordsPatient,
+
+  PatientsList,
+  PatientInsert,
+  PatientUpdate,
+  PatientDetails,
+
+  TutorsList,
+  TutorInsert,
+  TutorUpdate,
+  TutorDetails,
+
+  EmployeesList,
+  EmployeeInsert,
+  EmployeeUpdate,
+  EmployeeDetails,
+
+  Error400,
+  Error401,
+  Error403,
+  Error404,
+  Error500,
+
+  Login,
+  ForgotPassword,
+  ResetPassword
+} from '../pages';
+
 
 export const AppRoutes = () => {
   const { setSideMenuOptions } = useSideMenuContext();
@@ -42,15 +74,55 @@ export const AppRoutes = () => {
     ]);
   }, []);
 
+  interface IPrivateProps {
+    children: JSX.Element;
+  }
+
+  const Private: React.FC<IPrivateProps> = ({ children }) => {
+    const { isAuthenticated } = useAuthContext();
+
+
+    if (!isAuthenticated) {
+      return <Navigate to="/login" />;
+    }
+
+    return children;
+  };
+
   return (
     <Routes>
-      <Route path="/" />
 
-      <Route path="/home" element={<Home />} />
-      <Route path="/consultas" />
-      <Route path="/pacientes" />
-      <Route path="/tutores" />
-      <Route path="/funcionarios" />
+      <Route path="/" element={<Navigate to="/login" />} />
+      <Route path="/login" element={<Login />} />
+      
+      <Route path="/esqueceu-sua-senha" element={<ForgotPassword />} />
+      <Route path="/redefinir-senha" element={<ResetPassword />} />
+
+      <Route path="/home" element={<Private><Home /></Private>} />
+
+      <Route path="/consultas" element={<Private><AppointmentsList /></Private>} />
+      <Route path="/consultas/inserir" element={<Private><AppointmentInsert /></Private>} />
+      <Route path="/consultas/atualizar/:id" element={<Private><AppointmentUpdate /></Private>} />
+      <Route path="/consultas/detalhe/:id" element={<Private><AppointmentDetails /></Private>} />
+
+      <Route path="/prontuario/inserir" element={<MedicalRecordInsert/>} />
+      <Route path="/prontuario/consulta/:id" element={<MedicalRecordAppointment/>} />
+      <Route path="/prontuario/paciente/:id" element={<MedicalRecordsPatient/>} />
+
+      <Route path="/pacientes" element={<Private><PatientsList/></Private>} />
+      <Route path="/pacientes/inserir" element={<Private><PatientInsert/></Private>} />
+      <Route path="/pacientes/atualizar/:id" element={<Private><PatientUpdate/></Private>} />
+      <Route path="/pacientes/detalhe/:id" element={<Private><PatientDetails/></Private>} />
+
+      <Route path="/tutores" element={<Private><TutorsList/></Private>} />
+      <Route path="/tutores/inserir" element={<Private><TutorInsert/></Private>} />
+      <Route path="/tutores/atualizar/:id" element={<Private><TutorUpdate/></Private>} />
+      <Route path="/tutores/detalhe/:id" element={<Private><TutorDetails/></Private>} />
+
+      <Route path="/funcionarios" element={<Private><EmployeesList/></Private>} />
+      <Route path="/funcionarios/inserir" element={<Private><EmployeeInsert/></Private>} />
+      <Route path="/funcionarios/atualizar/:id" element={<Private><EmployeeUpdate/></Private>} />
+      <Route path="/funcionarios/detalhe/:id" element={<Private><EmployeeDetails/></Private>} />
 
       <Route path="/400" element={<Error400 />} />
       <Route path="/401" element={<Error401 />} />

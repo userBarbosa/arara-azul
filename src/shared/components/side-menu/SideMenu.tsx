@@ -2,10 +2,7 @@ import { Drawer, Icon, List, ListItemButton, ListItemIcon, ListItemText, useMedi
 import { Box } from '@mui/system';
 import { useSideMenuContext } from '../../contexts/SideMenuContext';
 import { useMatch, useNavigate, useResolvedPath } from 'react-router-dom';
-
-interface ISideMenuProps {
-  children: React.ReactNode;
-}
+import { useAuthContext } from '../../contexts';
 
 interface IListItemLinkProps {
   to: string;
@@ -35,45 +32,40 @@ const ListItemLink: React.FC<IListItemLinkProps> = ({ to, icon, label, onClick }
   );
 };
 
-export const SideMenu: React.FC<ISideMenuProps> = ({ children }) => {
+export const SideMenu: React.FC = () => {
   const theme = useTheme();
   const smDown = useMediaQuery(theme.breakpoints.down('sm'));
 
   const { isSideMenuOpen, sideMenuOptions, toggleSideMenuOpen } = useSideMenuContext();
+  const { logout } = useAuthContext();
 
   return (
-    <>
-      <Drawer open={isSideMenuOpen} variant={smDown ? 'temporary' : 'permanent'} onClose={toggleSideMenuOpen}>
-        <Box bgcolor={theme.palette.primary.main} color={theme.palette.primary.contrastText} width={theme.spacing(28)} height="100%" display="flex" flexDirection="column">
-          <Box flex={1}>
-            <List component="nav">
-              {sideMenuOptions.map(sideMenuOption => (
-                <ListItemLink
-                  to={sideMenuOption.path}
-                  key={sideMenuOption.path}
-                  icon={sideMenuOption.icon}
-                  label={sideMenuOption.label}
-                  onClick={smDown ? toggleSideMenuOpen : undefined}
-                />
-              ))}
-            </List>
-          </Box>
-          <Box>
-            <List component="nav">
-              <ListItemButton>
-                <ListItemIcon>
-                  <Icon sx={{ color: '#F7F9FC' }}>logout</Icon>
-                </ListItemIcon>
-                <ListItemText primary='Sair' />
-              </ListItemButton>
-            </List>
-          </Box>
+    <Drawer open={isSideMenuOpen} variant={smDown ? 'temporary' : 'permanent'} onClose={toggleSideMenuOpen}>
+      <Box bgcolor={theme.palette.primary.main} color={theme.palette.primary.contrastText} width={theme.spacing(28)} height="100%" display="flex" flexDirection="column">
+        <Box flex={1}>
+          <List component="nav">
+            {sideMenuOptions.map(sideMenuOption => (
+              <ListItemLink
+                to={sideMenuOption.path}
+                key={sideMenuOption.path}
+                icon={sideMenuOption.icon}
+                label={sideMenuOption.label}
+                onClick={smDown ? toggleSideMenuOpen : undefined}
+              />
+            ))}
+          </List>
         </Box>
-      </Drawer>
-
-      <Box height="100vh" marginLeft={smDown ? 0 : theme.spacing(28)}>
-        {children}
+        <Box>
+          <List component="nav">
+            <ListItemButton onClick={logout}>
+              <ListItemIcon>
+                <Icon sx={{ color: '#F7F9FC' }}>logout</Icon>
+              </ListItemIcon>
+              <ListItemText primary='Sair' />
+            </ListItemButton>
+          </List>
+        </Box>
       </Box>
-    </>
+    </Drawer>
   );
 };

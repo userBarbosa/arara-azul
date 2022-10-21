@@ -16,7 +16,7 @@ interface ISideMenuContextData {
 const SideMenuContext = createContext({} as ISideMenuContextData);
 
 interface ISideMenuProps {
-  children: React.ReactNode;
+  children?: React.ReactNode;
 }
 
 export const useSideMenuContext = () => {
@@ -25,10 +25,10 @@ export const useSideMenuContext = () => {
 
 export const SideMenuProvider: React.FC<ISideMenuProps> = ({ children }) => {
   const [sideMenuOptions, setSideMenuOptions] = useState<ISideMenuOption[]>([]);
-  const [isSideMenuOpen, setisSideMenuOpen] = useState(false);
+  const [isSideMenuOpen, setIsSideMenuOpen] = useState(false);
 
   const toggleSideMenuOpen = useCallback(() => {
-    setisSideMenuOpen((oldIsSideMenuOpen) => !oldIsSideMenuOpen);
+    setIsSideMenuOpen((oldIsSideMenuOpen) => !oldIsSideMenuOpen);
   }, []);
 
   const handleSetSideMenuOptions = useCallback((newSideMenuOptions: ISideMenuOption[]) => {

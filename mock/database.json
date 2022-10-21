@@ -78,5 +78,8 @@
       "birthDate": "907892546000",
       "active": true
     }
-  ]
+  ],
+  "auth": {
+    "accessToken": "aaaaaaaaaaa.bbbbbbbbbbb.cccccccccccc"
+  }
 }

@@ -1,15 +1,15 @@
 import { DetailTools } from '../../shared/components';
 import { BaseLayoutPage } from '../../shared/layouts';
 
-export const TutorsList: React.FC = () => {
+export const EmployeesList: React.FC = () => {
   return (
     <BaseLayoutPage
-      title={'Tutores'}
+      title={'Funcionários'}
       toolbar={(
         <DetailTools />
       )}
     >
-      Testando Tutor
+      Testando Funcionários
     </BaseLayoutPage>
   );
 };

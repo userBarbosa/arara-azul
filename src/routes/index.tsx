@@ -79,12 +79,12 @@ export const AppRoutes = () => {
   }
 
   const Private: React.FC<IPrivateProps> = ({ children }) => {
-    const { isAuthenticated } = useAuthContext();
+    // const { isAuthenticated } = useAuthContext();
 
 
-    if (!isAuthenticated) {
-      return <Navigate to="/login" />;
-    }
+    // if (!isAuthenticated) {
+    //   return <Navigate to="/login" />;
+    // }
 
     return children;
   };

@@ -1,6 +1,6 @@
 import { Box } from '@mui/material';
 
-export const MedicalRecords: React.FC = () => {
+export const EmployeeDetails: React.FC = () => {
   return (
     <Box>
         

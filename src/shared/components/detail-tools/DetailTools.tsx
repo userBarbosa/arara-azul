@@ -18,7 +18,6 @@ interface IDetailToolsProps {
   onClickButtonReturn?: () => void;
 }
 
-
 export const DetailTools: React.FC<IDetailToolsProps> = ({
   showButtonSave = true,
   showButtonSaveLoading = false,

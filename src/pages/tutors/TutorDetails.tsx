@@ -1,6 +1,6 @@
 import { Box } from '@mui/material';
 
-export const UsersDetails: React.FC = () => {
+export const TutorDetails: React.FC = () => {
   return (
     <Box>
         

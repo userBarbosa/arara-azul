@@ -1,4 +1,4 @@
-import { DetailTools } from '../../shared/components';
+import { ListTools } from '../../shared/components';
 import { BaseLayoutPage } from '../../shared/layouts';
 
 export const EmployeesList: React.FC = () => {
@@ -6,7 +6,7 @@ export const EmployeesList: React.FC = () => {
     <BaseLayoutPage
       title={'Funcionários'}
       toolbar={(
-        <DetailTools />
+        <ListTools />
       )}
     >
       Testando Funcionários

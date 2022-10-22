@@ -35,7 +35,14 @@ export const SliderCard: React.FC = () => {
     getData();
   }, []);
 
-  if (data.length < 1) return <div>Loading ...</div>;
+  if (data.length < 1) {
+    return (
+      <Box display='flex' alignItems='center' margin={2}>
+        <Typography variant='h6' sx={{ color: '#006BBF' }}>
+          Carregando ...
+        </Typography>
+      </Box>);
+  }
 
   return (
     <>

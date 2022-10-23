@@ -1,4 +1,5 @@
-import { Box, Button, Paper, Theme, Typography, useMediaQuery, useTheme } from '@mui/material';
+import { Box, Paper, Theme, Typography, useMediaQuery, useTheme } from '@mui/material';
+import { DetailTools } from '../../shared/components';
 import { BaseLayoutPage } from '../../shared/layouts';
 
 export const PatientDetails: React.FC = () => {
@@ -10,11 +11,12 @@ export const PatientDetails: React.FC = () => {
   return (
     <BaseLayoutPage
       title={'Detalhes Paciente'}
+      toolbar={<DetailTools showButtonReturn showButtonMedicalRecord />}
     >
       <Box
         margin={2}
         padding={1}
-        height={theme.spacing(mddown ? 150 : mdUp ? 100 : 150)} 
+        height={theme.spacing(mddown ? 110 : mdUp ? 90 : 110)} 
         component={Paper}
         display='flex'
         alignItems='stretch'
@@ -111,42 +113,6 @@ export const PatientDetails: React.FC = () => {
             </Typography>
           </Box>
           
-        </Box>
-
-        <Box margin={2}>
-          <Box display='flex' sx={{ flexDirection: { xs: 'column', md: 'row'} }}>
-            <Button
-              variant="contained"
-              disableElevation
-              fullWidth
-              sx={{ marginRight: { xs: 0, md: 1 }, marginBottom: { xs: 1, md: 0 } }}
-            >
-              <Typography
-                variant='button'
-                overflow='hidden'
-                whiteSpace='nowrap'
-                textOverflow='ellipsis'
-              >
-                  Voltar
-              </Typography>
-            </Button>
-            <Button
-              variant="contained"
-              disableElevation
-              fullWidth
-              sx={{ marginLeft: { xs: 0, md: 1 }, marginTop: { xs: 1, md: 0 } }}
-            >
-              <Typography
-                variant='button'
-                overflow='hidden'
-                whiteSpace='nowrap'
-                textOverflow='ellipsis'
-              >
-                  Prontuário
-              </Typography>
-            </Button>
-          </Box>
-
         </Box>
 
       </Box>

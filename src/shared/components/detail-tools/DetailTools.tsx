@@ -19,7 +19,7 @@ interface IDetailToolsProps {
 }
 
 export const DetailTools: React.FC<IDetailToolsProps> = ({
-  showButtonSave = true,
+  showButtonSave = false,
   showButtonSaveLoading = false,
   onClickButtonSave,
 
@@ -31,7 +31,7 @@ export const DetailTools: React.FC<IDetailToolsProps> = ({
   showButtonMedicalRecordLoading = false,
   onClickButtonMedicalRecord,
 
-  showButtonReturn = true,
+  showButtonReturn = false,
   showButtonReturnLoading = false,
   onClickButtonReturn,
 }) => {
@@ -49,11 +49,34 @@ export const DetailTools: React.FC<IDetailToolsProps> = ({
       alignItems='center'
       component={Paper}
     >
+      {(showButtonReturn && !showButtonReturnLoading) && (
+        <Button
+          onClick={onClickButtonReturn}
+          variant="contained"
+          disableElevation
+          fullWidth
+          startIcon={<Icon sx={{ color: '#F7F9FC' }}>arrow_back</Icon>}
+        >
+          <Typography
+            variant='button'
+            overflow='hidden'
+            whiteSpace='nowrap'
+            textOverflow='ellipsis'
+          >
+            Voltar
+          </Typography>
+        </Button>)}
+
+      {showButtonReturnLoading && (
+        <Skeleton width={110} height={60} />
+      )}
+      
       {(showButtonSave && !showButtonSaveLoading) && (
         <Button
           onClick={onClickButtonSave}
           variant="contained"
           disableElevation
+          fullWidth
           startIcon={<Icon sx={{ color: '#F7F9FC' }}>save</Icon>}
         >
           <Typography
@@ -75,6 +98,7 @@ export const DetailTools: React.FC<IDetailToolsProps> = ({
           onClick={onClickButtonPrint}
           variant="contained"
           disableElevation
+          fullWidth
           startIcon={<Icon sx={{ color: '#F7F9FC' }}>print</Icon>}
         >
           <Typography
@@ -96,6 +120,7 @@ export const DetailTools: React.FC<IDetailToolsProps> = ({
           onClick={onClickButtonMedicalRecord}
           variant="contained"
           disableElevation
+          fullWidth
           startIcon={<Icon sx={{ color: '#F7F9FC' }}>library_books</Icon>}
         >
           <Typography
@@ -110,27 +135,6 @@ export const DetailTools: React.FC<IDetailToolsProps> = ({
 
       {showButtonMedicalRecordLoading && (
         <Skeleton width={145} height={60} />
-      )}
-
-      {(showButtonReturn && !showButtonReturnLoading) && (
-        <Button
-          onClick={onClickButtonReturn}
-          variant="contained"
-          disableElevation
-          startIcon={<Icon sx={{ color: '#F7F9FC' }}>arrow_back</Icon>}
-        >
-          <Typography
-            variant='button'
-            overflow='hidden'
-            whiteSpace='nowrap'
-            textOverflow='ellipsis'
-          >
-            Voltar
-          </Typography>
-        </Button>)}
-
-      {showButtonReturnLoading && (
-        <Skeleton width={110} height={60} />
       )}
     </Box>
   );

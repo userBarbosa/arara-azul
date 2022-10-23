@@ -1,4 +1,5 @@
-import { Box, Button, Paper, Theme, Typography, useMediaQuery, useTheme } from '@mui/material';
+import { Box, Paper, Theme, Typography, useMediaQuery, useTheme } from '@mui/material';
+import { DetailTools } from '../../shared/components';
 import { BaseLayoutPage } from '../../shared/layouts';
 
 export const TutorDetails: React.FC = () => {
@@ -10,11 +11,12 @@ export const TutorDetails: React.FC = () => {
   return (
     <BaseLayoutPage
       title={'Detalhes Tutor'}
+      toolbar={<DetailTools showButtonReturn/>}
     >
       <Box
         margin={2}
         padding={1}
-        height={theme.spacing(mddown ? 150 : mdUp ? 100 : 150)} 
+        height={theme.spacing(mddown ? 130 : mdUp ? 90 : 130)} 
         component={Paper}
         display='flex'
         alignItems='stretch'
@@ -137,23 +139,6 @@ export const TutorDetails: React.FC = () => {
             </Typography>
           </Box>
           
-        </Box>
-
-        <Box margin={2}>
-          <Button
-            variant="contained"
-            disableElevation
-            fullWidth
-          >
-            <Typography
-              variant='button'
-              overflow='hidden'
-              whiteSpace='nowrap'
-              textOverflow='ellipsis'
-            >
-                  Voltar
-            </Typography>
-          </Button>
         </Box>
 
       </Box>

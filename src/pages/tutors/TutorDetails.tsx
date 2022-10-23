@@ -23,7 +23,7 @@ export const TutorDetails: React.FC = () => {
       >
         <Box margin={2}>
           <Box display='flex' sx={{ flexDirection: { xs: 'column', md: 'row'} }}>
-            <Typography variant='body2' sx={{ color: '#9E9E9E', fontWeight: 600, marginRight: 2 }}>
+            <Typography variant='body2' sx={{ color: '#9E9E9E', fontWeight: 600, marginRight: { xs: 0, md: 2 } }}>
               Nome Completo: 
             </Typography>
             <Typography variant='body2' sx={{ color: '#000000' }}>
@@ -32,7 +32,7 @@ export const TutorDetails: React.FC = () => {
           </Box>
 
           <Box display='flex' sx={{ flexDirection: { xs: 'column', md: 'row'} }} marginTop={3}>
-            <Typography variant='body2' sx={{ color: '#9E9E9E', fontWeight: 600, marginRight: 2 }}>
+            <Typography variant='body2' sx={{ color: '#9E9E9E', fontWeight: 600, marginRight: { xs: 0, md: 2 } }}>
               Telefone:
             </Typography>
             <Typography variant='body2' sx={{ color: '#000000' }}>
@@ -41,7 +41,7 @@ export const TutorDetails: React.FC = () => {
           </Box>
 
           <Box display='flex' sx={{ flexDirection: { xs: 'column', md: 'row'} }} marginTop={3}>
-            <Typography variant='body2' sx={{ color: '#9E9E9E', fontWeight: 600, marginRight: 2 }}>
+            <Typography variant='body2' sx={{ color: '#9E9E9E', fontWeight: 600, marginRight: { xs: 0, md: 2 } }}>
               E-mail:
             </Typography>
             <Typography variant='body2' sx={{ color: '#000000' }}>
@@ -50,7 +50,7 @@ export const TutorDetails: React.FC = () => {
           </Box>
 
           <Box display='flex' sx={{ flexDirection: { xs: 'column', md: 'row'} }} marginTop={3}>
-            <Typography variant='body2' sx={{ color: '#9E9E9E', fontWeight: 600, marginRight: 2 }}>
+            <Typography variant='body2' sx={{ color: '#9E9E9E', fontWeight: 600, marginRight: { xs: 0, md: 2 } }}>
               Documento:
             </Typography>
             <Typography variant='body2' sx={{ color: '#000000' }}>
@@ -59,7 +59,7 @@ export const TutorDetails: React.FC = () => {
           </Box>
 
           <Box display='flex' sx={{ flexDirection: { xs: 'column', md: 'row'} }} marginTop={3}>
-            <Typography variant='body2' sx={{ color: '#9E9E9E', fontWeight: 600, marginRight: 2 }}>
+            <Typography variant='body2' sx={{ color: '#9E9E9E', fontWeight: 600, marginRight: { xs: 0, md: 2 } }}>
               CEP:
             </Typography>
             <Typography variant='body2' sx={{ color: '#000000' }}>
@@ -68,7 +68,7 @@ export const TutorDetails: React.FC = () => {
           </Box>
 
           <Box display='flex' sx={{ flexDirection: { xs: 'column', md: 'row'} }} marginTop={3}>
-            <Typography variant='body2' sx={{ color: '#9E9E9E', fontWeight: 600, marginRight: 2 }}>
+            <Typography variant='body2' sx={{ color: '#9E9E9E', fontWeight: 600, marginRight: { xs: 0, md: 2 } }}>
               Estado:
             </Typography>
             <Typography variant='body2' sx={{ color: '#000000' }}>
@@ -77,7 +77,7 @@ export const TutorDetails: React.FC = () => {
           </Box>
 
           <Box display='flex' sx={{ flexDirection: { xs: 'column', md: 'row'} }} marginTop={3}>
-            <Typography variant='body2' sx={{ color: '#9E9E9E', fontWeight: 600, marginRight: 2 }}>
+            <Typography variant='body2' sx={{ color: '#9E9E9E', fontWeight: 600, marginRight: { xs: 0, md: 2 } }}>
               Cidade:
             </Typography>
             <Typography variant='body2' sx={{ color: '#000000' }}>
@@ -86,7 +86,7 @@ export const TutorDetails: React.FC = () => {
           </Box>
 
           <Box display='flex' sx={{ flexDirection: { xs: 'column', md: 'row'} }} marginTop={3}>
-            <Typography variant='body2' sx={{ color: '#9E9E9E', fontWeight: 600, marginRight: 2 }}>
+            <Typography variant='body2' sx={{ color: '#9E9E9E', fontWeight: 600, marginRight: { xs: 0, md: 2 } }}>
               Bairro:
             </Typography>
             <Typography variant='body2' sx={{ color: '#000000' }}>
@@ -95,7 +95,7 @@ export const TutorDetails: React.FC = () => {
           </Box>
 
           <Box display='flex' sx={{ flexDirection: { xs: 'column', md: 'row'} }} marginTop={3}>
-            <Typography variant='body2' sx={{ color: '#9E9E9E', fontWeight: 600, marginRight: 2 }}>
+            <Typography variant='body2' sx={{ color: '#9E9E9E', fontWeight: 600, marginRight: { xs: 0, md: 2 } }}>
               Endereço:
             </Typography>
             <Typography variant='body2' sx={{ color: '#000000' }}>
@@ -104,7 +104,7 @@ export const TutorDetails: React.FC = () => {
           </Box>
 
           <Box display='flex' sx={{ flexDirection: { xs: 'column', md: 'row'} }} marginTop={3}>
-            <Typography variant='body2' sx={{ color: '#9E9E9E', fontWeight: 600, marginRight: 2 }}>
+            <Typography variant='body2' sx={{ color: '#9E9E9E', fontWeight: 600, marginRight: { xs: 0, md: 2 } }}>
               Número:
             </Typography>
             <Typography variant='body2' sx={{ color: '#000000' }}>
@@ -113,7 +113,7 @@ export const TutorDetails: React.FC = () => {
           </Box>
 
           <Box display='flex' sx={{ flexDirection: { xs: 'column', md: 'row'} }} marginTop={3}>
-            <Typography variant='body2' sx={{ color: '#9E9E9E', fontWeight: 600, marginRight: 2 }}>
+            <Typography variant='body2' sx={{ color: '#9E9E9E', fontWeight: 600, marginRight: { xs: 0, md: 2 } }}>
               Complemento:
             </Typography>
             <Typography variant='body2' sx={{ color: '#000000' }}>
@@ -121,7 +121,7 @@ export const TutorDetails: React.FC = () => {
           </Box>
 
           <Box display='flex' sx={{ flexDirection: { xs: 'column', md: 'row'} }} marginTop={3}>
-            <Typography variant='body2' sx={{ color: '#9E9E9E', fontWeight: 600, marginRight: 2 }}>
+            <Typography variant='body2' sx={{ color: '#9E9E9E', fontWeight: 600, marginRight: { xs: 0, md: 2 } }}>
               Pacientes:
             </Typography>
             <Typography variant='body2' sx={{ color: '#000000' }}>
@@ -130,7 +130,7 @@ export const TutorDetails: React.FC = () => {
           </Box>
 
           <Box display='flex' sx={{ flexDirection: { xs: 'column', md: 'row'} }} marginTop={3}>
-            <Typography variant='body2' sx={{ color: '#9E9E9E', fontWeight: 600, marginRight: 2 }}>
+            <Typography variant='body2' sx={{ color: '#9E9E9E', fontWeight: 600, marginRight: { xs: 0, md: 2 } }}>
               Observação:
             </Typography>
             <Typography variant='body2' sx={{ color: '#000000' }}>

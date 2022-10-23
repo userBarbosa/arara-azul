@@ -1,7 +1,10 @@
-import { Box, Button, Paper, Typography, useTheme } from '@mui/material';
+import { Box, Button, Paper, Theme, Typography, useMediaQuery, useTheme } from '@mui/material';
 import { BaseLayoutPage } from '../../shared/layouts';
 
 export const EmployeeDetails: React.FC = () => {
+  const mddown = useMediaQuery((theme: Theme) => theme.breakpoints.down('md'));
+  const mdUp = useMediaQuery((theme: Theme) => theme.breakpoints.up('md'));
+
   const theme = useTheme();
 
   return (
@@ -9,18 +12,16 @@ export const EmployeeDetails: React.FC = () => {
       title={'Detalhes Funcionário'}
     >
       <Box
-        marginX={2}
+        margin={2}
         padding={1}
-        paddingX={1}
-        gap={1}
-        height={theme.spacing(100)}
+        height={theme.spacing(mddown ? 150 : mdUp ? 100 : 150)} 
         component={Paper}
         display='flex'
         alignItems='stretch'
         justifyContent='space-between'
         sx={{flexDirection: 'column'}}
       >
-        <Box margin={2} padding={1}>
+        <Box margin={2}>
           <Box display='flex' sx={{ flexDirection: { xs: 'column', md: 'row'} }}>
             <Typography variant='body2' sx={{ color: '#9E9E9E', fontWeight: 600, marginRight: 2 }}>
               Nome Completo: 

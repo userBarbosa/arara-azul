@@ -1,4 +1,5 @@
 import { Box, Paper, Theme, Typography, useMediaQuery, useTheme } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 import { DetailTools } from '../../shared/components';
 import { BaseLayoutPage } from '../../shared/layouts';
 
@@ -7,11 +8,16 @@ export const TutorDetails: React.FC = () => {
   const mdUp = useMediaQuery((theme: Theme) => theme.breakpoints.up('md'));
 
   const theme = useTheme();
+  const navigate = useNavigate();
 
   return (
     <BaseLayoutPage
       title={'Detalhes Tutor'}
-      toolbar={<DetailTools showButtonReturn/>}
+      toolbar={
+        <DetailTools 
+          showButtonReturn
+          onClickButtonReturn={() => navigate('/tutores')}
+        />}
     >
       <Box
         margin={2}
@@ -26,7 +32,7 @@ export const TutorDetails: React.FC = () => {
         <Box margin={2}>
           <Box display='flex' sx={{ flexDirection: { xs: 'column', md: 'row'} }}>
             <Typography variant='body2' sx={{ color: '#9E9E9E', fontWeight: 600, marginRight: { xs: 0, md: 2 } }}>
-              Nome Completo: 
+              Nome: 
             </Typography>
             <Typography variant='body2' sx={{ color: '#000000' }}>
               Kauã Claudino Loureiro

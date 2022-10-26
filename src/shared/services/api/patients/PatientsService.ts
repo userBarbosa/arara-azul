@@ -3,10 +3,30 @@ import { Api } from '../axios-config';
 
 export interface IListPatient {
     id: number;
+    tutorId: number;
+    name: string;
+    birthDate: string; 
+    bloodType: string;
+    species: string;
+    allergy: string;
+    sex: string;
+    treatment: string;
+    observation: string | undefined;
+    weight: string;
   }
   
 export interface IDetailPatient {
     id: number;
+    tutorId: number;
+    name: string;
+    birthDate: string; 
+    bloodType: string;
+    species: string;
+    allergy: string;
+    sex: string;
+    treatment: string;
+    observation: string | undefined;
+    weight: string;
   }
   
 type TPatientsWithTotalCount = {
@@ -14,9 +34,9 @@ type TPatientsWithTotalCount = {
     totalCount: number;
 }
 
-const getAll = async (page = 1, filter = ''): Promise<TPatientsWithTotalCount | Error> => {
+const getAll = async (page = 1, filter = '', id = ''): Promise<TPatientsWithTotalCount | Error> => {
   try {
-    const relative_url  = `/patient?_page=${page}&_limit=${Environment.ROW_LIMIT}&name_like=${filter}`;
+    const relative_url  = `/patient?_page=${page}&_limit=${Environment.ROW_LIMIT}&name_like=${filter}&id_like=${id}`;
     
     const { data, headers } = await Api.get(relative_url);
     

@@ -1,6 +1,7 @@
-import Slider from './slider/index';
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Box, Typography } from '@mui/material';
+import Slider from './slider/index';
 import './styles.css';
 
 const SliderProps = {
@@ -23,6 +24,7 @@ export type Appointment = {
 
 export const SliderCard: React.FC = () => {
   const [data, setData] = useState<Appointment[]>([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const getData = async () => {
@@ -48,7 +50,7 @@ export const SliderCard: React.FC = () => {
     <>
       <Slider {...SliderProps}>
         {data.map(appointment => (
-          <Box key={appointment.id} borderRadius={5} bgcolor={'background.paper'}>
+          <Box key={appointment.id} onClick={() => navigate(`/consultas/detalhe/${appointment.id}`)} borderRadius={5} bgcolor={'background.paper'}>
             <Box bgcolor={'#E8F9FC'} margin={2} padding={1} borderRadius={5} maxHeight={200}>
               <img className='random-image' src={require('../../../assets/card-images/image-' + [Math.floor(Math.random() * (54 - 1 + 1) + 1)] + '.svg')} alt='appointment' />
             </Box>

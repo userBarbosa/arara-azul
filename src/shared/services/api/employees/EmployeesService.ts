@@ -3,14 +3,24 @@ import { Api } from '../axios-config';
 
 export interface IListEmployee {
     id: number;
-    fullName: string;
-    email: number;
+    name: string;
+    email: string;
+    telephoneNumber: string;
+    identificationNumber: string;
+    birthDate: string; 
+    type: string;
+    active: string;
   }
   
 export interface IDetailEmployee {
     id: number;
-    fullName: string;
-    email: number;
+    name: string;
+    email: string;
+    telephoneNumber: string;
+    identificationNumber: string;
+    birthDate: string; 
+    type: string;
+    active: string;
   }
   
 type TEmployeesWithTotalCount = {
@@ -18,9 +28,9 @@ type TEmployeesWithTotalCount = {
     totalCount: number;
 }
 
-const getAll = async (page = 1, filter = ''): Promise<TEmployeesWithTotalCount | Error> => {
+const getAll = async (page = 1, filter = '', id = ''): Promise<TEmployeesWithTotalCount | Error> => {
   try {
-    const relative_url  = `/users?_page=${page}&_limit=${Environment.ROW_LIMIT}&fullName_like=${filter}`;
+    const relative_url  = `/users?_page=${page}&_limit=${Environment.ROW_LIMIT}&name_like=${filter}&id_like=${id}`;
     
     const { data, headers } = await Api.get(relative_url);
     

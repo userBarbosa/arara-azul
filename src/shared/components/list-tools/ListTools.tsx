@@ -37,6 +37,7 @@ export const ListTools: React.FC<IListToolsProps> = ({
           label="Pesquisar"
           variant="outlined"
           size="small"
+          fullWidth
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">

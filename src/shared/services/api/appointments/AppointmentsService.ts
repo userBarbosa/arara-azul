@@ -3,10 +3,30 @@ import { Api } from '../axios-config';
 
 export interface IListAppointment {
     id: number;
+    tutorId: number;
+    patientId: number;
+    employeeId: number;
+    date: string; 
+    hour: string;
+    reason: string;
+    value: number;
+    appointmentState: string;
+    paymentMethod: string;
+    observation: string | undefined;
   }
   
 export interface IDetailAppointment {
     id: number;
+    tutorId: number;
+    patientId: number;
+    employeeId: number;
+    date: string; 
+    hour: string;
+    reason: string;
+    value: number;
+    appointmentState: string;
+    paymentMethod: string;
+    observation: string | undefined;
   }
   
 type TAppointmentsWithTotalCount = {
@@ -14,9 +34,9 @@ type TAppointmentsWithTotalCount = {
     totalCount: number;
 }
 
-const getAll = async (page = 1, filter = ''): Promise<TAppointmentsWithTotalCount | Error> => {
+const getAll = async (page = 1, filter = '', id = ''): Promise<TAppointmentsWithTotalCount | Error> => {
   try {
-    const relative_url  = `/appointments?_page=${page}&_limit=${Environment.ROW_LIMIT}&name_like=${filter}`;
+    const relative_url  = `/appointments?_page=${page}&_limit=${Environment.ROW_LIMIT}&name_like=${filter}&id_like=${id}`;
     
     const { data, headers } = await Api.get(relative_url);
     

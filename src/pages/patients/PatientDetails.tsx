@@ -1,4 +1,5 @@
 import { Box, Paper, Theme, Typography, useMediaQuery, useTheme } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 import { DetailTools } from '../../shared/components';
 import { BaseLayoutPage } from '../../shared/layouts';
 
@@ -7,11 +8,17 @@ export const PatientDetails: React.FC = () => {
   const mdUp = useMediaQuery((theme: Theme) => theme.breakpoints.up('md'));
 
   const theme = useTheme();
+  const navigate = useNavigate();
 
   return (
     <BaseLayoutPage
       title={'Detalhes Paciente'}
-      toolbar={<DetailTools showButtonReturn showButtonMedicalRecord />}
+      toolbar={
+        <DetailTools 
+          showButtonReturn 
+          onClickButtonReturn={() => navigate('/pacientes')}
+          showButtonMedicalRecord 
+        />}
     >
       <Box
         margin={2}

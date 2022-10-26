@@ -3,10 +3,24 @@ import { Api } from '../axios-config';
 
 export interface IListTutor {
     id: number;
+    name: string;
+    email: string;
+    telephoneNumber: string;
+    identificationNumber: string;
+    address: string;
+    patientsName: string; 
+    observation: string | undefined;
   }
   
 export interface IDetailTutor {
     id: number;
+    name: string;
+    email: string;
+    telephoneNumber: string;
+    identificationNumber: string;
+    address: string;
+    patientsName: string; 
+    observation: string | undefined;
   }
   
 type TTutorsWithTotalCount = {
@@ -14,9 +28,9 @@ type TTutorsWithTotalCount = {
     totalCount: number;
 }
 
-const getAll = async (page = 1, filter = ''): Promise<TTutorsWithTotalCount | Error> => {
+const getAll = async (page = 1, filter = '', id = ''): Promise<TTutorsWithTotalCount | Error> => {
   try {
-    const relative_url  = `/tutor?_page=${page}&_limit=${Environment.ROW_LIMIT}&name_like=${filter}`;
+    const relative_url  = `/tutor?_page=${page}&_limit=${Environment.ROW_LIMIT}&name_like=${filter}&id_like=${id}`;
     
     const { data, headers } = await Api.get(relative_url);
     

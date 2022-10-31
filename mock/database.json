@@ -1,0 +1,85 @@
+{
+  "appointments": [
+    {
+      "id": "6348a4340eb86fa1e08d4f97",
+      "patiendId": "6348a6de9aa685ccc65ce0f9",
+      "tutorId": "6348a902f65d93135645a704",
+      "employeeId": "6348a6ee5e235456ec22004f",
+      "diagnosticId": "6348a735e540b90cf2a136f4",
+      "observation": "",
+      "appointmentState": 2,
+      "paymentState": 1,
+      "reason": 1,
+      "value": 200.2,
+      "date": "1665706904088"
+    }
+  ],
+  "patients": [
+    {
+      "id": "6348a6de9aa685ccc65ce0f9",
+      "tutorId": "6348a902f65d93135645a704",
+      "name": "Maia",
+      "bloodType": "A",
+      "observation": "",
+      "species": 0,
+      "allergy": 1,
+      "sex": 1,
+      "birthDate": "1550449346000",
+      "treatment": false,
+      "weight": 6
+    }
+  ],
+  "tutors": [
+    {
+      "id": "6348a902f65d93135645a704",
+      "name": "Kauã Claudino Loureiro",
+      "email": "kaua.loureiro@gmail.com",
+      "identificationNumber": "75781722807",
+      "telephoneNumber": "11980287824",
+      "observation": "",
+      "patientsName": ["Maia"],
+      "address": {
+        "zipCode": "06708710",
+        "state": "SP",
+        "city": "Cotia",
+        "neighborhood": "Jardim Mediterrâneo",
+        "streetName": "Rua Nice",
+        "houseNumber": "110A",
+        "complement": ""
+      }
+    }
+  ],
+  "employees": [
+    {
+      "id": "6348aeaaf6cf0560703e10ed",
+      "name": "Edmilson Cruz de Padua",
+      "email": "edmilson.padua@gmail.com",
+      "password": "12345",
+      "identificationNumber": "86822461809",
+      "telephoneNumber": "11982477223",
+      "observation": "",
+      "medicalLicense": "",
+      "type": 1,
+      "specialty": "",
+      "birthDate": "625450946000",
+      "active": true
+    },
+    {
+      "id": "6348a6ee5e235456ec22004f",
+      "name": "Lorenna Veiga Salomão",
+      "email": "edmilson.padua@gmail.com",
+      "password": "12345",
+      "identificationNumber": "51848687800",
+      "telephoneNumber": "11972688484",
+      "observation": "",
+      "medicalLicense": "875373371688",
+      "type": 2,
+      "specialty": "cats",
+      "birthDate": "907892546000",
+      "active": true
+    }
+  ],
+  "auth": {
+    "accessToken": "aaaaaaaaaaa.bbbbbbbbbbb.cccccccccccc"
+  }
+}

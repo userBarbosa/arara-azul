@@ -9,8 +9,7 @@ export * from './appointments/AppointmentUpdate';
 export * from './appointments/AppointmentDetails';
 
 export * from './medical-records/MedicalRecordInsert';
-export * from './medical-records/MedicalRecordAppointment';
-export * from './medical-records/MedicalRecordsPatient';
+export * from './medical-records/MedicalRecordDetails';
 
 export * from './patients/PatientList';
 export * from './patients/PatientInsert';

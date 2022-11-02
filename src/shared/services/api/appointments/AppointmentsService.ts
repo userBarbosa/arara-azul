@@ -7,7 +7,6 @@ export interface IListAppointment {
     patientId: number;
     employeeId: number;
     date: string; 
-    hour: string;
     reason: string;
     value: number;
     appointmentState: string;
@@ -16,17 +15,16 @@ export interface IListAppointment {
   }
   
 export interface IDetailAppointment {
-    id: number;
-    tutorId: number;
-    patientId: number;
-    employeeId: number;
-    date: string; 
-    hour: string;
-    reason: string;
-    value: number;
-    appointmentState: string;
-    paymentMethod: string;
-    observation: string | undefined;
+  id: number;
+  tutorId: number;
+  patientId: number;
+  employeeId: number;
+  date: string; 
+  reason: string;
+  value: number;
+  appointmentState: string;
+  paymentMethod: string;
+  observation: string | undefined;
   }
   
 type TAppointmentsWithTotalCount = {

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Box, Grid, LinearProgress, Paper } from '@mui/material';
+import { Box, Grid, InputAdornment, LinearProgress, Paper } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
 import * as yup from 'yup';
 
@@ -47,13 +47,13 @@ export const PatientUpdate: React.FC = () => {
     formRef.current?.setData({
       tutorId: undefined,
       name: 'Maia',
-      birthDate: '30/11/2020',
+      birthDate: '2020-11-30',
       bloodType: 'DEA 3',
       species: 'Cachorro',
       allergy: 'Abelha',
       sex: 'Fêmea',
       treatment: 'Não',
-      weight: '8 kg',
+      weight: '8',
       observation: '',
     });
   }, []);
@@ -143,6 +143,10 @@ export const PatientUpdate: React.FC = () => {
                   name='birthDate'
                   label='Data de Nascimento'
                   disabled={isLoading}
+                  type="date"
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
                 />
               </Grid>
 
@@ -209,6 +213,9 @@ export const PatientUpdate: React.FC = () => {
                   name='weight'
                   label='Peso'
                   disabled={isLoading}
+                  InputProps={{
+                    endAdornment: <InputAdornment position="end">kg</InputAdornment>,
+                  }}
                 />
               </Grid> 
 

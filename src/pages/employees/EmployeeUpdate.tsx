@@ -44,7 +44,7 @@ export const EmployeeUpdate: React.FC = () => {
       email: 'edmilson.padua@gmail.com',
       telephoneNumber: '(11) 98247-7223',
       identificationNumber: '868.224.618-09',
-      birthDate: '17/10/1989',
+      birthDate: '1989-10-17',
       type: 'Recepcionista',
       active: 'Ativo',
       observation: '',
@@ -163,6 +163,10 @@ export const EmployeeUpdate: React.FC = () => {
                   name='birthDate'
                   label='Data de Nascimento'
                   disabled={isLoading}
+                  type="date"
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
                 />
               </Grid>
 

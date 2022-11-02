@@ -11,8 +11,7 @@ import {
   AppointmentDetails,
 
   MedicalRecordInsert,
-  MedicalRecordAppointment,
-  MedicalRecordsPatient,
+  MedicalRecordDetails,
 
   PatientsList,
   PatientInsert,
@@ -106,8 +105,7 @@ export const AppRoutes = () => {
       <Route path="/consultas/detalhe/:id" element={<Private><AppointmentDetails /></Private>} />
 
       <Route path="/prontuario/inserir" element={<MedicalRecordInsert/>} />
-      <Route path="/prontuario/consulta/:id" element={<MedicalRecordAppointment/>} />
-      <Route path="/prontuario/paciente/:id" element={<MedicalRecordsPatient/>} />
+      <Route path="/prontuario/detalhe/:id" element={<MedicalRecordDetails/>} />
 
       <Route path="/pacientes" element={<Private><PatientsList/></Private>} />
       <Route path="/pacientes/inserir" element={<Private><PatientInsert/></Private>} />

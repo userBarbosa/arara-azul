@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Box, Grid, LinearProgress, Paper } from '@mui/material';
+import { Box, Grid, InputAdornment, LinearProgress, Paper } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import * as yup from 'yup';
 
@@ -17,7 +17,6 @@ interface IFormData {
   patientId: number;
   employeeId: number;
   date: string; 
-  hour: string;
   reason: string;
   value: number;
   appointmentState: string;
@@ -30,7 +29,6 @@ const formValidationSchema: yup.SchemaOf<IFormData> = yup.object().shape({
   patientId: yup.number().required(),
   employeeId: yup.number().required(),
   date: yup.string().required().min(3),
-  hour: yup.string().required().min(3),
   reason: yup.string().required().min(3),
   value: yup.number().required(),
   appointmentState: yup.string().required().min(3),
@@ -50,7 +48,6 @@ export const AppointmentInsert: React.FC = () => {
       patientId: undefined,
       employeeId: undefined,
       date: '',
-      hour: '',
       reason: '',
       value: undefined,
       appointmentState: '',
@@ -137,23 +134,14 @@ export const AppointmentInsert: React.FC = () => {
                 <VTextField
                   fullWidth
                   name='date'
-                  label='Data'
+                  label='Data e Hora'
+                  type="datetime-local"
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
                   disabled={isLoading}
                 />
               </Grid>
-
-              <Grid item xs={12} sm={12} md={6} lg={6} xl={6} >
-                <VTextField
-                  fullWidth
-                  name='hour'
-                  label='Horário'
-                  disabled={isLoading}
-                />
-              </Grid>
-
-            </Grid>
-
-            <Grid container item direction="row" spacing={2}>
 
               <Grid item xs={12} sm={12} md={6} lg={6} xl={6} >
                 <VSelect
@@ -164,13 +152,13 @@ export const AppointmentInsert: React.FC = () => {
                 />
               </Grid>
 
-              <Grid item xs={12} sm={12} md={6} lg={6} xl={6} >
-                <AutocompleteEmployee isExternalLoading={isLoading} />
-              </Grid> 
-
             </Grid>
 
             <Grid container item direction="row" spacing={2}>
+
+              <Grid item xs={12} sm={12} md={6} lg={6} xl={6} >
+                <AutocompleteEmployee isExternalLoading={isLoading} />
+              </Grid>
 
               <Grid item xs={12} sm={12} md={6} lg={6} xl={6} >
                 <VTextField
@@ -178,8 +166,15 @@ export const AppointmentInsert: React.FC = () => {
                   name='value'
                   label='Valor'
                   disabled={isLoading}
+                  InputProps={{
+                    startAdornment: <InputAdornment position="start">R$</InputAdornment>,
+                  }}
                 />
               </Grid> 
+
+            </Grid>
+
+            <Grid container item direction="row" spacing={2}>
 
               <Grid item xs={12} sm={12} md={6} lg={6} xl={6} >
                 <VSelect
@@ -188,22 +183,22 @@ export const AppointmentInsert: React.FC = () => {
                   label='Pagamento'
                   disabled={isLoading}
                 />
+              </Grid> 
+
+              <Grid item xs={12} sm={12} md={6} lg={6} xl={6} >
+                <VSelect
+                  fullWidth
+                  name='appointmentState'
+                  label='Status'
+                  disabled={isLoading}
+                />
               </Grid>
                
             </Grid>
 
             <Grid container item direction="row" spacing={2}>
 
-              <Grid item xs={12} sm={12} md={6} lg={6} xl={6} >
-                <VTextField
-                  fullWidth
-                  name='appointmentState'
-                  label='Status'
-                  disabled={isLoading}
-                />
-              </Grid> 
-
-              <Grid item xs={12} sm={12} md={6} lg={6} xl={6} >
+              <Grid item xs={12} sm={12} md={12} lg={12} xl={12} >
                 <VTextField
                   fullWidth
                   name='observation'

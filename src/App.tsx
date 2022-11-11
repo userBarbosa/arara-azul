@@ -1,8 +1,7 @@
+import './shared/forms/TranslationsYup';
 import { BrowserRouter } from 'react-router-dom';
 import { AppRoutes } from './routes/index';
 import { AppThemeProvider, AuthProvider, SideMenuProvider } from './shared/contexts';
-
-import './shared/forms/TranslationsYup';
 
 export const App = () => {
   return (

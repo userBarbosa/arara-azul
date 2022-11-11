@@ -5,14 +5,6 @@ interface IDetailToolsProps {
   showButtonSaveLoading?: boolean;
   onClickButtonSave?: () => void;
 
-  showButtonPrint?: boolean;
-  showButtonPrintLoading?: boolean;
-  onClickButtonPrint?: () => void;
-
-  showButtonMedicalRecord?: boolean;
-  showButtonMedicalRecordLoading?: boolean;
-  onClickButtonMedicalRecord?: () => void;
-
   showButtonReturn?: boolean;
   showButtonReturnLoading?: boolean;
   onClickButtonReturn?: () => void;
@@ -22,14 +14,6 @@ export const DetailTools: React.FC<IDetailToolsProps> = ({
   showButtonSave = false,
   showButtonSaveLoading = false,
   onClickButtonSave,
-
-  showButtonPrint = false,
-  showButtonPrintLoading = false,
-  onClickButtonPrint,
-
-  showButtonMedicalRecord = false,
-  showButtonMedicalRecordLoading = false,
-  onClickButtonMedicalRecord,
 
   showButtonReturn = false,
   showButtonReturnLoading = false,
@@ -91,50 +75,6 @@ export const DetailTools: React.FC<IDetailToolsProps> = ({
 
       {showButtonSaveLoading && (
         <Skeleton width={109} height={60} />
-      )}
-
-      {(showButtonPrint && !showButtonPrintLoading) && (
-        <Button
-          onClick={onClickButtonPrint}
-          variant="contained"
-          disableElevation
-          fullWidth
-          startIcon={<Icon sx={{ color: '#F7F9FC' }}>print</Icon>}
-        >
-          <Typography
-            variant='button'
-            overflow='hidden'
-            whiteSpace='nowrap'
-            textOverflow='ellipsis'
-          >
-            Imprimir
-          </Typography>
-        </Button>)}
-
-      {showButtonPrintLoading && (
-        <Skeleton width={118} height={60} />
-      )}
-
-      {(showButtonMedicalRecord && !showButtonMedicalRecordLoading) && (
-        <Button
-          onClick={onClickButtonMedicalRecord}
-          variant="contained"
-          disableElevation
-          fullWidth
-          startIcon={<Icon sx={{ color: '#F7F9FC' }}>library_books</Icon>}
-        >
-          <Typography
-            variant='button'
-            overflow='hidden'
-            whiteSpace='nowrap'
-            textOverflow='ellipsis'
-          >
-            Prontuário
-          </Typography>
-        </Button>)}
-
-      {showButtonMedicalRecordLoading && (
-        <Skeleton width={145} height={60} />
       )}
     </Box>
   );

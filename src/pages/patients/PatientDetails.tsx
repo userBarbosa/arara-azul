@@ -17,7 +17,6 @@ export const PatientDetails: React.FC = () => {
         <DetailTools 
           showButtonReturn 
           onClickButtonReturn={() => navigate('/pacientes')}
-          showButtonMedicalRecord 
         />}
     >
       <Box

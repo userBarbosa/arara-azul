@@ -22,7 +22,6 @@
     "@emotion/styled": "^11.10.4",
     "@mui/icons-material": "^5.10.3",
     "@mui/material": "^5.10.5",
-    "@react-pdf/renderer": "^3.0.0",
     "@unform/core": "^2.1.6",
     "@unform/web": "^2.1.6",
     "assert": "^2.0.0",

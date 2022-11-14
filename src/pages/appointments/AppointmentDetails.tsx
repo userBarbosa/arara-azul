@@ -17,7 +17,6 @@ export const AppointmentDetails: React.FC = () => {
         <DetailTools 
           showButtonReturn 
           onClickButtonReturn={() => navigate('/consultas')}
-          showButtonMedicalRecord 
         />}
     >
       <Box
@@ -33,19 +32,10 @@ export const AppointmentDetails: React.FC = () => {
         <Box margin={2}>
           <Box display='flex' sx={{ flexDirection: { xs: 'column', md: 'row'} }}>
             <Typography variant='body2' sx={{ color: '#9E9E9E', fontWeight: 600, marginRight: { xs: 0, md: 2 } }}>
-              Data:
+              Data e Hora:
             </Typography>
             <Typography variant='body2' sx={{ color: '#000000' }}>
-              20/08/2022
-            </Typography>
-          </Box>
-
-          <Box display='flex' sx={{ flexDirection: { xs: 'column', md: 'row'} }} marginTop={3}>
-            <Typography variant='body2' sx={{ color: '#9E9E9E', fontWeight: 600, marginRight: { xs: 0, md: 2 } }}>
-              Horário:
-            </Typography>
-            <Typography variant='body2' sx={{ color: '#000000' }}>
-              15:30
+              20/08/2022 15:30
             </Typography>
           </Box>
 

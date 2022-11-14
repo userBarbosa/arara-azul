@@ -162,6 +162,10 @@ export const EmployeeInsert: React.FC = () => {
                   name='birthDate'
                   label='Data de Nascimento'
                   disabled={isLoading}
+                  type="date"
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
                 />
               </Grid>
 

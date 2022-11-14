@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Icon, IconButton, LinearProgress, Pagination, Paper, Table, TableBody, TableCell, TableContainer, TableFooter, TableHead, TableRow } from '@mui/material';
+import { Box, Grid, Icon, IconButton, LinearProgress, Pagination, Paper, Table, TableBody, TableCell, TableContainer, TableFooter, TableHead, TableRow, Theme, Typography, useMediaQuery } from '@mui/material';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import { ListTools } from '../../shared/components';
@@ -11,6 +11,9 @@ import { IListPatient, PatientsService } from '../../shared/services/api/patient
 
 
 export const PatientsList: React.FC = () => {
+  const xldown = useMediaQuery((theme: Theme) => theme.breakpoints.down('xl'));
+  const xlup = useMediaQuery((theme: Theme) => theme.breakpoints.up('xl'));
+
   const [searchParams, setSearchParams] = useSearchParams();
   const { debounce } = useDebounce();
   const navigate = useNavigate();
@@ -47,6 +50,19 @@ export const PatientsList: React.FC = () => {
     });
   }, [search, page]);
 
+  const [data, setData] = useState<IListPatient[]>([]);
+
+  useEffect(() => {
+    const getData = async () => {
+      const data = await (
+        await fetch('https://finalspaceapi.com/api/v0/character/')
+      ).json();
+      setData(data);
+    };
+
+    getData();
+  }, []);
+
   return (
     <BaseLayoutPage
       title={'Pacientes'}
@@ -59,21 +75,93 @@ export const PatientsList: React.FC = () => {
         />
       }
     >
-      <TableContainer component={Paper} variant="outlined" sx={{ m: 2, width: 'auto' }}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Nome</TableCell>
-              <TableCell>Tutor</TableCell>
-              <TableCell>Espécie</TableCell>
-              <TableCell>Data de Nascimento</TableCell>
-              <TableCell>Sexo</TableCell>
-              <TableCell>Em tratamento</TableCell>
-              <TableCell width={100}>Opções</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {/* {rows.map(row => (
+      {xlup && (
+        <TableContainer component={Paper} variant="outlined" sx={{ m: 2, width: 'auto' }}>
+          <Table>
+            <TableHead>
+              <TableRow>
+
+                <TableCell>
+                  <Typography
+                    variant='subtitle2'
+                    overflow='hidden'
+                    whiteSpace='nowrap'
+                    textOverflow='ellipsis'
+                  >
+                  Nome
+                  </Typography>
+                </TableCell>
+
+                <TableCell>
+                  <Typography
+                    variant='subtitle2'
+                    overflow='hidden'
+                    whiteSpace='nowrap'
+                    textOverflow='ellipsis'
+                  >
+                  Tutor
+                  </Typography>
+                </TableCell>
+
+                <TableCell>
+                  <Typography
+                    variant='subtitle2'
+                    overflow='hidden'
+                    whiteSpace='nowrap'
+                    textOverflow='ellipsis'
+                  >
+                  Espécie
+                  </Typography>
+                </TableCell>
+
+                <TableCell>
+                  <Typography
+                    variant='subtitle2'
+                    overflow='hidden'
+                    whiteSpace='nowrap'
+                    textOverflow='ellipsis'
+                  >
+                  Data de Nascimento
+                  </Typography>
+                </TableCell>
+
+                <TableCell>
+                  <Typography
+                    variant='subtitle2'
+                    overflow='hidden'
+                    whiteSpace='nowrap'
+                    textOverflow='ellipsis'
+                  >
+                  Sexo
+                  </Typography>
+                </TableCell>
+
+                <TableCell>
+                  <Typography
+                    variant='subtitle2'
+                    overflow='hidden'
+                    whiteSpace='nowrap'
+                    textOverflow='ellipsis'
+                  >
+                  Em tratamento?
+                  </Typography>
+                </TableCell>
+
+                <TableCell>
+                  <Typography
+                    variant='subtitle2'
+                    overflow='hidden'
+                    whiteSpace='nowrap'
+                    textOverflow='ellipsis'
+                  >
+                  Opções
+                  </Typography>
+                </TableCell>
+
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {/* {rows.map(row => (
               <TableRow key={row.id}>
                 <TableCell>{row.name}</TableCell>
                 <TableCell>{row.tutor}</TableCell>
@@ -91,50 +179,328 @@ export const PatientsList: React.FC = () => {
                 </TableCell>
               </TableRow>
             ))} */}
-            <TableRow>
-              <TableCell>Maia</TableCell>
-              <TableCell>Kauã Claudino Loureiro</TableCell>
-              <TableCell>Cachorro</TableCell>
-              <TableCell>30/11/2020</TableCell>
-              <TableCell>Fêmea</TableCell>
-              <TableCell>Não</TableCell>
-              <TableCell>
-                <IconButton size="small" onClick={() => navigate('/pacientes/atualizar/1')}>
-                  <Icon>edit</Icon>
-                </IconButton>
-                <IconButton size="small" onClick={() => navigate('/pacientes/detalhe/1')}>
-                  <Icon>visibility</Icon>
-                </IconButton>
-              </TableCell>
-            </TableRow>
-          </TableBody>
+              <TableRow>
 
-          {totalCount === 0 && !isLoading && (
-            <caption>{Environment.EMPTY_LIST}</caption>
+                <TableCell>
+                  <Typography
+                    variant='body2'
+                    overflow='hidden'
+                    whiteSpace='nowrap'
+                    textOverflow='ellipsis'
+                  >
+                  Maia
+                  </Typography>
+                </TableCell>
+
+                <TableCell>
+                  <Typography
+                    variant='body2'
+                    overflow='hidden'
+                    whiteSpace='nowrap'
+                    textOverflow='ellipsis'
+                  >
+                  Kauã Claudino Loureiro
+                  </Typography>
+                </TableCell>
+
+                <TableCell>
+                  <Typography
+                    variant='body2'
+                    overflow='hidden'
+                    whiteSpace='nowrap'
+                    textOverflow='ellipsis'
+                  >
+                  Cachorro
+                  </Typography>
+                </TableCell>
+
+                <TableCell>
+                  <Typography
+                    variant='body2'
+                    overflow='hidden'
+                    whiteSpace='nowrap'
+                    textOverflow='ellipsis'
+                  >
+                  30/11/2020
+                  </Typography>
+                </TableCell>
+
+                <TableCell>
+                  <Typography
+                    variant='body2'
+                    overflow='hidden'
+                    whiteSpace='nowrap'
+                    textOverflow='ellipsis'
+                  >
+                  Fêmea
+                  </Typography>
+                </TableCell>
+
+                <TableCell>
+                  <Typography
+                    variant='body2'
+                    overflow='hidden'
+                    whiteSpace='nowrap'
+                    textOverflow='ellipsis'
+                  >
+                  Não
+                  </Typography>
+                </TableCell>
+
+                <TableCell sx={{ display: 'flex', flexDirection: 'row' }}>
+                  <IconButton size="small" onClick={() => navigate('/pacientes/atualizar/1')}>
+                    <Icon>edit</Icon>
+                  </IconButton>
+                  <IconButton size="small" onClick={() => navigate('/pacientes/detalhe/1')}>
+                    <Icon>visibility</Icon>
+                  </IconButton>
+                </TableCell>
+
+              </TableRow>
+            </TableBody>
+
+            {totalCount === 0 && !isLoading && (
+              <caption>{Environment.EMPTY_LIST}</caption>
+            )}
+
+            <TableFooter>
+              {isLoading && (
+                <TableRow>
+                  <TableCell colSpan={7}>
+                    <LinearProgress variant='indeterminate' />
+                  </TableCell>
+                </TableRow>
+              )}
+              {(totalCount > 0 && totalCount > Environment.ROW_LIMIT) && (
+                <TableRow>
+                  <TableCell colSpan={7}>
+                    <Pagination
+                      page={page}
+                      count={Math.ceil(totalCount / Environment.ROW_LIMIT)}
+                      onChange={(_, newPage) => setSearchParams({ search, page: newPage.toString() }, { replace: true })}
+                    />
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableFooter>
+          </Table>
+        </TableContainer>)}
+
+
+      {xldown && (
+        <Box display='flex' flexDirection='column' alignItems='center' margin={2}>
+
+          <Box>
+            {data.length < 1 && !isLoading && (
+              <Box>
+                <Typography variant='h6' sx={{ color: '#006BBF' }}>
+                  {Environment.EMPTY_LIST}
+                </Typography>
+              </Box>
+            )}
+            <Box>
+              {isLoading && (
+                <LinearProgress variant='indeterminate' />
+              )}
+            </Box>
+          </Box>
+          <Box>
+            <Grid container justifyContent="center">
+              {data.map(patient => (
+                <Grid key={patient.id} item xs={12} sm={8} md={4} lg={3} maxWidth={'300px'} margin={1} padding={2} borderRadius={5} bgcolor={'background.paper'}>
+                  
+                  <Box display='flex' flexDirection='column'>
+                    <Box>
+                      <Typography
+                        variant='subtitle2'
+                        overflow='hidden'
+                        whiteSpace='nowrap'
+                        textOverflow='ellipsis'
+                      >
+                        Nome:
+                      </Typography>
+                    </Box>
+                  
+                    <Box>
+                      <Typography
+                        variant='body2'
+                        overflow='hidden'
+                        whiteSpace='nowrap'
+                        textOverflow='ellipsis'
+                      >
+                        Maia
+                      </Typography>
+                    </Box>
+
+                  </Box>
+
+                  <Box display='flex' flexDirection='column' marginTop={2}>
+
+                    <Box>
+                      <Typography
+                        variant='subtitle2'
+                        overflow='hidden'
+                        whiteSpace='nowrap'
+                        textOverflow='ellipsis'
+                      >
+                        Tutor:
+                      </Typography>
+                    </Box>
+
+                    <Box>
+                      <Typography
+                        variant='body2'
+                        overflow='hidden'
+                        whiteSpace='nowrap'
+                        textOverflow='ellipsis'
+                      >
+                        Kauã Claudino Loureiro
+                      </Typography>
+                    </Box>
+
+                  </Box>
+
+                  <Box display='flex' flexDirection='column' marginTop={2}>                 
+                    <Box>
+                      <Typography
+                        variant='subtitle2'
+                        overflow='hidden'
+                        whiteSpace='nowrap'
+                        textOverflow='ellipsis'
+                      >
+                        Espécie:
+                      </Typography>
+                    </Box>
+
+                    <Box>
+                      <Typography
+                        variant='body2'
+                        overflow='hidden'
+                        whiteSpace='nowrap'
+                        textOverflow='ellipsis'
+                      >
+                        Cachorro
+                      </Typography>
+                    </Box>
+
+                  </Box>
+
+                  <Box display='flex' flexDirection='column' marginTop={2}>                  
+                    <Box>
+                      <Typography
+                        variant='subtitle2'
+                        overflow='hidden'
+                        whiteSpace='nowrap'
+                        textOverflow='ellipsis'
+                      >
+                        Data de Nascimento:
+                      </Typography>
+                    </Box>
+
+                    <Box>
+                      <Typography
+                        variant='body2'
+                        overflow='hidden'
+                        whiteSpace='nowrap'
+                        textOverflow='ellipsis'
+                      >
+                        30/11/2020
+                      </Typography>
+                    </Box>
+
+                  </Box>
+
+                  <Box display='flex' flexDirection='column' marginTop={2}>                  
+                    <Box>
+                      <Typography
+                        variant='subtitle2'
+                        overflow='hidden'
+                        whiteSpace='nowrap'
+                        textOverflow='ellipsis'
+                      >
+                        Sexo:
+                      </Typography>
+                    </Box>
+
+                    <Box>
+                      <Typography
+                        variant='body2'
+                        overflow='hidden'
+                        whiteSpace='nowrap'
+                        textOverflow='ellipsis'
+                      >
+                        Fêmea
+                      </Typography>
+                    </Box>
+
+                  </Box>
+
+                  <Box display='flex' flexDirection='column' marginTop={2}>                  
+                    <Box>
+                      <Typography
+                        variant='subtitle2'
+                        overflow='hidden'
+                        whiteSpace='nowrap'
+                        textOverflow='ellipsis'
+                      >
+                        Em tratamento?
+                      </Typography>
+                    </Box>
+
+                    <Box>
+                      <Typography
+                        variant='body2'
+                        overflow='hidden'
+                        whiteSpace='nowrap'
+                        textOverflow='ellipsis'
+                      >
+                          Não
+                      </Typography>
+                    </Box>
+
+                  </Box>
+
+                  <Box display='flex' alignItems='center' flexDirection='row' marginTop={2}>                    
+                    <Box marginRight={1}>
+                      <Typography
+                        variant='subtitle2'
+                        overflow='hidden'
+                        whiteSpace='nowrap'
+                        textOverflow='ellipsis'
+                      >
+                      Opções:
+                      </Typography>
+                    </Box>
+
+                    <Box marginLeft={1}>
+                      <IconButton size="small" onClick={() => navigate(`/pacientes/atualizar/${patient.id}`)}>
+                        <Icon>edit</Icon>
+                      </IconButton>
+                      <IconButton size="small" onClick={() => navigate(`/pacientes/detalhe/${patient.id}`)}>
+                        <Icon>visibility</Icon>
+                      </IconButton>
+                    </Box>
+                  </Box>
+                </Grid>
+              ))}
+            </Grid>
+          </Box>
+          
+          {(totalCount > 0 && totalCount > Environment.ROW_LIMIT) && (
+            <Box width='100%' margin={1} bgcolor={'background.paper'} padding={1} display='flex' alignItems='center' justifyContent="center">
+              <Pagination
+                size="small"
+                page={page}
+                count={Math.ceil(totalCount / Environment.ROW_LIMIT)}
+                onChange={(_, newPage) => setSearchParams({ search, page: newPage.toString() }, { replace: true })}
+              />
+            </Box>
           )}
 
-          <TableFooter>
-            {isLoading && (
-              <TableRow>
-                <TableCell colSpan={7}>
-                  <LinearProgress variant='indeterminate' />
-                </TableCell>
-              </TableRow>
-            )}
-            {(totalCount > 0 && totalCount > Environment.ROW_LIMIT) && (
-              <TableRow>
-                <TableCell colSpan={7}>
-                  <Pagination
-                    page={page}
-                    count={Math.ceil(totalCount / Environment.ROW_LIMIT)}
-                    onChange={(_, newPage) => setSearchParams({ search, page: newPage.toString() }, { replace: true })}
-                  />
-                </TableCell>
-              </TableRow>
-            )}
-          </TableFooter>
-        </Table>
-      </TableContainer>
+
+        </Box>
+      )}
+      
     </BaseLayoutPage>
   );
 };

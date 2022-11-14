@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Box, Typography } from '@mui/material';
 import Slider from './slider/index';
 import './styles.css';
+import { Environment } from '../../environment';
 
 const SliderProps = {
   zoomFactor: 30,
@@ -41,9 +42,10 @@ export const SliderCard: React.FC = () => {
     return (
       <Box display='flex' alignItems='center' margin={2}>
         <Typography variant='h6' sx={{ color: '#006BBF' }}>
-          Carregando ...
+          {Environment.EMPTY_LIST}
         </Typography>
-      </Box>);
+      </Box>
+    );
   }
 
   return (

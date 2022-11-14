@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Box, Grid, LinearProgress, Paper } from '@mui/material';
+import { Box, Grid, InputAdornment, LinearProgress, Paper } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import * as yup from 'yup';
 
@@ -141,6 +141,10 @@ export const PatientInsert: React.FC = () => {
                   name='birthDate'
                   label='Data de Nascimento'
                   disabled={isLoading}
+                  type="date"
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
                 />
               </Grid>
 
@@ -207,6 +211,9 @@ export const PatientInsert: React.FC = () => {
                   name='weight'
                   label='Peso'
                   disabled={isLoading}
+                  InputProps={{
+                    endAdornment: <InputAdornment position="end">kg</InputAdornment>,
+                  }}
                 />
               </Grid> 
 

@@ -2,29 +2,43 @@ import { setLocale } from 'yup';
 
 setLocale({
   mixed: {
-    default: 'Campo não é válido',
-    required: 'O campo é obrigatório',
+    required: 'Este campo é obrigatório',
+    notType: 'Formato digitado é invalido',
+    defined: 'Este campo precisa ter um valor definido',
+    oneOf: 'Deve ser um dos seguintes valores: ${values}',
+    notOneOf: 'Não pode ser um dos seguintes valores: ${values}',
   },
   string: {
-    email: () => 'O campo precisa conter um email válido',
-    max: ({ max }) => `O campo pode ter no máximo ${max} caracteres`,
-    min: ({ min }) => `O campo precisa ter pelo menos ${min} caracteres`,
-    length: ({ length }) => `O campo precisa ter exatamente ${length} caracteres`,
-  },
-  date: {
-    max: ({ max }) => `A data deve ser menor que ${max}`,
-    min: ({ min }) => `A data deve ser maior que ${min}`,
+    lowercase: 'Deve estar em maiúsculo',
+    uppercase: 'Deve estar em minúsculo',
+    url: 'Deve ter um formato de URL válida',
+    max: 'Deve ter no máximo ${max} caracteres',
+    min: 'Deve ter pelo menos ${min} caracteres',
+    email: 'Formato de e-mail digitado não é valido',
+    length: 'Deve ter exatamente ${length} caracteres',
+    uuid: 'Valor digitado não confere a um UUID valido',
+    trim: 'Não deve conter espaços no início ou no fim.',
+    matches: 'O valor deve corresponder ao padrão: ${regex}',
   },
   number: {
-    integer: () => 'O campo precisa ter um valor inteiro',
-    negative: () => 'O campo precisa ter um valor negativo',
-    positive: () => 'O campo precisa ter um valor positivo',
-    moreThan: ({ more }) => `O campo precisa ter um valor maior que ${more}`,
-    lessThan: ({ less }) => `O campo precisa ter um valor menor que ${less}`,
-    min: ({ min }) => `O campo precisa ter um valor com mais de ${min} caracteres`,
-    max: ({ max }) => `O campo precisa ter um valor com menos de ${max} caracteres`,
+    min: 'Deve ser no mínimo ${min}',
+    max: 'Deve ser no máximo ${max}',
+    integer: 'Deve ser um número inteiro',
+    lessThan: 'Deve ser menor que ${less}',
+    moreThan: 'Deve ser maior que ${more}',
+    positive: 'Deve ser um número positivo',
+    negative: 'Deve ser um número negativo',
   },
-  boolean: {},
-  object: {},
-  array: {},
+  date: {
+    min: 'Deve ser maior que a data ${min}',
+    max: 'Deve ser menor que a data ${max}',
+  },
+  array: {
+    min: 'Deve ter no mínimo ${min} itens',
+    max: 'Deve ter no máximo ${max} itens',
+    length: 'Deve conter exatamente ${length} itens',
+  },
+  object: {
+    noUnknown: 'Deve ser passado um valor definido',
+  }
 });

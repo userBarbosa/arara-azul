@@ -111,7 +111,9 @@ export const TutorInsert: React.FC = () => {
         formRef.current?.setFieldValue('streetName', data.logradouro);
       })
       .catch(() => {
-        toast.error('Digite um CEP válido!');
+        toast.error('Digite um CEP válido!', {
+          position: toast.POSITION.BOTTOM_CENTER
+        });
       });
   };
 

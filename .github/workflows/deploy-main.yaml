@@ -38,4 +38,4 @@ jobs:
           
           cd build
 
-          scp -r ./  ubuntu@ec2-15-229-88-93.sa-east-1.compute.amazonaws.com:/var/www/html/
+          scp -r ./* ubuntu@ec2-15-229-88-93.sa-east-1.compute.amazonaws.com:/var/www/html

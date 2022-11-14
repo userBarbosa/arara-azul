@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useMemo, useState } from 'react';
 import { ThemeProvider } from '@mui/material';
-import { DefaultTheme } from '../themes/default';
+import { DefaultTheme } from '../themes/Default';
 import { Box } from '@mui/system';
 
 interface IThemeContextData {

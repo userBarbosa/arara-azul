@@ -7,8 +7,14 @@ export interface IListTutor {
     email: string;
     telephoneNumber: string;
     identificationNumber: string;
-    address: string;
-    patientsName: string; 
+    zipCode: string;
+    state: string | undefined;
+    city: string | undefined;
+    neighborhood: string | undefined;
+    streetName: string | undefined;
+    houseNumber: string;
+    complement: string | undefined;
+    patientsName: string | undefined; 
     observation: string | undefined;
   }
   
@@ -18,8 +24,14 @@ export interface IDetailTutor {
     email: string;
     telephoneNumber: string;
     identificationNumber: string;
-    address: string;
-    patientsName: string; 
+    zipCode: string;
+    state: string | undefined;
+    city: string | undefined;
+    neighborhood: string | undefined;
+    streetName: string | undefined;
+    houseNumber: string;
+    complement: string | undefined;
+    patientsName: string | undefined; 
     observation: string | undefined;
   }
   

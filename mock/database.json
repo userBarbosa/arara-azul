@@ -52,8 +52,8 @@
   "employees": [
     {
       "id": "6348aeaaf6cf0560703e10ed",
-      "name": "Edmilson Cruz de Padua",
-      "email": "edmilson.padua@gmail.com",
+      "name": "Tatiana Dutra Ferreira",
+      "email": "tatiana.ferreira@gmail.com.br",
       "password": "12345",
       "identificationNumber": "86822461809",
       "telephoneNumber": "11982477223",
@@ -67,7 +67,7 @@
     {
       "id": "6348a6ee5e235456ec22004f",
       "name": "Lorenna Veiga Salomão",
-      "email": "edmilson.padua2@gmail.com",
+      "email": "lorenna.salomao@gmail.com",
       "password": "12345",
       "identificationNumber": "51848687800",
       "telephoneNumber": "11972688484",

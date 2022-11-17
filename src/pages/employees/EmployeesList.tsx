@@ -201,7 +201,7 @@ export const EmployeesList: React.FC = () => {
                     whiteSpace='nowrap'
                     textOverflow='ellipsis'
                   >
-                  Edmilson Cruz de Padua
+                  Tatiana Dutra Ferreira
                   </Typography>
                 </TableCell>
 
@@ -212,7 +212,7 @@ export const EmployeesList: React.FC = () => {
                     whiteSpace='nowrap'
                     textOverflow='ellipsis'
                   >
-                  edmilson.padua@gmail.com
+                  tatiana.ferreira@gmail.com.br
                   </Typography>
                 </TableCell>
 
@@ -351,7 +351,7 @@ export const EmployeesList: React.FC = () => {
                         whiteSpace='nowrap'
                         textOverflow='ellipsis'
                       >
-                          Edmilson Cruz de Padua
+                          Tatiana Dutra Ferreira
                       </Typography>
                     </Box>
 
@@ -377,7 +377,7 @@ export const EmployeesList: React.FC = () => {
                         whiteSpace='nowrap'
                         textOverflow='ellipsis'
                       >
-                          edmilson.padua@gmail.com
+                          tatiana.ferreira@gmail.com.br
                       </Typography>
                     </Box>
 

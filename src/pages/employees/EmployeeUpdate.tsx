@@ -40,8 +40,8 @@ export const EmployeeUpdate: React.FC = () => {
 
   useEffect(() => {
     formRef.current?.setData({
-      name: 'Edmilson Cruz de Padua',
-      email: 'edmilson.padua@gmail.com',
+      name: 'Tatiana Dutra Ferreira',
+      email: 'tatiana.ferreira@gmail.com.br',
       telephoneNumber: '(11) 98247-7223',
       identificationNumber: '868.224.618-09',
       birthDate: '1989-10-17',

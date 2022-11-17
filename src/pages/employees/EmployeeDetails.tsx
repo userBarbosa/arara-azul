@@ -35,7 +35,7 @@ export const EmployeeDetails: React.FC = () => {
               Nome: 
             </Typography>
             <Typography variant='body2' sx={{ color: '#000000' }}>
-              Edmilson Cruz de Padua
+              Tatiana Dutra Ferreira
             </Typography>
           </Box>
 
@@ -44,7 +44,7 @@ export const EmployeeDetails: React.FC = () => {
               E-mail:
             </Typography>
             <Typography variant='body2' sx={{ color: '#000000' }}>
-              edmilson.padua@gmail.com
+              tatiana.ferreira@gmail.com.br
             </Typography>
           </Box>
 

@@ -1,12 +1,12 @@
 import { Api } from '../axios-config';
 
-interface IAuth {
+interface ILogin {
   accessToken: string;
 }
 
-const auth = async (email: string, password: string): Promise<IAuth | Error> => {
+const login = async (email: string, password: string | undefined): Promise<ILogin | Error> => {
   try {
-    const { data } = await Api.get('/auth', { data: { email, password } });
+    const { data } = await Api.get('/login', { data: { email, password } });
 
     if (data) {
       return data;
@@ -14,11 +14,20 @@ const auth = async (email: string, password: string): Promise<IAuth | Error> => 
 
     return new Error('Erro no login.');
   } catch (error) {
-    console.error(error);
     return new Error((error as { message: string }).message || 'Erro no login.');
   }
 };
 
+const forgotPassword = async (email: string) => {
+  // todo
+};
+
+const resetPassword = async (password: string | undefined, confirmPassword: string | undefined) => {
+  // todo
+};
+
 export const AuthService = {
-  auth,
+  login,
+  forgotPassword,
+  resetPassword
 };

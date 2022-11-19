@@ -6,7 +6,9 @@ import { AuthService } from '../services/api/auth/AuthService';
 interface IAuthContextData {
   logout: () => void;
   isAuthenticated: boolean;
-  login: (email: string, password: string) => Promise<string | void>;
+  login: (email: string, password: string | undefined) => Promise<string | void>;
+  forgotPassword: (email: string) => Promise<string | void>;
+  resetPassword: (password: string | undefined, confirmPassword: string | undefined) => Promise<string | void>;
 }
 
 const AuthContext = createContext({} as IAuthContextData);
@@ -30,14 +32,22 @@ export const AuthProvider: React.FC<IAuthProviderProps> = ({ children }) => {
   }, []);
 
 
-  const handleLogin = useCallback(async (email: string, password: string) => {
-    const result = await AuthService.auth(email, password);
+  const handleLogin = useCallback(async (email: string, password: string | undefined) => {
+    const result = await AuthService.login(email, password);
     if (result instanceof Error) {
       return result.message;
     } else {
       localStorage.setItem(LOCAL_STORAGE_KEY__ACCESS_TOKEN, JSON.stringify(result.accessToken));
       setAccessToken(result.accessToken);
     }
+  }, []);
+
+  const handleForgotPassword = useCallback(async (email: string) => {
+    // todo
+  }, []);
+
+  const handleResetPassword = useCallback(async (password: string | undefined, confirmPassword: string | undefined) => {
+    // todo
   }, []);
 
   const handleLogout = useCallback(() => {
@@ -49,7 +59,7 @@ export const AuthProvider: React.FC<IAuthProviderProps> = ({ children }) => {
 
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, login: handleLogin, logout: handleLogout }}>
+    <AuthContext.Provider value={{ isAuthenticated, login: handleLogin, logout: handleLogout, forgotPassword: handleForgotPassword, resetPassword: handleResetPassword }}>
       {children}
     </AuthContext.Provider>
   );

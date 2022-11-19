@@ -79,7 +79,7 @@
       "active": true
     }
   ],
-  "auth": {
+  "login": {
     "accessToken": "aaaaaaaaaaa.bbbbbbbbbbb.cccccccccccc"
   }
 }

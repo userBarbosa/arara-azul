@@ -1,12 +1,22 @@
 import { useState } from 'react';
 import { Box, Button, Card, CardActions, CardContent, CircularProgress, Link, TextField, Typography } from '@mui/material';
 import * as yup from 'yup';
+import YupPassword from 'yup-password';
 import { LayoutPageAuth } from '../../shared/layouts';
 import { useAuthContext } from '../../shared/contexts';
+import { toast } from 'react-toastify';
+
+YupPassword(yup);
 
 const loginSchema = yup.object().shape({
   email: yup.string().email().required(),
-  password: yup.string().required().min(5),
+  password: yup.string()
+    .min(8, 'Senha deve ter no mínimo 8 caracteres')
+    .minLowercase(1, 'Senha deve conter pelo menos 1 letra minúscula')
+    .minUppercase(1, 'Senha deve conter pelo menos 1 letra maiúscula')
+    .minNumbers(1, 'Senha deve conter pelo menos 1 número')
+    .minSymbols(1, 'Senha deve conter pelo menos 1 carácter especial')
+    .required('Este campo é obrigatório'),
 });
 
 export const Login: React.FC = () => {
@@ -28,6 +38,14 @@ export const Login: React.FC = () => {
         login(dadosValidados.email, dadosValidados.password)
           .then(() => {
             setIsLoading(false);
+            toast.success('Seja Bem-vindo(a)!', {
+              position: toast.POSITION.BOTTOM_CENTER
+            });
+          })
+          .catch(() => {
+            toast.error('Ocorreu um problema, tente novamente!', {
+              position: toast.POSITION.BOTTOM_CENTER
+            });
           });
       })
       .catch((errors: yup.ValidationError) => {
@@ -60,9 +78,9 @@ export const Login: React.FC = () => {
               </Typography>
               
               <TextField
-                id="login-email" 
                 variant="outlined"
                 fullWidth
+                name='email'
                 type='email'
                 label='E-mail'
                 value={email}
@@ -76,6 +94,7 @@ export const Login: React.FC = () => {
               <TextField
                 variant="outlined"
                 fullWidth
+                name='password'
                 label='Senha'
                 type='password'
                 value={password}

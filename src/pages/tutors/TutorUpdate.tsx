@@ -80,7 +80,7 @@ export const TutorUpdate: React.FC = () => {
             setIsLoading(false);
 
             if (result instanceof Error) {
-              alert(result.message);
+              // alert(result.message);
             } else {
               navigate('/tutores');
             }

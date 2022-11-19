@@ -69,7 +69,7 @@ export const PatientInsert: React.FC = () => {
             setIsLoading(false);
 
             if (result instanceof Error) {
-              alert(result.message);
+              // alert(result.message);
             } else {
               navigate('/pacientes');
             }

@@ -82,10 +82,16 @@ export const TutorInsert: React.FC = () => {
               // alert(result.message);
             } else {
               navigate('/tutores');
+              toast.success('Cadastro realizado com Sucesso!', {
+                position: toast.POSITION.BOTTOM_CENTER
+              });
             }
           });
       })
       .catch((errors: yup.ValidationError) => {
+        toast.error('Informações inválidas, tente novamente!', {
+          position: toast.POSITION.BOTTOM_CENTER
+        });
         const validationErrors: IVFormErrors = {};
 
         errors.inner.forEach(error => {

@@ -83,10 +83,16 @@ export const TutorUpdate: React.FC = () => {
               // alert(result.message);
             } else {
               navigate('/tutores');
+              toast.success('Alteração realizada com Sucesso!', {
+                position: toast.POSITION.BOTTOM_CENTER
+              });
             }
           });
       })
       .catch((errors: yup.ValidationError) => {
+        toast.error('Informações inválidas, tente novamente!', {
+          position: toast.POSITION.BOTTOM_CENTER
+        });
         const validationErrors: IVFormErrors = {};
 
         errors.inner.forEach(error => {
@@ -162,7 +168,7 @@ export const TutorUpdate: React.FC = () => {
                   fullWidth
                   name='email'
                   label='E-mail'
-                  disabled={isLoading}
+                  disabled={true}
                 />
               </Grid>
 
@@ -184,7 +190,7 @@ export const TutorUpdate: React.FC = () => {
                   fullWidth
                   name='identificationNumber'
                   label='CPF'
-                  disabled={isLoading}
+                  disabled={true}
                 />
               </Grid>
 

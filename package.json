@@ -31,6 +31,7 @@
     "pdfmake": "^0.2.6",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-input-mask": "^2.0.4",
     "react-number-format": "^5.0.1",
     "react-router-dom": "6",
     "react-scripts": "5.0.1",

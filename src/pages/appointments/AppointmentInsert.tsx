@@ -10,7 +10,7 @@ import { AutoCompleteTutor } from './components/AutocompleteTutor';
 import { AppointmentsService } from '../../shared/services/api/appointments/AppointmentsService';
 import { AutocompletePatient } from './components/AutocompletePatient';
 import { AutocompleteEmployee } from './components/AutocompleteEmployee';
-
+import { toast } from 'react-toastify';
 
 interface IFormData {
   tutorId: number;
@@ -88,10 +88,16 @@ export const AppointmentInsert: React.FC = () => {
               // alert(result.message);
             } else {
               navigate('/consultas');
+              toast.success('Cadastro realizado com Sucesso!', {
+                position: toast.POSITION.BOTTOM_CENTER
+              });
             }
           });
       })
       .catch((errors: yup.ValidationError) => {
+        toast.error('Informações inválidas, tente novamente!', {
+          position: toast.POSITION.BOTTOM_CENTER
+        });
         const validationErrors: IVFormErrors = {};
 
         errors.inner.forEach(error => {

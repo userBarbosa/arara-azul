@@ -5,6 +5,7 @@ import * as yup from 'yup';
 import YupPassword from 'yup-password';
 import { useAuthContext } from '../../shared/contexts';
 import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
 YupPassword(yup);
 
@@ -23,6 +24,8 @@ const resetPasswordSchema = yup.object().shape({
 
 export const ResetPassword: React.FC = () => {
   const { resetPassword } = useAuthContext();
+
+  const navigate = useNavigate();
   
   const [isLoading, setIsLoading] = useState(false);
   
@@ -43,6 +46,7 @@ export const ResetPassword: React.FC = () => {
             toast.success('Senha alterada com sucesso!', {
               position: toast.POSITION.BOTTOM_CENTER
             });
+            navigate('/login');
           })
           .catch(() => {
             toast.error('Ocorreu um problema, tente novamente!', {

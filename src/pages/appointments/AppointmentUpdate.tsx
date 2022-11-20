@@ -10,6 +10,7 @@ import { AutoCompleteTutor } from './components/AutocompleteTutor';
 import { AppointmentsService } from '../../shared/services/api/appointments/AppointmentsService';
 import { AutocompletePatient } from './components/AutocompletePatient';
 import { AutocompleteEmployee } from './components/AutocompleteEmployee';
+import { toast } from 'react-toastify';
 
 interface IFormData {
   tutorId: number;
@@ -27,7 +28,7 @@ const formValidationSchema: yup.SchemaOf<IFormData> = yup.object().shape({
   tutorId: yup.number().required(),
   patientId: yup.number().required(),
   employeeId: yup.number().required(),
-  date: yup.string().required().min(3),
+  date: yup.string().required(),
   reason: yup.string().required().min(3),
   value: yup.number().required(),
   appointmentState: yup.string().required().min(3),
@@ -88,10 +89,17 @@ export const AppointmentUpdate: React.FC = () => {
               // alert(result.message);
             } else {
               navigate('/consultas');
+              toast.success('Alteração realizada com Sucesso!', {
+                position: toast.POSITION.BOTTOM_CENTER
+              });
             }
           });
       })
       .catch((errors: yup.ValidationError) => {
+        toast.error('Informações inválidas, tente novamente!', {
+          position: toast.POSITION.BOTTOM_CENTER
+        });
+
         const validationErrors: IVFormErrors = {};
 
         errors.inner.forEach(error => {

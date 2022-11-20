@@ -7,7 +7,7 @@ import { VTextField, VForm, useVForm, IVFormErrors, VSelect } from '../../shared
 import { BaseLayoutPage } from '../../shared/layouts';
 import { DetailTools } from '../../shared/components';
 import { EmployeesService } from '../../shared/services/api/employees/EmployeesService';
-
+import { toast } from 'react-toastify';
 
 interface IFormData {
   name: string;
@@ -66,10 +66,16 @@ export const EmployeeInsert: React.FC = () => {
               // alert(result.message);
             } else {
               navigate('/funcionarios');
+              toast.success('Cadastro realizado com Sucesso!', {
+                position: toast.POSITION.BOTTOM_CENTER
+              });
             }
           });
       })
       .catch((errors: yup.ValidationError) => {
+        toast.error('Informações inválidas, tente novamente!', {
+          position: toast.POSITION.BOTTOM_CENTER
+        });
         const validationErrors: IVFormErrors = {};
 
         errors.inner.forEach(error => {

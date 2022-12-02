@@ -35,5 +35,6 @@ jobs:
           mkdir -p ~/.ssh && echo "Host *" > ~/.ssh/config && echo " StrictHostKeyChecking no" >> ~/.ssh/config
           
           cd build
+          cp ../Dockerfile .
 
           scp -r ./* ubuntu@ec2-15-229-88-93.sa-east-1.compute.amazonaws.com:/var/www/petshealth.com.br

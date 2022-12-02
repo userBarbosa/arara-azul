@@ -7,8 +7,14 @@ export interface IListTutor {
     email: string;
     telephoneNumber: string;
     identificationNumber: string;
-    address: string;
-    patientsName: string; 
+    zipCode: string;
+    state: string | undefined;
+    city: string | undefined;
+    neighborhood: string | undefined;
+    streetName: string | undefined;
+    houseNumber: string;
+    complement: string | undefined;
+    patientsName: string | undefined; 
     observation: string | undefined;
   }
   
@@ -18,8 +24,14 @@ export interface IDetailTutor {
     email: string;
     telephoneNumber: string;
     identificationNumber: string;
-    address: string;
-    patientsName: string; 
+    zipCode: string;
+    state: string | undefined;
+    city: string | undefined;
+    neighborhood: string | undefined;
+    streetName: string | undefined;
+    houseNumber: string;
+    complement: string | undefined;
+    patientsName: string | undefined; 
     observation: string | undefined;
   }
   
@@ -43,7 +55,6 @@ const getAll = async (page = 1, filter = '', id = ''): Promise<TTutorsWithTotalC
     
     return new Error('Erro ao listar os registros.');
   } catch (error) {
-    console.error(error);
     return new Error((error as { message: string }).message || 'Erro ao listar os registros.');
   }
 };

@@ -7,7 +7,7 @@ import { VTextField, VForm, useVForm, IVFormErrors, VSelect } from '../../shared
 import { BaseLayoutPage } from '../../shared/layouts';
 import { DetailTools } from '../../shared/components';
 import { EmployeesService } from '../../shared/services/api/employees/EmployeesService';
-
+import { toast } from 'react-toastify';
 
 interface IFormData {
   name: string;
@@ -40,8 +40,8 @@ export const EmployeeUpdate: React.FC = () => {
 
   useEffect(() => {
     formRef.current?.setData({
-      name: 'Edmilson Cruz de Padua',
-      email: 'edmilson.padua@gmail.com',
+      name: 'Tatiana Dutra Ferreira',
+      email: 'tatiana.ferreira@gmail.com.br',
       telephoneNumber: '(11) 98247-7223',
       identificationNumber: '868.224.618-09',
       birthDate: '1989-10-17',
@@ -64,13 +64,19 @@ export const EmployeeUpdate: React.FC = () => {
             setIsLoading(false);
 
             if (result instanceof Error) {
-              alert(result.message);
+              // alert(result.message);
             } else {
               navigate('/funcionarios');
+              toast.success('Alteração realizada com Sucesso!', {
+                position: toast.POSITION.BOTTOM_CENTER
+              });
             }
           });
       })
       .catch((errors: yup.ValidationError) => {
+        toast.error('Informações inválidas, tente novamente!', {
+          position: toast.POSITION.BOTTOM_CENTER
+        });
         const validationErrors: IVFormErrors = {};
 
         errors.inner.forEach(error => {
@@ -127,7 +133,7 @@ export const EmployeeUpdate: React.FC = () => {
                   fullWidth
                   name='email'
                   label='E-mail'
-                  disabled={isLoading}
+                  disabled={true}
                 />
               </Grid>
 
@@ -149,7 +155,7 @@ export const EmployeeUpdate: React.FC = () => {
                   fullWidth
                   name='identificationNumber'
                   label='CPF'
-                  disabled={isLoading}
+                  disabled={true}
                 />
               </Grid>
 
@@ -162,7 +168,7 @@ export const EmployeeUpdate: React.FC = () => {
                   fullWidth
                   name='birthDate'
                   label='Data de Nascimento'
-                  disabled={isLoading}
+                  disabled={true}
                   type="date"
                   InputLabelProps={{
                     shrink: true,

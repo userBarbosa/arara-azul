@@ -8,7 +8,7 @@ import { BaseLayoutPage } from '../../shared/layouts';
 import { DetailTools } from '../../shared/components';
 import { PatientsService } from '../../shared/services/api/patients/PatientsService';
 import { AutoCompleteTutor } from './components/AutocompleteTutor';
-
+import { toast } from 'react-toastify';
 
 interface IFormData {
   tutorId: number;
@@ -71,13 +71,19 @@ export const PatientUpdate: React.FC = () => {
             setIsLoading(false);
 
             if (result instanceof Error) {
-              alert(result.message);
+              // alert(result.message);
             } else {
               navigate('/pacientes');
+              toast.success('Alteração realizada com Sucesso!', {
+                position: toast.POSITION.BOTTOM_CENTER
+              });
             }
           });
       })
       .catch((errors: yup.ValidationError) => {
+        toast.error('Informações inválidas, tente novamente!', {
+          position: toast.POSITION.BOTTOM_CENTER
+        });
         const validationErrors: IVFormErrors = {};
 
         errors.inner.forEach(error => {
@@ -213,6 +219,7 @@ export const PatientUpdate: React.FC = () => {
                   name='weight'
                   label='Peso'
                   disabled={isLoading}
+                  type="number"
                   InputProps={{
                     endAdornment: <InputAdornment position="end">kg</InputAdornment>,
                   }}

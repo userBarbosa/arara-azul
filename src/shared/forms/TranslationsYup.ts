@@ -3,7 +3,7 @@ import { setLocale } from 'yup';
 setLocale({
   mixed: {
     required: 'Este campo é obrigatório',
-    notType: 'Formato digitado é invalido',
+    notType: 'Formato digitado é inválido',
     defined: 'Este campo precisa ter um valor definido',
     oneOf: 'Deve ser um dos seguintes valores: ${values}',
     notOneOf: 'Não pode ser um dos seguintes valores: ${values}',
@@ -14,9 +14,9 @@ setLocale({
     url: 'Deve ter um formato de URL válida',
     max: 'Deve ter no máximo ${max} caracteres',
     min: 'Deve ter pelo menos ${min} caracteres',
-    email: 'Formato de e-mail digitado não é valido',
+    email: 'Formato de e-mail digitado não é válido',
     length: 'Deve ter exatamente ${length} caracteres',
-    uuid: 'Valor digitado não confere a um UUID valido',
+    uuid: 'Valor digitado não confere a um UUID válido',
     trim: 'Não deve conter espaços no início ou no fim.',
     matches: 'O valor deve corresponder ao padrão: ${regex}',
   },

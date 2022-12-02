@@ -1,3 +1,4 @@
+import React, { FocusEvent } from 'react';
 import { useEffect, useState } from 'react';
 import { Box, Grid, LinearProgress, Paper } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -7,24 +8,37 @@ import { VTextField, VForm, useVForm, IVFormErrors, VSelect } from '../../shared
 import { BaseLayoutPage } from '../../shared/layouts';
 import { DetailTools } from '../../shared/components';
 import { TutorsService } from '../../shared/services/api/tutors/TutorsService';
+import { toast } from 'react-toastify';
 
 interface IFormData {
   name: string;
   email: string;
   telephoneNumber: string;
   identificationNumber: string;
-  address: string;
-  patientsName: string; 
+  zipCode: string;
+  state: string | undefined;
+  city: string | undefined;
+  neighborhood: string | undefined;
+  streetName: string | undefined;
+  houseNumber: string;
+  complement: string | undefined;
+  patientsName: string | undefined; 
   observation: string | undefined;
 }
 
 const formValidationSchema: yup.SchemaOf<IFormData> = yup.object().shape({
-  name: yup.string().required().min(3),
+  name: yup.string().required(),
   email: yup.string().email().required(),
-  telephoneNumber: yup.string().required().min(3),
-  identificationNumber: yup.string().required().min(3),
-  address: yup.string().required().min(3),
-  patientsName: yup.string().required().min(3),
+  telephoneNumber: yup.string().required(),
+  identificationNumber: yup.string().required(),
+  zipCode: yup.string().required(),
+  state: yup.string().notRequired(),
+  city: yup.string().notRequired(),
+  neighborhood: yup.string().notRequired(),
+  streetName: yup.string().notRequired(),
+  houseNumber: yup.string().required(),
+  complement: yup.string().notRequired(),
+  patientsName: yup.string().notRequired(),
   observation: yup.string().notRequired(),
 });
 
@@ -41,7 +55,13 @@ export const TutorUpdate: React.FC = () => {
       email: 'kaua.loureiro@gmail.com',
       telephoneNumber: '(11) 98028-7824',
       identificationNumber: '757.817.228-07',
-      address: '',
+      zipCode: '06708-710',
+      state: 'SP',
+      city: 'Cotia',
+      neighborhood: 'Jardim Mediterrâneo',
+      streetName: 'Rua Nice',
+      houseNumber: '110A',
+      complement: '',
       patientsName: '',
       observation: '',
     });
@@ -60,13 +80,19 @@ export const TutorUpdate: React.FC = () => {
             setIsLoading(false);
 
             if (result instanceof Error) {
-              alert(result.message);
+              // alert(result.message);
             } else {
               navigate('/tutores');
+              toast.success('Alteração realizada com Sucesso!', {
+                position: toast.POSITION.BOTTOM_CENTER
+              });
             }
           });
       })
       .catch((errors: yup.ValidationError) => {
+        toast.error('Informações inválidas, tente novamente!', {
+          position: toast.POSITION.BOTTOM_CENTER
+        });
         const validationErrors: IVFormErrors = {};
 
         errors.inner.forEach(error => {
@@ -76,6 +102,25 @@ export const TutorUpdate: React.FC = () => {
         });
 
         formRef.current?.setErrors(validationErrors);
+      });
+  };
+
+  const checkCep = (event: FocusEvent<HTMLInputElement>) => {
+    const cep = event.target.value.replace(/\D/g, '');
+    const url = `https://viacep.com.br/ws/${cep}/json`;
+    
+    fetch(url)
+      .then(async (response) => await response.json())
+      .then(data => {
+        formRef.current?.setFieldValue('state', data.uf);
+        formRef.current?.setFieldValue('city', data.localidade);
+        formRef.current?.setFieldValue('neighborhood', data.bairro);
+        formRef.current?.setFieldValue('streetName', data.logradouro);
+      })
+      .catch(() => {
+        toast.error('Digite um CEP válido!', {
+          position: toast.POSITION.BOTTOM_CENTER
+        });
       });
   };
 
@@ -123,7 +168,7 @@ export const TutorUpdate: React.FC = () => {
                   fullWidth
                   name='email'
                   label='E-mail'
-                  disabled={isLoading}
+                  disabled={true}
                 />
               </Grid>
 
@@ -145,7 +190,7 @@ export const TutorUpdate: React.FC = () => {
                   fullWidth
                   name='identificationNumber'
                   label='CPF'
-                  disabled={isLoading}
+                  disabled={true}
                 />
               </Grid>
 
@@ -159,6 +204,7 @@ export const TutorUpdate: React.FC = () => {
                   name='zipCode'
                   label='CEP'
                   disabled={isLoading}
+                  onBlur={checkCep}
                 />
               </Grid>
 

@@ -258,7 +258,7 @@ export const AppointmentsList: React.FC = () => {
                     whiteSpace='nowrap'
                     textOverflow='ellipsis'
                   >
-                  Realizada
+                    Realizada
                   </Typography>
                 </TableCell>
 
@@ -479,7 +479,7 @@ export const AppointmentsList: React.FC = () => {
                         whiteSpace='nowrap'
                         textOverflow='ellipsis'
                       >
-                          Realizada
+                        Realizada
                       </Typography>
                     </Box>
 

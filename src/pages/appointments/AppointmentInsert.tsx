@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Box, Grid, InputAdornment, LinearProgress, Paper } from '@mui/material';
+import { Box, Grid, InputAdornment, LinearProgress, MenuItem, Paper } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import * as yup from 'yup';
 
@@ -10,7 +10,7 @@ import { AutoCompleteTutor } from './components/AutocompleteTutor';
 import { AppointmentsService } from '../../shared/services/api/appointments/AppointmentsService';
 import { AutocompletePatient } from './components/AutocompletePatient';
 import { AutocompleteEmployee } from './components/AutocompleteEmployee';
-
+import { toast } from 'react-toastify';
 
 interface IFormData {
   tutorId: number;
@@ -42,16 +42,32 @@ export const AppointmentInsert: React.FC = () => {
 
   const [isLoading, setIsLoading] = useState(false);
 
+  const [reason, setReason] = useState('');
+  const [paymentMethod, setPaymentMethod] = useState('');
+  const [appointmentState, setAppointmentState] = useState('');
+
+  const handleChangeReason = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setReason(event.target.value as string);
+  };
+
+  const handleChangePaymentMethod = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setPaymentMethod(event.target.value as string);
+  };
+
+  const handleChangeAppointmentState = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setAppointmentState(event.target.value as string);
+  };
+
   useEffect(() => {
     formRef.current?.setData({
       tutorId: undefined,
       patientId: undefined,
       employeeId: undefined,
       date: '',
-      reason: '',
+      reason: setReason(''),
       value: undefined,
-      appointmentState: '',
-      paymentMethod: '',
+      appointmentState: setPaymentMethod(''),
+      paymentMethod: setAppointmentState(''),
       observation: '',
     });
   }, []);
@@ -69,13 +85,19 @@ export const AppointmentInsert: React.FC = () => {
             setIsLoading(false);
 
             if (result instanceof Error) {
-              alert(result.message);
+              // alert(result.message);
             } else {
               navigate('/consultas');
+              toast.success('Cadastro realizado com Sucesso!', {
+                position: toast.POSITION.BOTTOM_CENTER
+              });
             }
           });
       })
       .catch((errors: yup.ValidationError) => {
+        toast.error('Informações inválidas, tente novamente!', {
+          position: toast.POSITION.BOTTOM_CENTER
+        });
         const validationErrors: IVFormErrors = {};
 
         errors.inner.forEach(error => {
@@ -148,8 +170,17 @@ export const AppointmentInsert: React.FC = () => {
                   fullWidth
                   name='reason'
                   label='Motivo'
+                  value={reason}
+                  onChange={handleChangeReason}
                   disabled={isLoading}
-                />
+                >
+                  <MenuItem value=""><em>Selecione Uma Opção</em></MenuItem>
+                  <MenuItem value={1}>Emergência</MenuItem>
+                  <MenuItem value={2}>Rotina</MenuItem>
+                  <MenuItem value={4}>Check-Up</MenuItem>
+                  <MenuItem value={8}>Exame</MenuItem>
+                  <MenuItem value={16}>Cirurgia</MenuItem>
+                </VSelect>
               </Grid>
 
             </Grid>
@@ -169,6 +200,7 @@ export const AppointmentInsert: React.FC = () => {
                   InputProps={{
                     startAdornment: <InputAdornment position="start">R$</InputAdornment>,
                   }}
+                  type="number"
                 />
               </Grid> 
 
@@ -182,7 +214,15 @@ export const AppointmentInsert: React.FC = () => {
                   name='paymentMethod'
                   label='Pagamento'
                   disabled={isLoading}
-                />
+                  value={paymentMethod}
+                  onChange={handleChangePaymentMethod}
+                >
+                  <MenuItem value=""><em>Selecione Uma Opção</em></MenuItem>
+                  <MenuItem value={1}>Cartão de Crédito</MenuItem>
+                  <MenuItem value={2}>Cartão de Débito</MenuItem>
+                  <MenuItem value={4}>Dinheiro</MenuItem>
+                  <MenuItem value={8}>PIX</MenuItem>
+                </VSelect>
               </Grid> 
 
               <Grid item xs={12} sm={12} md={6} lg={6} xl={6} >
@@ -191,7 +231,18 @@ export const AppointmentInsert: React.FC = () => {
                   name='appointmentState'
                   label='Status'
                   disabled={isLoading}
-                />
+                  value={appointmentState}
+                  onChange={handleChangeAppointmentState}
+                >
+                  <MenuItem value=""><em>Selecione Uma Opção</em></MenuItem>
+                  <MenuItem value={1}>Rascunho</MenuItem>
+                  <MenuItem value={2}>Registrada</MenuItem>
+                  <MenuItem value={4}>Agendada</MenuItem>
+                  <MenuItem value={8}>Realizada</MenuItem>
+                  <MenuItem value={16}>Cancelada</MenuItem>
+                  <MenuItem value={32}>Paga</MenuItem>
+                  <MenuItem value={64}>Excluída</MenuItem>
+                </VSelect>
               </Grid>
                
             </Grid>

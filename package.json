@@ -31,11 +31,14 @@
     "pdfmake": "^0.2.6",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-input-mask": "^2.0.4",
     "react-number-format": "^5.0.1",
     "react-router-dom": "6",
     "react-scripts": "5.0.1",
+    "react-toastify": "^9.1.1",
     "styled-components": "^5.2.0",
-    "yup": "^0.32.11"
+    "yup": "^0.32.11",
+    "yup-password": "^0.2.2"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^5.16.5",

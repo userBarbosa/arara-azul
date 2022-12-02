@@ -2,12 +2,15 @@ import { Box, Card, CardContent, Grid, Theme, Typography, useMediaQuery, useThem
 import { BaseLayoutPage } from '../../shared/layouts';
 import { ReactComponent as ImageLogo } from '../../assets/logo.svg';
 import { SliderCard } from '../../shared/components';
+import { formatDateCardDash } from '../../shared/helpers';
 
 export const Home: React.FC = () => {
   const down350 = useMediaQuery((theme: Theme) => theme.breakpoints.down(350));
   const lgDown = useMediaQuery((theme: Theme) => theme.breakpoints.down('lg'));
 
   const theme = useTheme();
+
+  const date = formatDateCardDash();
   
   return (
     <BaseLayoutPage
@@ -27,7 +30,7 @@ export const Home: React.FC = () => {
                       Bem-vindo de volta!
                       </Typography>
                       <Typography variant='subtitle2' marginTop={4}>
-                      Hoje é 20 de agosto de 2022.
+                        {date}
                       </Typography>
                     </Box>
                     <Box>

@@ -7,9 +7,12 @@ export interface IListEmployee {
     email: string;
     telephoneNumber: string;
     identificationNumber: string;
-    birthDate: string; 
+    birthDate: Date; 
     type: string;
-    active: string;
+    specialty: string;
+    medicalLicense: string | undefined;
+    status: string;
+    observation: string | undefined;
   }
   
 export interface IDetailEmployee {
@@ -18,9 +21,12 @@ export interface IDetailEmployee {
     email: string;
     telephoneNumber: string;
     identificationNumber: string;
-    birthDate: string; 
+    birthDate: Date; 
     type: string;
-    active: string;
+    specialty: string;
+    medicalLicense: string | undefined;
+    status: string;
+    observation: string | undefined;
   }
   
 type TEmployeesWithTotalCount = {

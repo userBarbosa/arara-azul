@@ -5,28 +5,28 @@ export interface IListPatient {
     id: number;
     tutorId: number;
     name: string;
-    birthDate: string; 
+    birthDate: Date; 
     bloodType: string;
     species: string;
     allergy: string;
     sex: string;
     treatment: string;
     observation: string | undefined;
-    weight: string;
+    weight: number;
   }
   
 export interface IDetailPatient {
     id: number;
     tutorId: number;
     name: string;
-    birthDate: string; 
+    birthDate: Date; 
     bloodType: string;
     species: string;
     allergy: string;
     sex: string;
     treatment: string;
     observation: string | undefined;
-    weight: string;
+    weight: number;
   }
   
 type TPatientsWithTotalCount = {

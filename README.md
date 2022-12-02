@@ -75,7 +75,6 @@ As seguintes tecnologias e ferramentas foram usadas na construção do projeto:
   - [npm](https://www.npmjs.com/)
   - [MongoDB](https://www.mongodb.com/)
   - [Docker](https://www.docker.com/)
-  - [Docker Compose](https://docs.docker.com/compose/)
   - [Amazon EC2](https://aws.amazon.com/pt/ec2/)
   - [Nginx](https://www.nginx.com/)
   - [Figma](https://www.figma.com/) → [Protótipo (TCC)](https://www.figma.com/file/8K7nK20bwcnGD54uCLUdUh/TCC)

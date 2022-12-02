@@ -1,5 +1,7 @@
 import { LayoutPageAuth } from '../../shared/layouts';
-import { Box, Button, Card, CardActions, CardContent, CircularProgress, TextField, Typography } from '@mui/material';
+import { Box, Button, Card, CardActions, CardContent, CircularProgress, InputAdornment, TextField, Typography, IconButton } from '@mui/material';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { useState } from 'react';
 import * as yup from 'yup';
 import YupPassword from 'yup-password';
@@ -27,13 +29,33 @@ export const ResetPassword: React.FC = () => {
 
   const navigate = useNavigate();
   
-  const [isLoading, setIsLoading] = useState(false);
-  
   const [newPassword, setNewPassword] = useState('');
   const [newPasswordError, setNewPasswordError] = useState('');
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
   const [confirmNewPasswordError, setConfirmNewPasswordError] = useState('');
-    
+
+  const [isLoading, setIsLoading] = useState(false);
+
+  const [showNewPassword, setShowNewPassword] = useState(false);
+
+  const handleClickShowNewPassword = () => {
+    setShowNewPassword(!showNewPassword);
+  };
+
+  const handleMouseDownNewPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+  };
+
+  const [showConfirmNewPassword, setShowConfirmNewPassword] = useState(false);
+
+  const handleClickShowConfirmNewPassword = () => {
+    setShowConfirmNewPassword(!showConfirmNewPassword);
+  };
+
+  const handleMouseDownConfirmNewPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+  };
+
   const handleSubmit = () => {
     setIsLoading(true);
     
@@ -89,13 +111,26 @@ export const ResetPassword: React.FC = () => {
                 name='password'
                 label="Nova Senha" 
                 variant="outlined"
-                type='password'
                 value={newPassword}
                 disabled={isLoading}
                 error={!!newPasswordError}
                 helperText={newPasswordError}
                 onKeyDown={() => setNewPasswordError('')}
                 onChange={e => setNewPassword(e.target.value)}
+                type={showNewPassword ? 'text' : 'password'}
+                InputProps={{
+                  endAdornment: 
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={handleClickShowNewPassword}
+                        onMouseDown={handleMouseDownNewPassword}
+                        edge="end"
+                      >
+                        {showNewPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                  </InputAdornment>,
+                }}
               />
 
 
@@ -104,13 +139,26 @@ export const ResetPassword: React.FC = () => {
                 name='password'
                 label="Confirmar Nova Senha" 
                 variant="outlined"
-                type='password'
                 value={confirmNewPassword}
                 disabled={isLoading}
                 error={!!confirmNewPasswordError}
                 helperText={confirmNewPasswordError}
                 onKeyDown={() => setConfirmNewPasswordError('')}
                 onChange={e => setConfirmNewPassword(e.target.value)}
+                type={showConfirmNewPassword ? 'text' : 'password'}
+                InputProps={{
+                  endAdornment: 
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={handleClickShowConfirmNewPassword}
+                        onMouseDown={handleMouseDownConfirmNewPassword}
+                        edge="end"
+                      >
+                        {showConfirmNewPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                  </InputAdornment>,
+                }}
               />
   
             </Box>

@@ -1,5 +1,7 @@
 import { useState } from 'react';
-import { Box, Button, Card, CardActions, CardContent, CircularProgress, Link, TextField, Typography } from '@mui/material';
+import { Box, Button, Card, CardActions, CardContent, CircularProgress, Link, TextField, Typography, IconButton, InputAdornment } from '@mui/material';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import * as yup from 'yup';
 import YupPassword from 'yup-password';
 import { LayoutPageAuth } from '../../shared/layouts';
@@ -28,6 +30,16 @@ export const Login: React.FC = () => {
   const [emailError, setEmailError] = useState('');
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
+
+  const [showPassword, setShowPassword] = useState(false);
+
+  const handleClickShowPassword = () => {
+    setShowPassword(!showPassword);
+  };
+
+  const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+  };
 
   const handleSubmit = () => {
     setIsLoading(true);
@@ -96,13 +108,26 @@ export const Login: React.FC = () => {
                 fullWidth
                 name='password'
                 label='Senha'
-                type='password'
                 value={password}
                 disabled={isLoading}
                 error={!!passwordError}
                 helperText={passwordError}
                 onKeyDown={() => setPasswordError('')}
                 onChange={e => setPassword(e.target.value)}
+                type={showPassword ? 'text' : 'password'}
+                InputProps={{
+                  endAdornment: 
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={handleClickShowPassword}
+                        onMouseDown={handleMouseDownPassword}
+                        edge="end"
+                      >
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>,
+                }}
               />
             </Box>
           </CardContent>

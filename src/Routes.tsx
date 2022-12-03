@@ -170,13 +170,13 @@ export const MainRoutes = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/esqueceu-sua-senha" element={<ForgotPassword />} />
         <Route path="/redefinir-senha" element={<ResetPassword />} />
-        <Route path="/400" element={<Error400 />} />
-        <Route path="/401" element={<Error401 />} />
-        <Route path="/403" element={<Error403 />} />
-        <Route path="/404" element={<Error404 />} />
-        <Route path="/500" element={<Error500 />} />
       </Route>
 
+      <Route path="/400" element={<Error400 />} />
+      <Route path="/401" element={<Error401 />} />
+      <Route path="/403" element={<Error403 />} />
+      <Route path="/404" element={<Error404 />} />
+      <Route path="/500" element={<Error500 />} />
       <Route path="*" element={<Navigate to="/404" />} />
     </Routes>
   );

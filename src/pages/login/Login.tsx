@@ -5,8 +5,9 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import * as yup from 'yup';
 import YupPassword from 'yup-password';
 import { LayoutPageAuth } from '../../shared/layouts';
-import { useAuthContext } from '../../shared/contexts';
 import { toast } from 'react-toastify';
+import { useAuthContext } from '../../shared/contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 YupPassword(yup);
 
@@ -26,12 +27,15 @@ export const Login: React.FC = () => {
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const [passwordError, setPasswordError] = useState('');
   const [emailError, setEmailError] = useState('');
-  const [password, setPassword] = useState('');
+  const [passwordError, setPasswordError] = useState('');
+
   const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
   const [showPassword, setShowPassword] = useState(false);
+
+  const navigate = useNavigate();
 
   const handleClickShowPassword = () => {
     setShowPassword(!showPassword);
@@ -41,7 +45,8 @@ export const Login: React.FC = () => {
     event.preventDefault();
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
     setIsLoading(true);
 
     loginSchema
@@ -53,6 +58,9 @@ export const Login: React.FC = () => {
             toast.success('Seja Bem-vindo(a)!', {
               position: toast.POSITION.BOTTOM_CENTER
             });
+            setEmail('');
+            setPassword('');
+            navigate('/home');
           })
           .catch(() => {
             toast.error('Ocorreu um problema, tente novamente!', {
@@ -101,6 +109,7 @@ export const Login: React.FC = () => {
                 helperText={emailError}
                 onKeyDown={() => setEmailError('')}
                 onChange={e => setEmail(e.target.value)}
+                autoComplete='off'
               />
   
               <TextField
@@ -128,6 +137,7 @@ export const Login: React.FC = () => {
                       </IconButton>
                     </InputAdornment>,
                 }}
+                autoComplete='off'
               />
             </Box>
           </CardContent>

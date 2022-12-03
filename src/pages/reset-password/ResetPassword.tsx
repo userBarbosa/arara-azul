@@ -129,7 +129,7 @@ export const ResetPassword: React.FC = () => {
                       >
                         {showNewPassword ? <VisibilityOff /> : <Visibility />}
                       </IconButton>
-                  </InputAdornment>,
+                    </InputAdornment>,
                 }}
               />
 
@@ -157,7 +157,7 @@ export const ResetPassword: React.FC = () => {
                       >
                         {showConfirmNewPassword ? <VisibilityOff /> : <Visibility />}
                       </IconButton>
-                  </InputAdornment>,
+                    </InputAdornment>,
                 }}
               />
   

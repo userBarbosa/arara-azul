@@ -5,6 +5,11 @@ export const Environment = {
   ROW_LIMIT: 6,
 
   /**
+   * Define a quantidade de cards a ser carregada por padrão nas listagens
+   */
+  CARD_LIMIT: 6,
+
+  /**
     * Placeholder exibido nas inputs
     */
   SEARCH_INPUT: 'Pesquisar...',

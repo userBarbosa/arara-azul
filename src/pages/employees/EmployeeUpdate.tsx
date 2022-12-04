@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import { Box, Grid, LinearProgress, MenuItem, Paper } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
 import * as yup from 'yup';
@@ -33,10 +33,19 @@ const formValidationSchema: yup.SchemaOf<IFormData> = yup.object().shape({
   telephoneNumber: yup.string().required(),
   identificationNumber: yup.string().required().test('test-cpf-invalido', 'CPF inválido', (identificationNumber) => isValidCPF(identificationNumber!)),
   birthDate: yup.date().min(getFormatedDate('01/01/1900')).max(getFormatedDate(new Date().toLocaleDateString())).required(),
-  type: yup.mixed().required().oneOf(['administrador', 'recepcionista', 'veterinario']).label('Selecione Uma Opção'),
-  specialty: yup.mixed().oneOf(['', 'gatos', 'cachorros', 'aves', 'peixes', 'roedores', 'repteis', 'selvagens', 'fazenda', 'marinhos']).label('Selecione Uma Opção'),
-  medicalLicense: yup.string(),
-  status: yup.mixed().required().oneOf(['ativo', 'inativo']).label('Selecione Uma Opção'),
+  type: yup.mixed().oneOf(['administrador', 'recepcionista', 'veterinario']).label('Selecione Uma Opção'),
+  specialty: yup.mixed()
+    .oneOf(['', 'gatos', 'cachorros', 'aves', 'peixes', 'roedores', 'repteis', 'selvagens', 'fazenda', 'marinhos'])
+    .label('Selecione Uma Opção')
+    .when('type', {
+      is: 'veterinario',
+      then: yup.mixed().oneOf(['gatos', 'cachorros', 'aves', 'peixes', 'roedores', 'repteis', 'selvagens', 'fazenda', 'marinhos']).notOneOf([''], 'Este campo é obrigatório').label('Selecione Uma Opção'),
+    }),
+  medicalLicense: yup.string().when('type', {
+    is: 'veterinario',
+    then: yup.string().required()
+  }),
+  status: yup.mixed().oneOf(['ativo', 'inativo']).label('Selecione Uma Opção'),
   observation: yup.string(),
 });
 
@@ -62,6 +71,17 @@ export const EmployeeUpdate: React.FC = () => {
     });
   }, []);
 
+  const [disableFields, setDisableFields] = useState(true);
+  const handleSelectAssistantOrAdmin= (event: ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value as string;
+    if (value === '' || value === 'administrador' || value === 'recepcionista') {
+      formRef.current?.setFieldValue('specialty', '');
+      formRef.current?.setFieldValue('medicalLicense', '');
+      setDisableFields(true);
+    } else {
+      setDisableFields(false);
+    }
+  };
 
   const handleSave = (dados: IFormData) => {
     formValidationSchema.
@@ -205,6 +225,7 @@ export const EmployeeUpdate: React.FC = () => {
                   name='type'
                   label='Cargo'
                   disabled={isLoading}
+                  onChange={handleSelectAssistantOrAdmin}
                 >
                   <MenuItem value=""><em>Selecione Uma Opção</em></MenuItem>
                   <MenuItem value='administrador'>Administrador</MenuItem>
@@ -223,7 +244,7 @@ export const EmployeeUpdate: React.FC = () => {
                   id='especialidade'
                   name='specialty'
                   label='Especialidade'
-                  disabled={isLoading}
+                  disabled={disableFields}
                 >
                   <MenuItem value=""><em>Selecione Uma Opção</em></MenuItem>
                   <MenuItem value='gatos'>Gatos</MenuItem>
@@ -244,7 +265,7 @@ export const EmployeeUpdate: React.FC = () => {
                   id='crmv'
                   name='medicalLicense'
                   label='CRMV'
-                  disabled={isLoading}
+                  disabled={disableFields}
                 />
               </Grid>
                

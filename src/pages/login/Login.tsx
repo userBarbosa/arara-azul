@@ -14,11 +14,6 @@ YupPassword(yup);
 const loginSchema = yup.object().shape({
   email: yup.string().email().required(),
   password: yup.string()
-    .min(8, 'Senha deve ter no mínimo 8 caracteres')
-    .minLowercase(1, 'Senha deve conter pelo menos 1 letra minúscula')
-    .minUppercase(1, 'Senha deve conter pelo menos 1 letra maiúscula')
-    .minNumbers(1, 'Senha deve conter pelo menos 1 número')
-    .minSymbols(1, 'Senha deve conter pelo menos 1 carácter especial')
     .required('Este campo é obrigatório'),
 });
 
@@ -53,14 +48,48 @@ export const Login: React.FC = () => {
       .validate({ email, password }, { abortEarly: false })
       .then(dadosValidados => {
         login(dadosValidados.email, dadosValidados.password)
-          .then(() => {
-            setIsLoading(false);
-            toast.success('Seja Bem-vindo(a)!', {
-              position: toast.POSITION.BOTTOM_CENTER
-            });
-            setEmail('');
-            setPassword('');
-            navigate('/home');
+          .then((result: void | 400 | 500 | 401 | 403 | 200) => {
+            if (result === 400) {
+              setIsLoading(false);
+              setEmail('');
+              setPassword('');
+              toast.error('Ocorreu um problema, tente novamente!', {
+                position: toast.POSITION.BOTTOM_CENTER
+              });
+              navigate('/400');
+            } else if (result === 401) {
+              setIsLoading(false);
+              setEmail('');
+              setPassword('');
+              toast.error('Não Autorizado!', {
+                position: toast.POSITION.BOTTOM_CENTER
+              });
+              navigate('/401');
+            } else if (result === 403) {
+              setIsLoading(false);
+              setEmail('');
+              setPassword('');
+              toast.error('Credenciais incorretas, tente novamente!', {
+                position: toast.POSITION.BOTTOM_CENTER
+              });
+              navigate('/403');
+            } else if (result === 500) {
+              setIsLoading(false);
+              setEmail('');
+              setPassword('');
+              toast.error('Ocorreu um problema no servidor!', {
+                position: toast.POSITION.BOTTOM_CENTER
+              });
+              navigate('/500');
+            } else if (result === 200) {
+              setIsLoading(false);
+              toast.success('Seja Bem-vindo(a)!', {
+                position: toast.POSITION.BOTTOM_CENTER
+              });
+              setEmail('');
+              setPassword('');
+              navigate('/home');
+            }
           })
           .catch(() => {
             toast.error('Ocorreu um problema, tente novamente!', {

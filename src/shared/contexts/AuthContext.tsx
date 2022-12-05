@@ -5,7 +5,7 @@ interface IAuthContextData {
   logout: () => void;
   getCurrentUser: () => any;
   isAuthenticated: () => boolean;
-  login: (email: string, password: string | undefined) => Promise<string | void>;
+  login: (email: string, password: string | undefined) => Promise<400 | 500 | 401 | 403 | 200 | void>;
   forgotPassword: (email: string) => Promise<string | void>;
   resetPassword: (password: string | undefined, confirmPassword: string | undefined) => Promise<string | void>;
 }
@@ -34,10 +34,23 @@ export const AuthProvider: React.FC<IAuthProviderProps> = ({ children }) => {
   const handleLogin = useCallback(async (email: string, password: string | undefined) => {
     const result = await AuthService.login(email, password);
     if (result instanceof Error) {
-      return result.message;
+      return 500;
     } else {
-      localStorage.setItem(LOCAL_STORAGE_KEY__USER, JSON.stringify(result));
-      setUser(result);
+      if (!result) {
+        return 500;
+      } else if (result.status === 400) {
+        return result.status;
+      } else if (result.status === 401) {
+        return result.status;
+      } else if (result.status === 403) {
+        return result.status;
+      } else if (result.status === 500) {
+        return result.status;
+      } else if (result.status === 200) {
+        localStorage.setItem(LOCAL_STORAGE_KEY__USER, JSON.stringify(result.data?.user));
+        setUser(result.data?.user);
+        return result.status;
+      }
     }
   }, []);
 

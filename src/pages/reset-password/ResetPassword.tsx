@@ -28,6 +28,10 @@ export const ResetPassword: React.FC = () => {
   const { resetPassword } = useAuthContext();
 
   const navigate = useNavigate();
+
+  const goBack = () => {
+    navigate(-1);
+  };
   
   const [newPassword, setNewPassword] = useState('');
   const [newPasswordError, setNewPasswordError] = useState('');
@@ -167,12 +171,28 @@ export const ResetPassword: React.FC = () => {
             <Box 
               width='100%' 
               display='flex' 
-              flexDirection='column' 
               gap={2} 
               alignItems='center' 
               justifyContent='center' 
-              sx={{ marginLeft: { xs: 1, sm: 2 }, marginRight: { xs: 1, sm: 2 }, marginBottom: { xs: 1, sm: 2 }  }}
+              sx={{ marginLeft: { xs: 1, sm: 2 }, marginRight: { xs: 1, sm: 2 }, marginBottom: { xs: 1, sm: 2 }, flexDirection: { xs: 'column', md: 'row'}  }}
             >
+
+              <Button
+                variant='contained'
+                disabled={isLoading}
+                onClick={goBack}
+                disableElevation
+                fullWidth
+              >
+                <Typography
+                  variant='button'
+                  overflow='hidden'
+                  whiteSpace='nowrap'
+                  textOverflow='ellipsis'
+                >
+                Voltar
+                </Typography>
+              </Button>
   
               <Button
                 variant='contained'

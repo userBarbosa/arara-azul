@@ -4,6 +4,7 @@ import { LayoutPageAuth } from '../../shared/layouts';
 import { Box, Button, Card, CardActions, CardContent, TextField, Typography, CircularProgress } from '@mui/material';
 import { useAuthContext } from '../../shared/contexts';
 import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
 const forgotPasswordSchema = yup.object().shape({
   email: yup.string().email().required(),
@@ -16,6 +17,12 @@ export const ForgotPassword: React.FC = () => {
 
   const [emailError, setEmailError] = useState('');
   const [email, setEmail] = useState('');
+
+  const navigate = useNavigate();
+
+  const goBack = () => {
+    navigate(-1);
+  };
   
   const handleSubmit = () => {
     setIsLoading(true);
@@ -85,12 +92,28 @@ export const ForgotPassword: React.FC = () => {
             <Box 
               width='100%' 
               display='flex' 
-              flexDirection='column' 
               gap={2} 
               alignItems='center' 
               justifyContent='center' 
-              sx={{ marginLeft: { xs: 1, sm: 2 }, marginRight: { xs: 1, sm: 2 }, marginBottom: { xs: 1, sm: 2 }  }}
+              sx={{ marginLeft: { xs: 1, sm: 2 }, marginRight: { xs: 1, sm: 2 }, marginBottom: { xs: 1, sm: 2 }, flexDirection: { xs: 'column', md: 'row'}  }}
             >
+
+              <Button
+                variant='contained'
+                disabled={isLoading}
+                onClick={goBack}
+                disableElevation
+                fullWidth
+              >
+                <Typography
+                  variant='button'
+                  overflow='hidden'
+                  whiteSpace='nowrap'
+                  textOverflow='ellipsis'
+                >
+                Voltar
+                </Typography>
+              </Button>
 
               <Button
                 variant='contained'

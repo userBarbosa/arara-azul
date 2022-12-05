@@ -4,11 +4,12 @@ import { Box, Grid, LinearProgress, Paper } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import * as yup from 'yup';
 
-import { VTextField, VForm, useVForm, IVFormErrors, VSelect } from '../../shared/forms';
+import { VTextField, VForm, useVForm, IVFormErrors, VPatternFormat } from '../../shared/forms';
 import { BaseLayoutPage } from '../../shared/layouts';
 import { DetailTools } from '../../shared/components';
 import { TutorsService } from '../../shared/services/api/tutors/TutorsService';
 import { toast } from 'react-toastify';
+import { isValid as isValidCPF } from '@fnando/cpf';
 
 interface IFormData {
   name: string;
@@ -30,7 +31,7 @@ const formValidationSchema: yup.SchemaOf<IFormData> = yup.object().shape({
   name: yup.string().required(),
   email: yup.string().email().required(),
   telephoneNumber: yup.string().required(),
-  identificationNumber: yup.string().required(),
+  identificationNumber: yup.string().required().test('test-cpf-invalido', 'CPF inválido', (identificationNumber) => isValidCPF(identificationNumber!)),
   zipCode: yup.string().required(),
   state: yup.string().notRequired(),
   city: yup.string().notRequired(),
@@ -156,6 +157,7 @@ export const TutorInsert: React.FC = () => {
               <Grid item xs={12} sm={12} md={6} lg={6} xl={6} >
                 <VTextField
                   fullWidth
+                  id='nome'
                   name='name'
                   label='Nome'
                   disabled={isLoading}
@@ -165,6 +167,7 @@ export const TutorInsert: React.FC = () => {
               <Grid item xs={12} sm={12} md={6} lg={6} xl={6} >
                 <VTextField
                   fullWidth
+                  id='email'
                   name='email'
                   label='E-mail'
                   disabled={isLoading}
@@ -176,20 +179,28 @@ export const TutorInsert: React.FC = () => {
             <Grid container item direction="row" spacing={2}>
 
               <Grid item xs={12} sm={12} md={6} lg={6} xl={6} >
-                <VTextField
+                <VPatternFormat
                   fullWidth
+                  id='telefone'
                   name='telephoneNumber'
                   label='Telefone'
                   disabled={isLoading}
+                  valueIsNumericString 
+                  format="(##) #####-####" 
+                  mask="_"
                 />
               </Grid>
 
               <Grid item xs={12} sm={12} md={6} lg={6} xl={6} >
-                <VTextField
+                <VPatternFormat
                   fullWidth
+                  id='cpf'
                   name='identificationNumber'
                   label='CPF'
                   disabled={isLoading}
+                  valueIsNumericString 
+                  format="###.###.###-##" 
+                  mask="_"
                 />
               </Grid>
 
@@ -198,18 +209,23 @@ export const TutorInsert: React.FC = () => {
             <Grid container item direction="row" spacing={2}>
 
               <Grid item xs={12} sm={12} md={2} lg={2} xl={2} >
-                <VTextField
+                <VPatternFormat
                   fullWidth
+                  id='cep'
                   name='zipCode'
                   label='CEP'
                   disabled={isLoading}
                   onBlur={checkCep}
+                  valueIsNumericString
+                  format="#####-###" 
+                  mask="_"
                 />
               </Grid>
 
               <Grid item xs={12} sm={12} md={2} lg={2} xl={2} >
                 <VTextField
                   fullWidth
+                  id='estado'
                   name='state'
                   label='Estado'
                   disabled={true}
@@ -220,6 +236,7 @@ export const TutorInsert: React.FC = () => {
               <Grid item xs={12} sm={12} md={4} lg={4} xl={4} >
                 <VTextField
                   fullWidth
+                  id='cidade'
                   name='city'
                   label='Cidade'
                   disabled={true}
@@ -230,6 +247,7 @@ export const TutorInsert: React.FC = () => {
               <Grid item xs={12} sm={12} md={4} lg={4} xl={4} >
                 <VTextField
                   fullWidth
+                  id='bairro'
                   name='neighborhood'
                   label='Bairro'
                   disabled={true}
@@ -245,6 +263,7 @@ export const TutorInsert: React.FC = () => {
               <Grid item xs={12} sm={12} md={5} lg={5} xl={5} >
                 <VTextField
                   fullWidth
+                  id='endereco'
                   name='streetName'
                   label='Endereço'
                   disabled={true}
@@ -255,6 +274,7 @@ export const TutorInsert: React.FC = () => {
               <Grid item xs={12} sm={12} md={2} lg={2} xl={2} >
                 <VTextField
                   fullWidth
+                  id='numero'
                   name='houseNumber'
                   label='Número'
                   disabled={isLoading}
@@ -264,6 +284,7 @@ export const TutorInsert: React.FC = () => {
               <Grid item xs={12} sm={12} md={5} lg={5} xl={5} >
                 <VTextField
                   fullWidth
+                  id='complemento'
                   name='complement'
                   label='Complemento'
                   disabled={isLoading}
@@ -275,8 +296,9 @@ export const TutorInsert: React.FC = () => {
             <Grid container item direction="row" spacing={2}>
 
               <Grid item xs={12} sm={12} md={6} lg={6} xl={6} >
-                <VSelect
+                <VTextField
                   fullWidth
+                  id='pacientes'
                   name='patientsName'
                   label='Pacientes'
                   disabled={true}
@@ -287,6 +309,7 @@ export const TutorInsert: React.FC = () => {
               <Grid item xs={12} sm={12} md={6} lg={6} xl={6} >
                 <VTextField
                   fullWidth
+                  id='observacao'
                   name='observation'
                   label='Observação'
                   disabled={isLoading}

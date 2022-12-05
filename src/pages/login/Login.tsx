@@ -1,10 +1,13 @@
 import { useState } from 'react';
-import { Box, Button, Card, CardActions, CardContent, CircularProgress, Link, TextField, Typography } from '@mui/material';
+import { Box, Button, Card, CardActions, CardContent, CircularProgress, Link, TextField, Typography, IconButton, InputAdornment } from '@mui/material';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import * as yup from 'yup';
 import YupPassword from 'yup-password';
 import { LayoutPageAuth } from '../../shared/layouts';
-import { useAuthContext } from '../../shared/contexts';
 import { toast } from 'react-toastify';
+import { useAuthContext } from '../../shared/contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 YupPassword(yup);
 
@@ -24,12 +27,26 @@ export const Login: React.FC = () => {
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const [passwordError, setPasswordError] = useState('');
   const [emailError, setEmailError] = useState('');
-  const [password, setPassword] = useState('');
-  const [email, setEmail] = useState('');
+  const [passwordError, setPasswordError] = useState('');
 
-  const handleSubmit = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const [showPassword, setShowPassword] = useState(false);
+
+  const navigate = useNavigate();
+
+  const handleClickShowPassword = () => {
+    setShowPassword(!showPassword);
+  };
+
+  const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+  };
+
+  const handleSubmit = async (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
     setIsLoading(true);
 
     loginSchema
@@ -41,6 +58,9 @@ export const Login: React.FC = () => {
             toast.success('Seja Bem-vindo(a)!', {
               position: toast.POSITION.BOTTOM_CENTER
             });
+            setEmail('');
+            setPassword('');
+            navigate('/home');
           })
           .catch(() => {
             toast.error('Ocorreu um problema, tente novamente!', {
@@ -89,6 +109,7 @@ export const Login: React.FC = () => {
                 helperText={emailError}
                 onKeyDown={() => setEmailError('')}
                 onChange={e => setEmail(e.target.value)}
+                autoComplete='off'
               />
   
               <TextField
@@ -96,13 +117,27 @@ export const Login: React.FC = () => {
                 fullWidth
                 name='password'
                 label='Senha'
-                type='password'
                 value={password}
                 disabled={isLoading}
                 error={!!passwordError}
                 helperText={passwordError}
                 onKeyDown={() => setPasswordError('')}
                 onChange={e => setPassword(e.target.value)}
+                type={showPassword ? 'text' : 'password'}
+                InputProps={{
+                  endAdornment: 
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={handleClickShowPassword}
+                        onMouseDown={handleMouseDownPassword}
+                        edge="end"
+                      >
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>,
+                }}
+                autoComplete='off'
               />
             </Box>
           </CardContent>

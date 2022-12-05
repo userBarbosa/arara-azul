@@ -1,12 +1,17 @@
 import { Api } from '../axios-config';
 
+const LOGIN_URL = '/signin';
+const FORGOT_PASSWORD_URL = '/requestnewpassword';
+const RESET_PASSWORD_URL = '/resetpassword';
+
 interface ILogin {
-  accessToken: string;
+  token: string;
+  type: string;
 }
 
 const login = async (email: string, password: string | undefined): Promise<ILogin | Error> => {
   try {
-    const { data } = await Api.get('/login', { data: { email, password } });
+    const { data } = await Api.get(LOGIN_URL, { data: { email, password } });
 
     if (data) {
       return data;

@@ -3,7 +3,7 @@ import { Box, Grid, InputAdornment, LinearProgress, MenuItem, Paper } from '@mui
 import { useNavigate, useParams } from 'react-router-dom';
 import * as yup from 'yup';
 
-import { VTextField, VForm, useVForm, IVFormErrors, VSelect } from '../../shared/forms';
+import { VTextField, VForm, useVForm, IVFormErrors, VSelect, VNumericFormat } from '../../shared/forms';
 import { BaseLayoutPage } from '../../shared/layouts';
 import { DetailTools } from '../../shared/components';
 import { AutoCompleteTutor } from './components/AutocompleteTutor';
@@ -28,11 +28,11 @@ const formValidationSchema: yup.SchemaOf<IFormData> = yup.object().shape({
   tutorId: yup.number().required(),
   patientId: yup.number().required(),
   employeeId: yup.number().required(),
-  date: yup.string().required(),
-  reason: yup.string().required().min(3),
+  date: yup.string().required().min(3),
+  reason: yup.mixed().required().oneOf(['emergencia', 'rotina', 'check-up', 'exame', 'cirurgia']).label('Selecione Uma Opção'),
   value: yup.number().required(),
-  appointmentState: yup.string().required().min(3),
-  paymentMethod: yup.string().required().min(3),
+  appointmentState: yup.mixed().required().oneOf(['rascunho', 'registrada', 'agendada', 'realizada', 'cancelada', 'paga', 'excluida']).label('Selecione Uma Opção'),
+  paymentMethod: yup.mixed().required().oneOf(['cartao-credito', 'cartao-debito', 'dinheiro', 'pix']).label('Selecione Uma Opção'),
   observation: yup.string().notRequired(),
 });
 
@@ -43,32 +43,16 @@ export const AppointmentUpdate: React.FC = () => {
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const [reason, setReason] = useState('');
-  const [paymentMethod, setPaymentMethod] = useState('');
-  const [appointmentState, setAppointmentState] = useState('');
-
-  const handleChangeReason = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setReason(event.target.value as string);
-  };
-
-  const handleChangePaymentMethod = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setPaymentMethod(event.target.value as string);
-  };
-
-  const handleChangeAppointmentState = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setAppointmentState(event.target.value as string);
-  };
-
   useEffect(() => {
     formRef.current?.setData({
-      tutorId: undefined,
-      patientId: undefined,
-      employeeId: undefined,
+      tutorId: 1,
+      patientId: 1,
+      employeeId: 1,
       date: '2022-08-20T15:30',
-      reason: setReason('Rotina'),
+      reason: 'emergencia',
       value: 150.00,
-      appointmentState: setPaymentMethod('PIX'),
-      paymentMethod: setAppointmentState('Realizada'),
+      appointmentState: 'realizada',
+      paymentMethod: 'pix',
       observation: '',
     });
   }, []);
@@ -79,7 +63,7 @@ export const AppointmentUpdate: React.FC = () => {
       validate(dados, { abortEarly: false })
       .then((dadosValidados) => {
         setIsLoading(true);
-
+        
         AppointmentsService
           .updateById(Number(id), { id: Number(id), ...dadosValidados })
           .then((result) => {
@@ -143,7 +127,7 @@ export const AppointmentUpdate: React.FC = () => {
             <Grid container item direction="row" spacing={2}>
 
               <Grid item xs={12} sm={12} md={6} lg={6} xl={6} >
-                <AutoCompleteTutor isExternalLoading={isLoading} />
+                <AutoCompleteTutor isExternalLoading={isLoading}/>
               </Grid>
 
               <Grid item xs={12} sm={12} md={6} lg={6} xl={6} >
@@ -158,6 +142,7 @@ export const AppointmentUpdate: React.FC = () => {
                 <VTextField
                   fullWidth
                   name='date'
+                  id='data-hora'
                   label='Data e Hora'
                   type="datetime-local"
                   InputLabelProps={{
@@ -170,18 +155,17 @@ export const AppointmentUpdate: React.FC = () => {
               <Grid item xs={12} sm={12} md={6} lg={6} xl={6} >
                 <VSelect
                   fullWidth
+                  id='motivo'
                   name='reason'
                   label='Motivo'
-                  value={reason}
-                  onChange={handleChangeReason}
                   disabled={isLoading}
                 >
                   <MenuItem value=""><em>Selecione Uma Opção</em></MenuItem>
-                  <MenuItem value={1}>Emergência</MenuItem>
-                  <MenuItem value={2}>Rotina</MenuItem>
-                  <MenuItem value={4}>Check-Up</MenuItem>
-                  <MenuItem value={8}>Exame</MenuItem>
-                  <MenuItem value={16}>Cirurgia</MenuItem>
+                  <MenuItem value="emergencia">Emergência</MenuItem>
+                  <MenuItem value="rotina">Rotina</MenuItem>
+                  <MenuItem value="check-up">Check-Up</MenuItem>
+                  <MenuItem value="exame">Exame</MenuItem>
+                  <MenuItem value="cirurgia">Cirurgia</MenuItem>
                 </VSelect>
               </Grid>
 
@@ -194,15 +178,25 @@ export const AppointmentUpdate: React.FC = () => {
               </Grid>
 
               <Grid item xs={12} sm={12} md={6} lg={6} xl={6} >
-                <VTextField
+                <VNumericFormat
                   fullWidth
                   name='value'
                   label='Valor'
+                  id='valor'
                   disabled={isLoading}
                   InputProps={{
                     startAdornment: <InputAdornment position="start">R$</InputAdornment>,
                   }}
-                  type="number"
+                  valueIsNumericString
+                  decimalSeparator=","
+                  thousandSeparator="."
+                  decimalScale={2}
+                  thousandsGroupStyle="thousand"
+                  allowNegative={false}
+                  allowLeadingZeros={true}
+                  onValueChange={(values) => {
+                    console.log(values);
+                  }}
                 />
               </Grid> 
 
@@ -216,14 +210,13 @@ export const AppointmentUpdate: React.FC = () => {
                   name='paymentMethod'
                   label='Pagamento'
                   disabled={isLoading}
-                  value={paymentMethod}
-                  onChange={handleChangePaymentMethod}
+                  id='pagamento'
                 >
-                  <MenuItem value=""><em>Selecione Uma Opção</em></MenuItem>
-                  <MenuItem value={1}>Cartão de Crédito</MenuItem>
-                  <MenuItem value={2}>Cartão de Débito</MenuItem>
-                  <MenuItem value={4}>Dinheiro</MenuItem>
-                  <MenuItem value={8}>PIX</MenuItem>
+                  <MenuItem value=''><em>Selecione Uma Opção</em></MenuItem>
+                  <MenuItem value='cartao-credito'>Cartão de Crédito</MenuItem>
+                  <MenuItem value='cartao-debito'>Cartão de Débito</MenuItem>
+                  <MenuItem value='dinheiro'>Dinheiro</MenuItem>
+                  <MenuItem value='pix'>PIX</MenuItem>
                 </VSelect>
               </Grid> 
 
@@ -233,17 +226,16 @@ export const AppointmentUpdate: React.FC = () => {
                   name='appointmentState'
                   label='Status'
                   disabled={isLoading}
-                  value={appointmentState}
-                  onChange={handleChangeAppointmentState}
+                  id='status'
                 >
-                  <MenuItem value=""><em>Selecione Uma Opção</em></MenuItem>
-                  <MenuItem value={1}>Rascunho</MenuItem>
-                  <MenuItem value={2}>Registrada</MenuItem>
-                  <MenuItem value={4}>Agendada</MenuItem>
-                  <MenuItem value={8}>Realizada</MenuItem>
-                  <MenuItem value={16}>Cancelada</MenuItem>
-                  <MenuItem value={32}>Paga</MenuItem>
-                  <MenuItem value={64}>Excluída</MenuItem>
+                  <MenuItem value=''><em>Selecione Uma Opção</em></MenuItem>
+                  <MenuItem value='rascunho'>Rascunho</MenuItem>
+                  <MenuItem value='registrada'>Registrada</MenuItem>
+                  <MenuItem value='agendada'>Agendada</MenuItem>
+                  <MenuItem value='realizada'>Realizada</MenuItem>
+                  <MenuItem value='cancelada'>Cancelada</MenuItem>
+                  <MenuItem value='paga'>Paga</MenuItem>
+                  <MenuItem value='excluida'>Excluída</MenuItem>
                 </VSelect>
               </Grid>
                
@@ -257,6 +249,7 @@ export const AppointmentUpdate: React.FC = () => {
                   name='observation'
                   label='Observação'
                   disabled={isLoading}
+                  id='observacao'
                 />
               </Grid> 
 

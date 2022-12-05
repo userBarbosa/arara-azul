@@ -37,7 +37,9 @@
       "identificationNumber": "75781722807",
       "telephoneNumber": "11980287824",
       "observation": "",
-      "patientsName": ["Maia"],
+      "patientsName": [
+        "Maia"
+      ],
       "address": {
         "zipCode": "06708710",
         "state": "SP",
@@ -79,7 +81,8 @@
       "active": true
     }
   ],
-  "login": {
-    "accessToken": "aaaaaaaaaaa.bbbbbbbbbbb.cccccccccccc"
+  "signin": {
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
+    "type": "admin"
   }
 }

@@ -5,6 +5,11 @@ export const Environment = {
   ROW_LIMIT: 6,
 
   /**
+   * Define a quantidade de cards a ser carregada por padrão nas listagens
+   */
+  CARD_LIMIT: 6,
+
+  /**
     * Placeholder exibido nas inputs
     */
   SEARCH_INPUT: 'Pesquisar...',
@@ -17,5 +22,5 @@ export const Environment = {
   /**
     * Url base de consultado dos dados dessa aplicação
     */
-  BASE_URL: process.env.REACT_APP_BACKEND_URL ?? 'http://localhost:3333',
+  BASE_URL: 'http://localhost:3333',
 };

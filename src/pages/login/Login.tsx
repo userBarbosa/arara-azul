@@ -14,6 +14,11 @@ YupPassword(yup);
 const loginSchema = yup.object().shape({
   email: yup.string().email().required(),
   password: yup.string()
+    .min(8, 'Senha deve ter no mínimo 8 caracteres')
+    .minLowercase(1, 'Senha deve conter pelo menos 1 letra minúscula')
+    .minUppercase(1, 'Senha deve conter pelo menos 1 letra maiúscula')
+    .minNumbers(1, 'Senha deve conter pelo menos 1 número')
+    .minSymbols(1, 'Senha deve conter pelo menos 1 carácter especial')
     .required('Este campo é obrigatório'),
 });
 
@@ -47,9 +52,26 @@ export const Login: React.FC = () => {
     loginSchema
       .validate({ email, password }, { abortEarly: false })
       .then(dadosValidados => {
+        if (dadosValidados.password === 'Mudar@123' || dadosValidados.password === 'mudar@123') {
+          setIsLoading(false);
+          setEmail('');
+          setPassword('');
+          toast.error('Por favor, altere sua senha para logar!', {
+            position: toast.POSITION.BOTTOM_CENTER
+          });
+          navigate('/esqueceu-sua-senha');
+        } else {
         login(dadosValidados.email, dadosValidados.password)
-          .then((result: void | 400 | 500 | 401 | 403 | 200) => {
-            if (result === 400) {
+          .then((result) => {
+            if (result === 'Network Error') {
+              setIsLoading(false);
+              setEmail('');
+              setPassword('');
+              toast.error('Ocorreu um problema, tente novamente!', {
+                position: toast.POSITION.BOTTOM_CENTER
+              });
+              navigate('/400');
+            } else if (result === 400) {
               setIsLoading(false);
               setEmail('');
               setPassword('');
@@ -61,7 +83,7 @@ export const Login: React.FC = () => {
               setIsLoading(false);
               setEmail('');
               setPassword('');
-              toast.error('Não Autorizado!', {
+              toast.error('Ocorreu um problema, tente novamente!', {
                 position: toast.POSITION.BOTTOM_CENTER
               });
               navigate('/401');
@@ -69,15 +91,23 @@ export const Login: React.FC = () => {
               setIsLoading(false);
               setEmail('');
               setPassword('');
-              toast.error('Credenciais incorretas, tente novamente!', {
+              toast.error('Ocorreu um problema, tente novamente!', {
                 position: toast.POSITION.BOTTOM_CENTER
               });
               navigate('/403');
+            } else if (result === 404) {
+              setIsLoading(false);
+              setEmail('');
+              setPassword('');
+              toast.error('Ocorreu um problema, tente novamente!', {
+                position: toast.POSITION.BOTTOM_CENTER
+              });
+              navigate('/404');
             } else if (result === 500) {
               setIsLoading(false);
               setEmail('');
               setPassword('');
-              toast.error('Ocorreu um problema no servidor!', {
+              toast.error('Ocorreu um problema, tente novamente!', {
                 position: toast.POSITION.BOTTOM_CENTER
               });
               navigate('/500');
@@ -96,7 +126,7 @@ export const Login: React.FC = () => {
               position: toast.POSITION.BOTTOM_CENTER
             });
           });
-      })
+      }})
       .catch((errors: yup.ValidationError) => {
         setIsLoading(false);
 

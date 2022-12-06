@@ -41,37 +41,37 @@ export const MainRoutes = () => {
   const { setSideMenuOptions } = useSideMenuContext();
   const { getCurrentUser } = useAuthContext();
 
-  if (getCurrentUser()) {
     useEffect(() => {
-      'admin' === getCurrentUser().type ? 
-        setSideMenuOptions([
-          {
-            icon: 'home',
-            path: '/home',
-            label: 'Home',
-          },
-          {
-            icon: 'event_available',
-            path: '/consultas',
-            label: 'Consultas',
-          },
-          {
-            icon: 'pets',
-            path: '/pacientes',
-            label: 'Pacientes',
-          },
-          {
-            icon: 'folder_shared', 
-            path: '/tutores',
-            label: 'Tutores',
-          },
-          {
-            icon: 'admin_panel_settings',
-            path: '/funcionarios',
-            label: 'Funcionários',
-          },
-        ])
-        : 'assistant' === getCurrentUser().type ? 
+      if (getCurrentUser()) {
+        'admin' === getCurrentUser().type ? 
+          setSideMenuOptions([
+            {
+              icon: 'home',
+              path: '/home',
+              label: 'Home',
+            },
+            {
+              icon: 'event_available',
+              path: '/consultas',
+              label: 'Consultas',
+            },
+            {
+              icon: 'pets',
+              path: '/pacientes',
+              label: 'Pacientes',
+            },
+            {
+              icon: 'folder_shared', 
+              path: '/tutores',
+              label: 'Tutores',
+            },
+            {
+              icon: 'admin_panel_settings',
+              path: '/funcionarios',
+              label: 'Funcionários',
+            },
+          ])
+        : 'assistant' === getCurrentUser().type ?
           setSideMenuOptions([
             {
               icon: 'home',
@@ -94,36 +94,36 @@ export const MainRoutes = () => {
               label: 'Tutores',
             },
           ])
-          : 'doctor' === getCurrentUser().type ? 
-            setSideMenuOptions([
-              {
-                icon: 'home',
-                path: '/home',
-                label: 'Home',
-              },
-              {
-                icon: 'event_available',
-                path: '/consultas',
-                label: 'Consultas',
-              },
-              {
-                icon: 'pets',
-                path: '/pacientes',
-                label: 'Pacientes',
-              },
-            ])
-            :
-            setSideMenuOptions([
-              {
-                icon: 'home',
-                path: '/home',
-                label: 'Home',
-              },
-            ]);
+        : 'doctor' === getCurrentUser().type ?        
+          setSideMenuOptions([
+            {
+              icon: 'home',
+              path: '/home',
+              label: 'Home',
+            },
+            {
+              icon: 'event_available',
+              path: '/consultas',
+              label: 'Consultas',
+            },
+            {
+              icon: 'pets',
+              path: '/pacientes',
+              label: 'Pacientes',
+            },
+          ])
+        :
+          setSideMenuOptions([
+            {
+              icon: 'home',
+              path: '/home',
+              label: 'Home',
+            },
+          ]);
+      } else {
+        <Navigate to="/login" />;
+      }
     }, []);
-  } else {
-    <Navigate to="/login" />;
-  }
   
   return (
     <Routes>

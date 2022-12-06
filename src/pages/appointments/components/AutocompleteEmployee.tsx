@@ -7,7 +7,7 @@ import { EmployeesService } from '../../../shared/services/api/employees/Employe
 
 
 type TAutoCompleteOption = {
-  id: number;
+  id: string;
   label: string;
 }
 
@@ -18,7 +18,7 @@ export const AutocompleteEmployee: React.FC<IAutocompleteEmployeeProps> = ({ isE
   const { fieldName, registerField, defaultValue, error, clearError } = useField('employeeId');
   const { debounce } = useDebounce();
 
-  const [selectedId, setSelectedId] = useState<number | undefined>(defaultValue);
+  const [selectedId, setSelectedId] = useState<string | undefined>(defaultValue);
 
   const [options, setOptions] = useState<TAutoCompleteOption[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -35,19 +35,19 @@ export const AutocompleteEmployee: React.FC<IAutocompleteEmployeeProps> = ({ isE
   useEffect(() => {
     setIsLoading(true);
 
-    debounce(() => {
-      EmployeesService.getAll(1, search, selectedId?.toString())
-        .then((result) => {
-          setIsLoading(false);
+    // debounce(() => {
+    //   EmployeesService.getAll()
+    //     .then((result) => {
+    //       setIsLoading(false);
 
-          if (result instanceof Error) {
-            // alert(result.message);
-          } else {
-            setOptions(result.data.map(employee => ({ id: employee.id, label: employee.name })));
-          }
-        });
-    });
-  }, [search, selectedId]);
+    //       if (result instanceof Error) {
+    //         // alert(result.message);
+    //       } else {
+    //         setOptions(result.data.map(employee => ({ id: employee.id, label: employee.name })));
+    //       }
+    //     });
+    // });
+  }, []);
 
   const autoCompleteSelectedOption = useMemo(() => {
     if (!selectedId) return null;

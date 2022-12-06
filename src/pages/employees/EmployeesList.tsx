@@ -1,66 +1,92 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Box, Grid, Icon, IconButton, LinearProgress, Pagination, Paper, Table, TableBody, TableCell, TableContainer, TableFooter, TableHead, TableRow, Theme, Typography, useMediaQuery } from '@mui/material';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import { ListTools } from '../../shared/components';
 import { BaseLayoutPage } from '../../shared/layouts';
 
-import { useDebounce } from '../../shared/hooks';
 import { Environment } from '../../shared/environment';
 import { EmployeesService, IListEmployee } from '../../shared/services/api/employees/EmployeesService';
-
+import { activeBooleanToString, activeStringToString, formatDateToString, formatDocumentNumber, formatPhoneNumber, removeInvalidCharacters, typeStringToStringPtBr } from '../../shared/helpers';
 
 export const EmployeesList: React.FC = () => {
   const xldown = useMediaQuery((theme: Theme) => theme.breakpoints.down('xl'));
   const xlup = useMediaQuery((theme: Theme) => theme.breakpoints.up('xl'));
 
-  const [searchParams, setSearchParams] = useSearchParams();
-  const { debounce } = useDebounce();
+  const [name, setName] = useState('');
   const navigate = useNavigate();
 
-  const [rows, setRows] = useState<IListEmployee[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [data, setData] = useState<IListEmployee[]>([]);
   const [totalCount, setTotalCount] = useState(0);
+  const [foundEmployees, setFoundEmployees] = useState(data);
 
+  const [page, setPage] = useState(1);
+  const handlePageChange = (
+    event: React.ChangeEvent<unknown>,
+    newPage: number,
+  ) => {
+    setPage(newPage);
+  };
 
-  const search = useMemo(() => {
-    return searchParams.get('search') || '';
-  }, [searchParams]);
+  const filter = (text: string) => {
+    const keyword = text;
 
-  const page = useMemo(() => {
-    return Number(searchParams.get('page') || '1');
-  }, [searchParams]);
+    if (keyword !== '') {
+      const results = data.filter((employee) => {
+        const name = employee.name === undefined || employee.name === null ? '' : employee.name
+        return name.toLowerCase().startsWith(keyword.toLowerCase());
+      });
+      setTotalCount(results.length);
+      setFoundEmployees(results);
+    } else {
+      setTotalCount(data.length);
+      setFoundEmployees(data);
+    }
 
+    setName(keyword);
+  };
+
+  const indexOfLastData = page * Environment.LIMIT;
+  const indexOfFirstData = indexOfLastData - Environment.LIMIT;
+  const currentData = foundEmployees.slice(indexOfFirstData, indexOfLastData);
+
+  const [isLoading, setIsLoading] = useState(true);
+
+  const getTokenCurrentUser = () => {
+    const _user = localStorage.getItem('APP_USER');
+  
+    if (_user) {
+      const obj = JSON.parse(_user);
+      return obj.token;
+    }
+  };
 
   useEffect(() => {
     setIsLoading(true);
 
-    debounce(() => {
-      EmployeesService.getAll(page, search)
-        .then((result) => {
-          setIsLoading(false);
+    EmployeesService.getAll(getTokenCurrentUser())
+      .then((result) => {
+        setIsLoading(false);
 
-          if (result instanceof Error) {
-            // console.log(result.message);
-          } else {
-            setTotalCount(result.totalCount);
-            setRows(result.data);
-          }
-        });
-    });
-  }, [search, page]);
-
-  const [data, setData] = useState<IListEmployee[]>([]);
-
-  useEffect(() => {
-    const getData = async () => {
-      const data = await (
-        await fetch('https://finalspaceapi.com/api/v0/character/')
-      ).json();
-      setData(data);
-    };
-
-    getData();
+        if (result === 'Network Error') {
+          navigate('/400');
+        } else if (result.status === 400) {
+          navigate('/400');
+        } else if (result.status === 401) {
+          localStorage.removeItem('APP_USER');
+          navigate('/401');
+        } else if (result.status === 403) {
+          navigate('/403');
+        } else if (result.status === 404) {
+          navigate('/404');
+        } else if (result.status === 500) {
+          navigate('/500');
+        } else if (result.status === 200) {
+          setTotalCount(result.data.length);
+          setData(result.data);
+          setFoundEmployees(result.data);
+        }
+      });
   }, []);
 
   return (
@@ -69,9 +95,9 @@ export const EmployeesList: React.FC = () => {
       toolbar={
         <ListTools
           showInputSearch
-          searchText={search}
+          searchText={name}
           onClickButtonAdd={() => navigate('/funcionarios/inserir')}
-          onChangeSearchText={text => setSearchParams({ search: text, page: '1' }, { replace: true })}
+          onChangeSearchText={text => filter(text)}
         />
       }
     >
@@ -172,120 +198,32 @@ export const EmployeesList: React.FC = () => {
 
               </TableRow>
             </TableHead>
-            <TableBody>
-              {/* {rows.map(row => (
-              <TableRow key={row.id}>
-                <TableCell>{row.name}</TableCell>
-                <TableCell>{row.email}</TableCell>
-                <TableCell>{row.telephoneNumber}</TableCell>
-                <TableCell>{row.identificationNumber}</TableCell>
-                <TableCell>{row.birthDate}</TableCell>
-                <TableCell>{row.type}</TableCell>
-                <TableCell>{row.active}</TableCell>
-                <TableCell>
-                  <IconButton size="small" onClick={() => navigate(`/funcionarios/atualizar/${row.id}`)}>
-                    <Icon>edit</Icon>
-                  </IconButton>
-                  <IconButton size="small" onClick={() => navigate(`/funcionarios/detalhe/${row.id}`)}>
-                    <Icon>visibility</Icon>
-                  </IconButton>
-                </TableCell>
-              </TableRow>
-            ))} */}
-              <TableRow>
 
-                <TableCell>
-                  <Typography
-                    variant='body2'
-                    overflow='hidden'
-                    whiteSpace='nowrap'
-                    textOverflow='ellipsis'
-                  >
-                  Tatiana Dutra Ferreira
-                  </Typography>
-                </TableCell>
-
-                <TableCell>
-                  <Typography
-                    variant='body2'
-                    overflow='hidden'
-                    whiteSpace='nowrap'
-                    textOverflow='ellipsis'
-                  >
-                  tatiana.ferreira@gmail.com.br
-                  </Typography>
-                </TableCell>
-
-                <TableCell>
-                  <Typography
-                    variant='body2'
-                    overflow='hidden'
-                    whiteSpace='nowrap'
-                    textOverflow='ellipsis'
-                  >
-                  (11) 98247-7223
-                  </Typography>
-                </TableCell>
-
-                <TableCell>
-                  <Typography
-                    variant='body2'
-                    overflow='hidden'
-                    whiteSpace='nowrap'
-                    textOverflow='ellipsis'
-                  >
-                  868.224.618-09
-                  </Typography>
-                </TableCell>
-
-                <TableCell>
-                  <Typography
-                    variant='body2'
-                    overflow='hidden'
-                    whiteSpace='nowrap'
-                    textOverflow='ellipsis'
-                  >
-                  17/10/1989
-                  </Typography>
-                </TableCell>
-
-                <TableCell>
-                  <Typography
-                    variant='body2'
-                    overflow='hidden'
-                    whiteSpace='nowrap'
-                    textOverflow='ellipsis'
-                  >
-                  Recepcionista
-                  </Typography>
-                </TableCell>
-
-                <TableCell>
-                  <Typography
-                    variant='body2'
-                    overflow='hidden'
-                    whiteSpace='nowrap'
-                    textOverflow='ellipsis'
-                  >
-                  Ativo
-                  </Typography>
-                </TableCell>
+              <TableBody>
+                {currentData.map(employee => (
+                  <TableRow key={employee.id}>
+                    <TableCell>{employee.name === undefined || employee.name === null ? '' : employee.name}</TableCell>
+                    <TableCell>{employee.email === undefined || employee.email === null ? '' : employee.email}</TableCell>
+                    <TableCell>{employee.phoneNumber === undefined || employee.phoneNumber === null ? '' : formatPhoneNumber(removeInvalidCharacters(employee.phoneNumber))}</TableCell>
+                    <TableCell>{employee.documentNumber === undefined || employee.documentNumber === null ? '' : formatDocumentNumber(removeInvalidCharacters(employee.documentNumber))}</TableCell>
+                    <TableCell>{employee.birthDate === undefined || employee.birthDate === null ? '' : formatDateToString(employee.birthDate)}</TableCell>
+                    <TableCell>{employee.type === undefined || employee.type === null ? '' : typeStringToStringPtBr(employee.type)}</TableCell>
+                    <TableCell>{employee.active === undefined || employee.active === null ? '' : activeStringToString(activeBooleanToString(employee.active))}</TableCell>
+                    <TableCell>
+                      <IconButton size="small" onClick={() => navigate(`/funcionarios/atualizar/${employee.id}`)}>
+                        <Icon>edit</Icon>
+                      </IconButton>
+                      <IconButton size="small" onClick={() => navigate(`/funcionarios/detalhe/${employee.id}`)}>
+                        <Icon>visibility</Icon>
+                      </IconButton>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
               
-                <TableCell sx={{ display: 'flex', flexDirection: 'row' }}>
-                  <IconButton size="small" onClick={() => navigate('/funcionarios/atualizar/1')}>
-                    <Icon>edit</Icon>
-                  </IconButton>
-                  <IconButton size="small" onClick={() => navigate('/funcionarios/detalhe/1')}>
-                    <Icon>visibility</Icon>
-                  </IconButton>
-                </TableCell>
-
-              </TableRow>
-            </TableBody>
-
-            {totalCount === 0 && !isLoading && (
-              <caption>{Environment.EMPTY_LIST}</caption>
-            )}
+              {totalCount === 0 && !isLoading && (
+                <caption>{Environment.EMPTY_LIST}</caption>
+              )}  
 
             <TableFooter>
               {isLoading && (
@@ -295,13 +233,13 @@ export const EmployeesList: React.FC = () => {
                   </TableCell>
                 </TableRow>
               )}
-              {(totalCount > 0 && totalCount > Environment.ROW_LIMIT) && (
+              {(totalCount > 0 && totalCount > Environment.LIMIT) && (
                 <TableRow>
                   <TableCell colSpan={8}>
                     <Pagination
                       page={page}
-                      count={Math.ceil(totalCount / Environment.ROW_LIMIT)}
-                      onChange={(_, newPage) => setSearchParams({ search, page: newPage.toString() }, { replace: true })}
+                      count={Math.ceil(totalCount / Environment.LIMIT)}
+                      onChange={handlePageChange}
                     />
                   </TableCell>
                 </TableRow>
@@ -314,7 +252,7 @@ export const EmployeesList: React.FC = () => {
         <Box display='flex' flexDirection='column' alignItems='center' margin={2}>
 
           <Box>
-            {data.length < 1 && !isLoading && (
+            {totalCount === 0 && !isLoading && (
               <Box>
                 <Typography variant='h6' sx={{ color: '#006BBF' }}>
                   {Environment.EMPTY_LIST}
@@ -329,7 +267,7 @@ export const EmployeesList: React.FC = () => {
           </Box>
           <Box>
             <Grid container justifyContent="center">
-              {data.map(employee => (
+              {currentData.map(employee => (
                 <Grid key={employee.id} item xs={12} sm={8} md={4} lg={3} maxWidth={'300px'} margin={1} padding={2} borderRadius={5} bgcolor={'background.paper'}>
                   
                   <Box display='flex' flexDirection='column'>
@@ -351,7 +289,7 @@ export const EmployeesList: React.FC = () => {
                         whiteSpace='nowrap'
                         textOverflow='ellipsis'
                       >
-                          Tatiana Dutra Ferreira
+                        {employee.name === undefined || employee.name === null ? '' : employee.name}
                       </Typography>
                     </Box>
 
@@ -366,7 +304,7 @@ export const EmployeesList: React.FC = () => {
                         whiteSpace='nowrap'
                         textOverflow='ellipsis'
                       >
-                          Email:
+                        Email:
                       </Typography>
                     </Box>
 
@@ -377,7 +315,7 @@ export const EmployeesList: React.FC = () => {
                         whiteSpace='nowrap'
                         textOverflow='ellipsis'
                       >
-                          tatiana.ferreira@gmail.com.br
+                        {employee.email === undefined || employee.email === null ? '' : employee.email}
                       </Typography>
                     </Box>
 
@@ -402,7 +340,7 @@ export const EmployeesList: React.FC = () => {
                         whiteSpace='nowrap'
                         textOverflow='ellipsis'
                       >
-                          (11) 98247-7223
+                        {employee.phoneNumber === undefined || employee.phoneNumber === null ? '' : formatPhoneNumber(removeInvalidCharacters(employee.phoneNumber))}
                       </Typography>
                     </Box>
 
@@ -416,7 +354,7 @@ export const EmployeesList: React.FC = () => {
                         whiteSpace='nowrap'
                         textOverflow='ellipsis'
                       >
-                          CPF:
+                        CPF:
                       </Typography>
                     </Box>
 
@@ -427,7 +365,7 @@ export const EmployeesList: React.FC = () => {
                         whiteSpace='nowrap'
                         textOverflow='ellipsis'
                       >
-                          868.224.618-09
+                        {employee.documentNumber === undefined || employee.documentNumber === null ? '' : formatDocumentNumber(removeInvalidCharacters(employee.documentNumber))}
                       </Typography>
                     </Box>
 
@@ -441,7 +379,7 @@ export const EmployeesList: React.FC = () => {
                         whiteSpace='nowrap'
                         textOverflow='ellipsis'
                       >
-                            Data de Nascimento:
+                        Data de Nascimento:
                       </Typography>
                     </Box>
 
@@ -452,7 +390,7 @@ export const EmployeesList: React.FC = () => {
                         whiteSpace='nowrap'
                         textOverflow='ellipsis'
                       >
-                          17/10/1989
+                        {employee.birthDate === undefined || employee.birthDate === null ? '' : formatDateToString(employee.birthDate)}
                       </Typography>
                     </Box>
 
@@ -477,7 +415,7 @@ export const EmployeesList: React.FC = () => {
                         whiteSpace='nowrap'
                         textOverflow='ellipsis'
                       >
-                          Recepcionista
+                        {employee.type === undefined || employee.type === null ? '' : typeStringToStringPtBr(employee.type)}
                       </Typography>
                     </Box>
 
@@ -491,7 +429,7 @@ export const EmployeesList: React.FC = () => {
                         whiteSpace='nowrap'
                         textOverflow='ellipsis'
                       >
-                      Status:
+                       Status:
                       </Typography>
                     </Box>
 
@@ -502,7 +440,7 @@ export const EmployeesList: React.FC = () => {
                         whiteSpace='nowrap'
                         textOverflow='ellipsis'
                       >
-                      Ativo
+                        {employee.active === undefined || employee.active === null ? '' : activeStringToString(activeBooleanToString(employee.active))}
                       </Typography>
                     </Box>
 
@@ -534,13 +472,13 @@ export const EmployeesList: React.FC = () => {
             </Grid>
           </Box>
           
-          {(totalCount > 0 && totalCount > Environment.ROW_LIMIT) && (
-            <Box width='100%' margin={1} bgcolor={'background.paper'} padding={1} display='flex' alignItems='center' justifyContent="center">
+          {(totalCount > 0 && totalCount > Environment.LIMIT) && (
+            <Box width='auto' margin={1} bgcolor={'background.paper'} padding={1} display='flex' alignItems='center' justifyContent="center">
               <Pagination
                 size="small"
                 page={page}
-                count={Math.ceil(totalCount / Environment.ROW_LIMIT)}
-                onChange={(_, newPage) => setSearchParams({ search, page: newPage.toString() }, { replace: true })}
+                count={Math.ceil(totalCount / Environment.LIMIT)}
+                onChange={handlePageChange}
               />
             </Box>
           )}

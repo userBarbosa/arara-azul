@@ -34,14 +34,14 @@ type TAppointmentsWithTotalCount = {
 
 const getAll = async (page = 1, filter = '', id = ''): Promise<TAppointmentsWithTotalCount | Error> => {
   try {
-    const relative_url  = `/appointments?_page=${page}&_limit=${Environment.ROW_LIMIT}&name_like=${filter}&id_like=${id}`;
+    const relative_url  = `/appointments?_page=${page}&_limit=${Environment.LIMIT}&name_like=${filter}&id_like=${id}`;
     
     const { data, headers } = await Api.get(relative_url);
     
     if (data) {
       return {
         data,
-        totalCount: Number(headers['x-total-count'] || Environment.ROW_LIMIT),
+        totalCount: Number(headers['x-total-count'] || Environment.LIMIT),
       };
     }
     

@@ -9,19 +9,20 @@ import { DetailTools } from '../../shared/components';
 import { EmployeesService } from '../../shared/services/api/employees/EmployeesService';
 import { toast } from 'react-toastify';
 import { isValid as isValidCPF } from '@fnando/cpf';
+import { typeStringToStringEnUs, removeInvalidCharacters, specialtyStringToNumber, activeStringToBoolean } from '../../shared/helpers';
 
 
 interface IFormData {
   name: string;
   email: string;
-  telephoneNumber: string;
-  identificationNumber: string;
-  birthDate: Date; 
   type: string;
-  specialty: string;
+  phoneNumber: string;
+  documentNumber: string;
   medicalLicense: string | undefined;
-  status: string;
-  observation: string | undefined;
+  specialty: string;
+  active: string;
+  birthDate: Date;
+  observation: string | undefined; 
 }
 
 const getFormatedDate = (currentDate: string) => {
@@ -31,10 +32,13 @@ const getFormatedDate = (currentDate: string) => {
 const formValidationSchema: yup.SchemaOf<IFormData> = yup.object().shape({
   name: yup.string().required(),
   email: yup.string().email().required(),
-  telephoneNumber: yup.string().required(),
-  identificationNumber: yup.string().required().test('test-cpf-invalido', 'CPF inválido', (identificationNumber) => isValidCPF(identificationNumber!)),
-  birthDate: yup.date().min(getFormatedDate('01/01/1900')).max(getFormatedDate(new Date().toLocaleDateString())).required(),
   type: yup.mixed().oneOf(['administrador', 'recepcionista', 'veterinario']).label('Selecione Uma Opção'),
+  phoneNumber: yup.string().required(),
+  documentNumber: yup.string().required().test('test-cpf-invalido', 'CPF inválido', (documentNumber) => isValidCPF(documentNumber!)),
+  medicalLicense: yup.string().when('type', {
+    is: 'veterinario',
+    then: yup.string().required()
+  }),
   specialty: yup.mixed()
     .oneOf(['', 'gatos', 'cachorros', 'aves', 'peixes', 'roedores', 'repteis', 'selvagens', 'fazenda', 'marinhos'])
     .label('Selecione Uma Opção')
@@ -42,11 +46,8 @@ const formValidationSchema: yup.SchemaOf<IFormData> = yup.object().shape({
       is: 'veterinario',
       then: yup.mixed().oneOf(['gatos', 'cachorros', 'aves', 'peixes', 'roedores', 'repteis', 'selvagens', 'fazenda', 'marinhos']).notOneOf([''], 'Este campo é obrigatório').label('Selecione Uma Opção'),
     }),
-  medicalLicense: yup.string().when('type', {
-    is: 'veterinario',
-    then: yup.string().required()
-  }),
-  status: yup.mixed().oneOf(['ativo', 'inativo']).label('Selecione Uma Opção'),
+  active: yup.mixed().oneOf(['ativo', 'inativo']).label('Selecione Uma Opção'),
+  birthDate: yup.date().min(getFormatedDate('01/01/1900')).max(getFormatedDate(new Date().toLocaleDateString())).required(),
   observation: yup.string(),
 });
 
@@ -60,13 +61,13 @@ export const EmployeeInsert: React.FC = () => {
     formRef.current?.setData({
       name: '',
       email: '',
-      telephoneNumber: '',
-      identificationNumber: '',
+      phoneNumber: '',
+      documentNumber: '',
       birthDate: '',
       type: '',
       specialty: '',
       medicalLicense: '',
-      status: '',
+      active: '',
       observation: '',
     });
   }, []);
@@ -83,20 +84,54 @@ export const EmployeeInsert: React.FC = () => {
     }
   };
 
+  const getTokenCurrentUser = () => {
+    const _user = localStorage.getItem('APP_USER');
+  
+    if (_user) {
+      const obj = JSON.parse(_user);
+      return obj.token;
+    }
+  };
+
   const handleSave = (dados: IFormData) => {
     formValidationSchema.
       validate(dados, { abortEarly: false })
       .then((dadosValidados) => {
         setIsLoading(true);
-      
+
+        const data = {
+          id: '',
+          name: dadosValidados.name,
+          email: dadosValidados.email,
+          type: typeStringToStringEnUs(dadosValidados.type),
+          phoneNumber: removeInvalidCharacters(dadosValidados.phoneNumber),
+          documentNumber: removeInvalidCharacters(dadosValidados.documentNumber),
+          medicalLicense: dadosValidados.medicalLicense,
+          specialty: specialtyStringToNumber(dadosValidados.specialty),
+          active: activeStringToBoolean(dadosValidados.active),
+          birthDate: dadosValidados.birthDate,
+          observation: dadosValidados.observation,
+        };
+
         EmployeesService
-          .create(dadosValidados)
+          .create(data, getTokenCurrentUser())
           .then((result) => {
             setIsLoading(false);
 
-            if (result instanceof Error) {
-              // alert(result.message);
-            } else {
+            if (result === 'Network Error') {
+              navigate('/400');
+            } else if (result.status === 400) {
+              navigate('/400');
+            } else if (result.status === 401) {
+              localStorage.removeItem('APP_USER');
+              navigate('/401');
+            } else if (result.status === 403) {
+              navigate('/403');
+            } else if (result.status === 404) {
+              navigate('/404');
+            } else if (result.status === 500) {
+              navigate('/500');
+            } else if (result.status === 200) {
               navigate('/funcionarios');
               toast.success('Cadastro realizado com Sucesso!', {
                 position: toast.POSITION.BOTTOM_CENTER
@@ -178,7 +213,7 @@ export const EmployeeInsert: React.FC = () => {
                 <VPatternFormat
                   fullWidth
                   id='telefone'
-                  name='telephoneNumber'
+                  name='phoneNumber'
                   label='Telefone'
                   disabled={isLoading}
                   valueIsNumericString 
@@ -191,7 +226,7 @@ export const EmployeeInsert: React.FC = () => {
                 <VPatternFormat
                   fullWidth
                   id='cpf'
-                  name='identificationNumber'
+                  name='documentNumber'
                   label='CPF'
                   disabled={isLoading}
                   valueIsNumericString 
@@ -276,8 +311,8 @@ export const EmployeeInsert: React.FC = () => {
               <Grid item xs={12} sm={12} md={6} lg={6} xl={6} >
                 <VSelect
                   fullWidth
-                  id='status'
-                  name='status'
+                  id='active'
+                  name='active'
                   label='Status'
                   disabled={isLoading}
                 >

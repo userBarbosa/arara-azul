@@ -5,18 +5,17 @@ const FORGOT_PASSWORD_URL = '/users/requestnewpassword';
 const RESET_PASSWORD_URL = '/users/resetpassword';
 
 const login = async (email: string, password: string | undefined) => {
-  try {
-    const response = await Api.post(LOGIN_URL, 
-      JSON.stringify({email, password}),
-      {
-        headers: { 'Content-Type': 'application/json'}
-      }
-    );
-
+  return await Api
+  .post(LOGIN_URL, JSON.stringify({email, password}))
+  .then(response => {
     return response;
-  } catch (error) {
-    return new Error((error as { message: string }).message || 'Erro no login.');
-  }
+  })
+  .catch(error => {
+    if (error.message === 'Network Error') {
+      return error.message;
+    }
+    return error.response;
+  });
 };
 
 const forgotPassword = async (email: string) => {

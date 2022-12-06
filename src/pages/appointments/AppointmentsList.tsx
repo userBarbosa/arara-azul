@@ -297,12 +297,12 @@ export const AppointmentsList: React.FC = () => {
                   </TableCell>
                 </TableRow>
               )}
-              {(totalCount > 0 && totalCount > Environment.ROW_LIMIT) && (
+              {(totalCount > 0 && totalCount > Environment.LIMIT) && (
                 <TableRow>
                   <TableCell colSpan={8}>
                     <Pagination
                       page={page}
-                      count={Math.ceil(totalCount / Environment.ROW_LIMIT)}
+                      count={Math.ceil(totalCount / Environment.LIMIT)}
                       onChange={(_, newPage) => setSearchParams({ search, page: newPage.toString() }, { replace: true })}
                     />
                   </TableCell>
@@ -536,12 +536,12 @@ export const AppointmentsList: React.FC = () => {
             </Grid>
           </Box>
           
-          {(totalCount > 0 && totalCount > Environment.CARD_LIMIT) && (
+          {(totalCount > 0 && totalCount > Environment.LIMIT) && (
             <Box width='100%' margin={1} bgcolor={'background.paper'} padding={1} display='flex' alignItems='center' justifyContent="center">
               <Pagination
                 size="small"
                 page={page}
-                count={Math.ceil(totalCount / Environment.CARD_LIMIT)}
+                count={Math.ceil(totalCount / Environment.LIMIT)}
                 onChange={(_, newPage) => setSearchParams({ search, page: newPage.toString() }, { replace: true })}
               />
             </Box>

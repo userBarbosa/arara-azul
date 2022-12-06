@@ -1,11 +1,11 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { createContext, useCallback, useContext, useEffect, useState } from 'react';
 import { AuthService } from '../services/api/auth/AuthService';
 
-interface IAuthContextData {
+interface IAuthContextData { 
   logout: () => void;
   getCurrentUser: () => any;
   isAuthenticated: () => boolean;
-  login: (email: string, password: string | undefined) => Promise<400 | 500 | 401 | 403 | 200 | void>;
+  login: (email: string, password: string | undefined) => Promise<number | string | void>;
   forgotPassword: (email: string) => Promise<string | void>;
   resetPassword: (password: string | undefined, confirmPassword: string | undefined) => Promise<string | void>;
 }
@@ -22,10 +22,10 @@ export const AuthProvider: React.FC<IAuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState({});
 
   useEffect(() => {
-    const user = localStorage.getItem(LOCAL_STORAGE_KEY__USER);
+    const _user = localStorage.getItem(LOCAL_STORAGE_KEY__USER);
 
-    if (user) {
-      setUser(JSON.parse(user));
+    if (_user) {
+      setUser(JSON.parse(_user));
     } else {
       setUser({});
     }
@@ -33,24 +33,15 @@ export const AuthProvider: React.FC<IAuthProviderProps> = ({ children }) => {
 
   const handleLogin = useCallback(async (email: string, password: string | undefined) => {
     const result = await AuthService.login(email, password);
-    if (result instanceof Error) {
-      return 500;
+
+    if (result.message === 'Network Error') {
+      return result.message;
+    } else if (result.status !== 200) {
+      return result.status;
     } else {
-      if (!result) {
-        return 500;
-      } else if (result.status === 400) {
-        return result.status;
-      } else if (result.status === 401) {
-        return result.status;
-      } else if (result.status === 403) {
-        return result.status;
-      } else if (result.status === 500) {
-        return result.status;
-      } else if (result.status === 200) {
-        localStorage.setItem(LOCAL_STORAGE_KEY__USER, JSON.stringify(result.data?.user));
-        setUser(result.data?.user);
-        return result.status;
-      }
+      localStorage.setItem(LOCAL_STORAGE_KEY__USER, JSON.stringify(result.data?.user));
+      setUser(result.data?.user);
+      return result.status;
     }
   }, []);
 

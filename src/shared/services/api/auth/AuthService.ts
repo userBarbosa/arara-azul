@@ -19,11 +19,31 @@ const login = async (email: string, password: string | undefined) => {
 };
 
 const forgotPassword = async (email: string) => {
-  // todo
+  return await Api
+  .post(FORGOT_PASSWORD_URL, JSON.stringify({email}))
+  .then(response => {
+    return response;
+  })
+  .catch(error => {
+    if (error.message === 'Network Error') {
+      return error.message;
+    }
+    return error.response;
+  });
 };
 
-const resetPassword = async (password: string | undefined, confirmPassword: string | undefined) => {
-  // todo
+const resetPassword = async (password: string | undefined) => {
+  return await Api
+  .post(RESET_PASSWORD_URL, JSON.stringify({password}))
+  .then(response => {
+    return response;
+  })
+  .catch(error => {
+    if (error.message === 'Network Error') {
+      return error.message;
+    }
+    return error.response;
+  });
 };
 
 export const AuthService = {

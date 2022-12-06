@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Box, Grid, LinearProgress, MenuItem, Paper } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
 import * as yup from 'yup';
@@ -6,7 +6,7 @@ import * as yup from 'yup';
 import { VTextField, VForm, useVForm, IVFormErrors, VSelect, VPatternFormat } from '../../shared/forms';
 import { BaseLayoutPage } from '../../shared/layouts';
 import { DetailTools } from '../../shared/components';
-import { EmployeesService, IDetailEmployee } from '../../shared/services/api/employees/EmployeesService';
+import { EmployeesService } from '../../shared/services/api/employees/EmployeesService';
 import { toast } from 'react-toastify';
 import { isValid as isValidCPF } from '@fnando/cpf';
 import { typeStringToStringEnUs, removeInvalidCharacters, specialtyStringToNumber, activeStringToBoolean, specialtyNumberToString, activeBooleanToString, typeStringEnUsToStringPtBr, formatDateToDatePicker } from '../../shared/helpers';
@@ -81,7 +81,7 @@ export const EmployeeUpdate: React.FC = () => {
       } else if (result.status === 403) {
         navigate('/403');
       } else if (result.status === 404) {
-        navigate('/404');
+        navigate('/500');
       } else if (result.status === 500) {
         navigate('/500');
       } else if (result.status === 200) {
@@ -137,7 +137,7 @@ export const EmployeeUpdate: React.FC = () => {
             } else if (result.status === 403) {
               navigate('/403');
             } else if (result.status === 404) {
-              navigate('/404');
+              navigate('/500');
             } else if (result.status === 500) {
               navigate('/500');
             } else if (result.status === 200) {

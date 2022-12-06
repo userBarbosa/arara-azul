@@ -1,66 +1,93 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Box, Grid, Icon, IconButton, LinearProgress, Pagination, Paper, Table, TableBody, TableCell, TableContainer, TableFooter, TableHead, TableRow, Theme, Typography, useMediaQuery } from '@mui/material';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import { ListTools } from '../../shared/components';
 import { BaseLayoutPage } from '../../shared/layouts';
 
-import { useDebounce } from '../../shared/hooks';
 import { Environment } from '../../shared/environment';
 import { IListTutor, TutorsService } from '../../shared/services/api/tutors/TutorsService';
+import { formatDocumentNumber, formatPhoneNumber, formatZipCode, removeInvalidCharacters } from '../../shared/helpers';
 
 
 export const TutorsList: React.FC = () => {
   const xldown = useMediaQuery((theme: Theme) => theme.breakpoints.down('xl'));
   const xlup = useMediaQuery((theme: Theme) => theme.breakpoints.up('xl'));
 
-  const [searchParams, setSearchParams] = useSearchParams();
-  const { debounce } = useDebounce();
+  const [name, setName] = useState('');
   const navigate = useNavigate();
 
-  const [rows, setRows] = useState<IListTutor[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [data, setData] = useState<IListTutor[]>([]);
   const [totalCount, setTotalCount] = useState(0);
+  const [foundTutors, setFoundTutors] = useState(data);
 
+  const [page, setPage] = useState(1);
+  const handlePageChange = (
+    event: React.ChangeEvent<unknown>,
+    newPage: number,
+  ) => {
+    setPage(newPage);
+  };
 
-  const search = useMemo(() => {
-    return searchParams.get('search') || '';
-  }, [searchParams]);
+  const filter = (text: string) => {
+    const keyword = text;
 
-  const page = useMemo(() => {
-    return Number(searchParams.get('page') || '1');
-  }, [searchParams]);
+    if (keyword !== '') {
+      const results = data.filter((tutor) => {
+        const name = tutor.name === undefined || tutor.name === null ? '' : tutor.name
+        return name.toLowerCase().startsWith(keyword.toLowerCase());
+      });
+      setTotalCount(results.length);
+      setFoundTutors(results);
+    } else {
+      setTotalCount(data.length);
+      setFoundTutors(data);
+    }
 
+    setName(keyword);
+  };
+
+  const indexOfLastData = page * Environment.LIMIT;
+  const indexOfFirstData = indexOfLastData - Environment.LIMIT;
+  const currentData = foundTutors.slice(indexOfFirstData, indexOfLastData);
+
+  const [isLoading, setIsLoading] = useState(true);
+
+  const getTokenCurrentUser = () => {
+    const _user = localStorage.getItem('APP_USER');
+  
+    if (_user) {
+      const obj = JSON.parse(_user);
+      return obj.token;
+    }
+  };
 
   useEffect(() => {
     setIsLoading(true);
 
-    debounce(() => {
-      TutorsService.getAll(page, search)
-        .then((result) => {
-          setIsLoading(false);
+    TutorsService.getAll(getTokenCurrentUser())
+      .then((result) => {
+        setIsLoading(false);
 
-          if (result instanceof Error) {
-            // console.log(result.message);
-          } else {
-            setTotalCount(result.totalCount);
-            setRows(result.data);
-          }
-        });
-    });
-  }, [search, page]);
-
-  const [data, setData] = useState<IListTutor[]>([]);
-
-  useEffect(() => {
-    const getData = async () => {
-      const data = await (
-        await fetch('https://finalspaceapi.com/api/v0/character/')
-      ).json();
-      setData(data);
-    };
-
-    getData();
+        if (result === 'Network Error') {
+          navigate('/400');
+        } else if (result.status === 400) {
+          navigate('/400');
+        } else if (result.status === 401) {
+          localStorage.removeItem('APP_USER');
+          navigate('/401');
+        } else if (result.status === 403) {
+          navigate('/403');
+        } else if (result.status === 404) {
+          navigate('/500');
+        } else if (result.status === 500) {
+          navigate('/500');
+        } else if (result.status === 200) {
+          setTotalCount(result.data.length);
+          setData(result.data);
+          setFoundTutors(result.data);
+        }
+      });
   }, []);
 
   return (
@@ -69,9 +96,9 @@ export const TutorsList: React.FC = () => {
       toolbar={
         <ListTools
           showInputSearch
-          searchText={search}
+          searchText={name}
           onClickButtonAdd={() => navigate('/tutores/inserir')}
-          onChangeSearchText={text => setSearchParams({ search: text, page: '1' }, { replace: true })}
+          onChangeSearchText={text => filter(text)}
         />
       }
     >
@@ -162,101 +189,24 @@ export const TutorsList: React.FC = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {/* {rows.map(row => (
-              <TableRow key={row.id}>
-                <TableCell>{row.name}</TableCell>
-                <TableCell>{row.email}</TableCell>
-                <TableCell>{row.telephoneNumber}</TableCell>
-                <TableCell>{row.identificationNumber}</TableCell>
-                <TableCell>{row.address}</TableCell>
-                <TableCell>{row.patientsName}</TableCell>
+              {currentData.map(tutor => (
+              <TableRow key={tutor.id}>
+                <TableCell>{tutor.name === undefined || tutor.name === null ? '' : tutor.name}</TableCell>
+                <TableCell>{tutor.email === undefined || tutor.email === null ? '' : tutor.email}</TableCell>
+                <TableCell>{tutor.phoneNumber === undefined || tutor.phoneNumber === null ? '' : formatPhoneNumber(removeInvalidCharacters(tutor.phoneNumber))}</TableCell>
+                <TableCell>{tutor.documentNumber === undefined || tutor.documentNumber === null ? '' : formatDocumentNumber(removeInvalidCharacters(tutor.documentNumber))}</TableCell>
+                <TableCell>{tutor.address === undefined || tutor.address === null ? '' : `${tutor.address.streetName}, ${tutor.address.number}, ${tutor.address.neighborhood} - ${formatZipCode(removeInvalidCharacters(tutor.address.zipCode!))}, ${tutor.address.city} - ${tutor.address.state}`}</TableCell>
+                <TableCell>{tutor.patientsName === undefined || tutor.patientsName === null ? '' : tutor.patientsName.join(' | ')}</TableCell>
                 <TableCell>
-                  <IconButton size="small" onClick={() => navigate(`/tutores/atualizar//${row.id}`)}>
+                  <IconButton size="small" onClick={() => navigate(`/tutores/atualizar/${tutor.id}`)}>
                     <Icon>edit</Icon>
                   </IconButton>
-                  <IconButton size="small" onClick={() => navigate(`/tutores/detalhe/${row.id}`)}>
+                  <IconButton size="small" onClick={() => navigate(`/tutores/detalhe/${tutor.id}`)}>
                     <Icon>visibility</Icon>
                   </IconButton>
                 </TableCell>
               </TableRow>
-            ))} */}
-              <TableRow>
-                <TableCell>
-                  <Typography
-                    variant='body2'
-                    overflow='hidden'
-                    whiteSpace='nowrap'
-                    textOverflow='ellipsis'
-                  >
-                  Kauã Claudino Loureiro
-                  </Typography>
-                </TableCell>
-
-                <TableCell>
-                  <Typography
-                    variant='body2'
-                    overflow='hidden'
-                    whiteSpace='nowrap'
-                    textOverflow='ellipsis'
-                  >
-                  kaua.loureiro@gmail.com
-                  </Typography>
-                </TableCell>
-
-                <TableCell>
-                  <Typography
-                    variant='body2'
-                    overflow='hidden'
-                    whiteSpace='nowrap'
-                    textOverflow='ellipsis'
-                  >
-                  (11) 98028-7824
-                  </Typography>
-                </TableCell>
-
-                <TableCell>
-                  <Typography
-                    variant='body2'
-                    overflow='hidden'
-                    whiteSpace='nowrap'
-                    textOverflow='ellipsis'
-                  >
-                  757.817.228-07
-                  </Typography>
-                </TableCell>
-
-                <TableCell>
-                  <Typography
-                    variant='body2'
-                    overflow='hidden'
-                    whiteSpace='nowrap'
-                    textOverflow='ellipsis'
-                  >
-                  Rua Nice, 110A, Jardim Mediterrâneo, 06708-710, Cotia - SP
-                  </Typography>
-                </TableCell>
-
-                <TableCell>
-                  <Typography
-                    variant='body2'
-                    overflow='hidden'
-                    whiteSpace='nowrap'
-                    textOverflow='ellipsis'
-                  >
-                  Rex | Maia
-                  </Typography>
-                </TableCell>
-
-                <TableCell sx={{ display: 'flex', flexDirection: 'row' }}>
-                  <IconButton size="small" onClick={() => navigate('/tutores/atualizar/1')}>
-                    <Icon>edit</Icon>
-                  </IconButton>
-                  <IconButton size="small" onClick={() => navigate('/tutores/detalhe/1')}>
-                    <Icon>visibility</Icon>
-                  </IconButton>
-                </TableCell>
-
-              </TableRow>
+            ))}
             </TableBody>
 
             {totalCount === 0 && !isLoading && (
@@ -277,7 +227,7 @@ export const TutorsList: React.FC = () => {
                     <Pagination
                       page={page}
                       count={Math.ceil(totalCount / Environment.LIMIT)}
-                      onChange={(_, newPage) => setSearchParams({ search, page: newPage.toString() }, { replace: true })}
+                      onChange={handlePageChange}
                     />
                   </TableCell>
                 </TableRow>
@@ -290,7 +240,7 @@ export const TutorsList: React.FC = () => {
         <Box display='flex' flexDirection='column' alignItems='center' margin={2}>
 
           <Box>
-            {data.length < 1 && !isLoading && (
+            {totalCount === 0 && !isLoading && (
               <Box>
                 <Typography variant='h6' sx={{ color: '#006BBF' }}>
                   {Environment.EMPTY_LIST}
@@ -305,7 +255,7 @@ export const TutorsList: React.FC = () => {
           </Box>
           <Box>
             <Grid container justifyContent="center">
-              {data.map(tutor => (
+              {currentData.map(tutor => (
                 <Grid key={tutor.id} item xs={12} sm={8} md={4} lg={3} maxWidth={'300px'} margin={1} padding={2} borderRadius={5} bgcolor={'background.paper'}>
                   
                   <Box display='flex' flexDirection='column'>
@@ -316,7 +266,7 @@ export const TutorsList: React.FC = () => {
                         whiteSpace='nowrap'
                         textOverflow='ellipsis'
                       >
-                          Nome:
+                        Nome:
                       </Typography>
                     </Box>
                   
@@ -327,7 +277,7 @@ export const TutorsList: React.FC = () => {
                         whiteSpace='nowrap'
                         textOverflow='ellipsis'
                       >
-                          Kauã Claudino Loureiro
+                        {tutor.name === undefined || tutor.name === null ? '' : tutor.name}
                       </Typography>
                     </Box>
 
@@ -353,7 +303,7 @@ export const TutorsList: React.FC = () => {
                         whiteSpace='nowrap'
                         textOverflow='ellipsis'
                       >
-                          kaua.loureiro@gmail.com
+                        {tutor.email === undefined || tutor.email === null ? '' : tutor.email}
                       </Typography>
                     </Box>
 
@@ -378,7 +328,7 @@ export const TutorsList: React.FC = () => {
                         whiteSpace='nowrap'
                         textOverflow='ellipsis'
                       >
-                          (11) 98028-7824
+                        {tutor.phoneNumber === undefined || tutor.phoneNumber === null ? '' : formatPhoneNumber(removeInvalidCharacters(tutor.phoneNumber))}
                       </Typography>
                     </Box>
 
@@ -403,7 +353,7 @@ export const TutorsList: React.FC = () => {
                         whiteSpace='nowrap'
                         textOverflow='ellipsis'
                       >
-                          757.817.228-07
+                        {tutor.documentNumber === undefined || tutor.documentNumber === null ? '' : formatDocumentNumber(removeInvalidCharacters(tutor.documentNumber))}
                       </Typography>
                     </Box>
 
@@ -428,7 +378,7 @@ export const TutorsList: React.FC = () => {
                         whiteSpace='nowrap'
                         textOverflow='ellipsis'
                       >
-                        Rua Nice, 110A, Jardim Mediterrâneo, 06708-710, Cotia - SP
+                        {tutor.address === undefined || tutor.address === null ? '' : `${tutor.address.streetName}, ${tutor.address.number}, ${tutor.address.neighborhood} - ${formatZipCode(removeInvalidCharacters(tutor.address.zipCode!))}, ${tutor.address.city} - ${tutor.address.state}`}
                       </Typography>
                     </Box>
 
@@ -453,7 +403,7 @@ export const TutorsList: React.FC = () => {
                         whiteSpace='nowrap'
                         textOverflow='ellipsis'
                       >
-                        Rex | Maia
+                        {tutor.patientsName === undefined || tutor.patientsName === null ? '' : tutor.patientsName.join(' | ')}
                       </Typography>
                     </Box>
 
@@ -467,7 +417,7 @@ export const TutorsList: React.FC = () => {
                         whiteSpace='nowrap'
                         textOverflow='ellipsis'
                       >
-                      Opções:
+                        Opções:
                       </Typography>
                     </Box>
 
@@ -491,7 +441,7 @@ export const TutorsList: React.FC = () => {
                 size="small"
                 page={page}
                 count={Math.ceil(totalCount / Environment.LIMIT)}
-                onChange={(_, newPage) => setSearchParams({ search, page: newPage.toString() }, { replace: true })}
+                onChange={handlePageChange}
               />
             </Box>
           )}

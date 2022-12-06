@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Autocomplete, CircularProgress, TextField } from '@mui/material';
-
+import { useNavigate } from 'react-router-dom';
 import { useDebounce } from '../../../shared/hooks';
 import { useField } from '@unform/core';
 import { EmployeesService } from '../../../shared/services/api/employees/EmployeesService';
@@ -24,6 +24,17 @@ export const AutocompleteEmployee: React.FC<IAutocompleteEmployeeProps> = ({ isE
   const [isLoading, setIsLoading] = useState(false);
   const [search, setSearch] = useState('');
 
+  const navigate = useNavigate();
+
+  const getTokenCurrentUser = () => {
+    const _user = localStorage.getItem('APP_USER');
+  
+    if (_user) {
+      const obj = JSON.parse(_user);
+      return obj.token;
+    }
+  };
+
   useEffect(() => {
     registerField({
       name: fieldName,
@@ -35,18 +46,29 @@ export const AutocompleteEmployee: React.FC<IAutocompleteEmployeeProps> = ({ isE
   useEffect(() => {
     setIsLoading(true);
 
-    // debounce(() => {
-    //   EmployeesService.getAll()
-    //     .then((result) => {
-    //       setIsLoading(false);
+    debounce(() => {
+      EmployeesService.getAll(getTokenCurrentUser())
+        .then((result) => {
+          setIsLoading(false);
 
-    //       if (result instanceof Error) {
-    //         // alert(result.message);
-    //       } else {
-    //         setOptions(result.data.map(employee => ({ id: employee.id, label: employee.name })));
-    //       }
-    //     });
-    // });
+          if (result === 'Network Error') {
+            navigate('/400');
+          } else if (result.status === 400) {
+            navigate('/400');
+          } else if (result.status === 401) {
+            localStorage.removeItem('APP_USER');
+            navigate('/401');
+          } else if (result.status === 403) {
+            navigate('/403');
+          } else if (result.status === 404) {
+            navigate('/500');
+          } else if (result.status === 500) {
+            navigate('/500');
+          } else if (result.status === 200) {
+            setOptions(result.data.map((tutor: { id: string; name: string; }) => ({ id: tutor.id, label: tutor.name })));
+          }
+        });
+    });
   }, []);
 
   const autoCompleteSelectedOption = useMemo(() => {

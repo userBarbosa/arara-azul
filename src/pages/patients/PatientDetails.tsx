@@ -1,7 +1,11 @@
+import { useEffect, useState } from 'react';
 import { Box, Paper, Theme, Typography, useMediaQuery, useTheme } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { DetailTools } from '../../shared/components';
 import { BaseLayoutPage } from '../../shared/layouts';
+import { IDetailPatient, PatientsService } from '../../shared/services/api/patients/PatientsService';
+import { allergyNumberToString, allergyStringToString, formatDateToString, onTreatmentBooleanToString, onTreatmentStringToString, sexNumberToString, sexStringToString, specieNumberToString, specieStringToString } from '../../shared/helpers';
+import { IDetailTutor, TutorsService } from '../../shared/services/api/tutors/TutorsService';
 
 export const PatientDetails: React.FC = () => {
   const mddown = useMediaQuery((theme: Theme) => theme.breakpoints.down('md'));
@@ -9,6 +13,94 @@ export const PatientDetails: React.FC = () => {
 
   const theme = useTheme();
   const navigate = useNavigate();
+
+  const { id } = useParams<'id'>();
+  const [data, setData] = useState<IDetailPatient>({
+    id: id!,
+    tutorId: '',
+    name: '',
+    bloodType: '',
+    observation: '',
+    species: 0,
+    allergy: 0,
+    sex: 0,
+    birthDate: undefined,
+    onTreatment: true,
+    weight: 0,
+  });
+
+  const [tutor, setTutor] = useState<IDetailTutor>({
+    id: data.tutorId!,
+    name: '',
+    email: '',
+    documentNumber: '',
+    phoneNumber: '',
+    observation: '',
+    patientsName: [''],
+    address: {
+      zipCode: '',
+      state: '',
+      city: '',
+      neighborhood: '',
+      streetName: '',
+      number: '',
+      complement: '',
+    }
+  });
+
+  const getTokenCurrentUser = () => {
+    const _user = localStorage.getItem('APP_USER');
+  
+    if (_user) {
+      const obj = JSON.parse(_user);
+      return obj.token;
+    }
+  };
+
+  useEffect(() => {
+    PatientsService.getById(id!, getTokenCurrentUser())
+      .then((result) => {
+
+        if (result === 'Network Error') {
+          navigate('/400');
+        } else if (result.status === 400) {
+          navigate('/400');
+        } else if (result.status === 401) {
+          localStorage.removeItem('APP_USER');
+          navigate('/401');
+        } else if (result.status === 403) {
+          navigate('/403');
+        } else if (result.status === 404) {
+          navigate('/500');
+        } else if (result.status === 500) {
+          navigate('/500');
+        } else if (result.status === 200) {
+          setData(result.data);
+        }
+      });
+
+    TutorsService.getById(data.tutorId!, getTokenCurrentUser())
+    .then((result) => {
+
+      if (result === 'Network Error') {
+        navigate('/400');
+      } else if (result.status === 400) {
+        navigate('/400');
+      } else if (result.status === 401) {
+        localStorage.removeItem('APP_USER');
+        navigate('/401');
+      } else if (result.status === 403) {
+        navigate('/403');
+      } else if (result.status === 404) {
+        navigate('/500');
+      } else if (result.status === 500) {
+        navigate('/500');
+      } else if (result.status === 200) {
+        setTutor(result.data);
+      }
+    });
+  }, []);
+
 
   return (
     <BaseLayoutPage
@@ -35,7 +127,7 @@ export const PatientDetails: React.FC = () => {
               Tutor:
             </Typography>
             <Typography variant='body2' sx={{ color: '#000000' }}>
-              Kauã Claudino Loureiro
+              {tutor.name === undefined || tutor.name === null ? '' : tutor.name}
             </Typography>
           </Box>
 
@@ -44,7 +136,7 @@ export const PatientDetails: React.FC = () => {
               Nome:
             </Typography>
             <Typography variant='body2' sx={{ color: '#000000' }}>
-              Maia
+              {data.name === undefined || data.name === null ? '' : data.name}
             </Typography>
           </Box>
 
@@ -53,7 +145,7 @@ export const PatientDetails: React.FC = () => {
               Data de Nascimento:
             </Typography>
             <Typography variant='body2' sx={{ color: '#000000' }}>
-              30/11/2020
+              {data.birthDate === undefined || data.birthDate === null ? '' : formatDateToString(data.birthDate)}
             </Typography>
           </Box>
 
@@ -62,7 +154,7 @@ export const PatientDetails: React.FC = () => {
               Tipo Sanguineo:
             </Typography>
             <Typography variant='body2' sx={{ color: '#000000' }}>
-              DEA 3
+              {data.bloodType === undefined || data.bloodType === null ? '' : data.bloodType}
             </Typography>
           </Box>
 
@@ -71,7 +163,7 @@ export const PatientDetails: React.FC = () => {
               Sexo:
             </Typography>
             <Typography variant='body2' sx={{ color: '#000000' }}>
-              Fêmea
+              {data.sex === undefined || data.sex === null ? '' : sexStringToString(sexNumberToString(data.sex))}
             </Typography>
           </Box>
 
@@ -80,7 +172,7 @@ export const PatientDetails: React.FC = () => {
               Espécie:
             </Typography>
             <Typography variant='body2' sx={{ color: '#000000' }}>
-              Cachorro
+              {data.species === undefined || data.species === null ? '' : specieStringToString(specieNumberToString(data.species))}
             </Typography>
           </Box>
 
@@ -89,7 +181,7 @@ export const PatientDetails: React.FC = () => {
               Em Tratamento:
             </Typography>
             <Typography variant='body2' sx={{ color: '#000000' }}>
-              Não
+              {data.onTreatment === undefined || data.onTreatment === null ? '' : onTreatmentStringToString(onTreatmentBooleanToString(data.onTreatment))}
             </Typography>
           </Box>
 
@@ -98,7 +190,7 @@ export const PatientDetails: React.FC = () => {
               Alergias:
             </Typography>
             <Typography variant='body2' sx={{ color: '#000000' }}>
-              Abelha
+              {data.allergy === undefined || data.allergy === null ? '' : allergyStringToString(allergyNumberToString(data.allergy))}
             </Typography>
           </Box>
 
@@ -107,7 +199,7 @@ export const PatientDetails: React.FC = () => {
               Peso:
             </Typography>
             <Typography variant='body2' sx={{ color: '#000000' }}>
-              8 kg
+              {data.weight === undefined || data.weight === null ? '' : `${data.weight} kg`}
             </Typography>
           </Box>
 
@@ -116,6 +208,7 @@ export const PatientDetails: React.FC = () => {
               Observação:
             </Typography>
             <Typography variant='body2' sx={{ color: '#000000' }}>
+              {data.observation === undefined || data.observation === null ? '' : data.observation}
             </Typography>
           </Box>
           

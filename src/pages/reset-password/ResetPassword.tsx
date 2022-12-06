@@ -66,13 +66,65 @@ export const ResetPassword: React.FC = () => {
     resetPasswordSchema
       .validate({ newPassword, confirmNewPassword }, { abortEarly: false })
       .then(dadosValidados => {
-        resetPassword(dadosValidados.newPassword, dadosValidados.confirmNewPassword)
-          .then(() => {
-            setIsLoading(false);
-            toast.success('Senha alterada com sucesso!', {
-              position: toast.POSITION.BOTTOM_CENTER
-            });
-            navigate('/login');
+        resetPassword(dadosValidados.newPassword)
+          .then((result) => {
+            if (result === 'Network Error') {
+              setIsLoading(false);
+              setNewPassword('');
+              setConfirmNewPassword('');
+              toast.error('Ocorreu um problema, tente novamente!', {
+                position: toast.POSITION.BOTTOM_CENTER
+              });
+              navigate('/400');
+            } else if (result === 400) {
+              setIsLoading(false);
+              setNewPassword('');
+              setConfirmNewPassword('');
+              toast.error('Ocorreu um problema, tente novamente!', {
+                position: toast.POSITION.BOTTOM_CENTER
+              });
+              navigate('/400');
+            } else if (result === 401) {
+              setIsLoading(false);
+              setNewPassword('');
+              setConfirmNewPassword('');
+              toast.error('Ocorreu um problema, tente novamente!', {
+                position: toast.POSITION.BOTTOM_CENTER
+              });
+              navigate('/401');
+            } else if (result === 403) {
+              setIsLoading(false);
+              setNewPassword('');
+              setConfirmNewPassword('');
+              toast.error('Ocorreu um problema, tente novamente!', {
+                position: toast.POSITION.BOTTOM_CENTER
+              });
+              navigate('/403');
+            } else if (result === 404) {
+              setIsLoading(false);
+              setNewPassword('');
+              setConfirmNewPassword('');
+              toast.error('Ocorreu um problema, tente novamente!', {
+                position: toast.POSITION.BOTTOM_CENTER
+              });
+              navigate('/500');
+            } else if (result === 500) {
+              setIsLoading(false);
+              setNewPassword('');
+              setConfirmNewPassword('');
+              toast.error('Ocorreu um problema, tente novamente!', {
+                position: toast.POSITION.BOTTOM_CENTER
+              });
+              navigate('/500');
+            } else if (result === 200) {
+              setIsLoading(false);
+              setNewPassword('');
+              setConfirmNewPassword('');
+              toast.success('Senha alterada com sucesso!', {
+                position: toast.POSITION.BOTTOM_CENTER
+              });
+              navigate('/login');
+            }
           })
           .catch(() => {
             toast.error('Ocorreu um problema, tente novamente!', {

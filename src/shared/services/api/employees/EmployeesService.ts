@@ -2,36 +2,36 @@ import { Api } from '../axios-config';
 
 export interface IListEmployee {
     id: string;
-    name?: string | undefined;
-    email?: string | undefined;
-    type?: string | undefined;
-    emailConfirmed?: Date | undefined;
-    phoneNumber?: string | undefined;
-    documentNumber?: string | undefined;
-    medicalLicense?: string | undefined;
-    specialty?: number | undefined;
-    active?: boolean | undefined;
-    birthDate?: Date | undefined;
-    observation?: string | undefined;
+    name?: string;
+    email?: string;
+    type?: string;
+    emailConfirmed?: Date;
+    phoneNumber?: string;
+    documentNumber?: string;
+    medicalLicense?: string;
+    specialty?: number;
+    active?: boolean;
+    birthDate?: Date;
+    observation?: string;
   }
   
 export interface IDetailEmployee {
     id: string;
-    name?: string | undefined;
-    email?: string | undefined;
-    type?: string | undefined;
-    emailConfirmed?: Date | undefined;
-    phoneNumber?: string | undefined;
-    documentNumber?: string | undefined;
-    medicalLicense?: string | undefined;
-    specialty?: number | undefined;
-    active?: boolean | undefined;
-    birthDate?: Date | undefined;
-    observation?: string | undefined;
+    name?: string;
+    email?: string;
+    type?: string;
+    emailConfirmed?: Date;
+    phoneNumber?: string;
+    documentNumber?: string;
+    medicalLicense?: string;
+    specialty?: number;
+    active?: boolean;
+    birthDate?: Date;
+    observation?: string;
   }
 
 const CREATE_USER = '/users/signup';
-const UPDATE_USER = '/users/';
+const UPDATE_USER_BY_ID = '/users/';
 const GET_USER_BY_ID = '/users/';
 const GET_ALL_USERS = '/users';
 
@@ -88,7 +88,7 @@ const create = async (dados: Omit<IDetailEmployee, 'id'>, token: string) => {
 
 const updateById = async (id: string, dados: IDetailEmployee, token: string) => {
   return await Api
-    .patch(`${UPDATE_USER}${id}`, dados, {
+    .patch(`${UPDATE_USER_BY_ID}${id}`, dados, {
       headers: {
         'x-api-token': token
     }})

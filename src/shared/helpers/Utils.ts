@@ -21,6 +21,18 @@ export const formatDateToDatePicker = (date: Date) => {
   return new Date(date).toLocaleDateString('en-CA');
 };
 
+export const formatDateToDateTimePicker = (date: Date) => {
+  return new Date(date).toLocaleDateString('nl-NL');
+};
+
+export const formatStringToArray = (value: string) => {
+  return value.split(' | ');
+};
+
+export const formatNumberToString = (value: number) => {
+  return value.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
+};
+
 export const removeInvalidCharacters= (value: string) => {
   return value.replace(/[^0-9]/g, '');
 };
@@ -155,7 +167,7 @@ export const specialtyStringToString = (specialty: string) => {
   }
 };
 
-export const sexStringToInteger = (sex: string) => {
+export const sexStringToNumber = (sex: string) => {
   switch (sex) {
   case 'femea':
     return 1;
@@ -170,6 +182,8 @@ export const sexNumberToString = (sex: number) => {
     return 'femea';
   case 2:
     return 'macho';
+  default:
+    return '';
   }
 };
 
@@ -182,7 +196,7 @@ export const sexStringToString = (sex: string) => {
   }
 };
 
-export const specieStringToInteger = (specie: string) => {
+export const specieStringToNumber = (specie: string) => {
   switch (specie) {
   case 'gato':
     return 1;
@@ -225,10 +239,35 @@ export const specieNumberToString = (specie: number) => {
     return 'fazenda';
   case 256:
     return 'marinho';
+  default:
+    return '';
   }
 };
 
-export const allergyStringToInteger = (allergy: string) => {
+export const specieStringToString = (specie: string) => {
+  switch (specie) {
+  case 'gato':
+    return 'Gato';
+  case 'cachorro':
+    return 'Cachorro';
+  case 'ave':
+    return 'Ave';
+  case 'peixe':
+    return 'Peixe';
+  case 'roedor':
+    return 'Roedor';
+  case 'reptil':
+    return 'Réptil';
+  case 'selvagem':
+    return 'Selvagem';
+  case 'fazenda':
+    return 'Fazenda';
+  case 'marinho':
+    return 'Marinho';
+  }
+};
+
+export const allergyStringToNumber = (allergy: string) => {
   switch (allergy) {
   case 'alergia-pulga':
     return 1;
@@ -255,6 +294,23 @@ export const allergyNumberToString = (allergy: number) => {
     return 'alergia-medicamento';
   case 16:
     return 'outra';
+  default:
+    return '';
+  }
+};
+
+export const allergyStringToString = (allergy: string) => {
+  switch (allergy) {
+  case 'alergia-pulga':
+    return 'Alergia a Pulga';
+  case 'alergia-dermatologica':
+    return 'Alergia Dermatológica';
+  case 'alergia-alimentar':
+    return 'Alergia Alimentar';
+  case 'alergia-medicamento':
+    return 'Alergia a Medicamentos';
+  case 'outra':
+    return 'Outras';
   }
 };
 
@@ -266,7 +322,11 @@ export const onTreatmentStringToBoolean = (onTreatment: string) => {
   return onTreatment === 'sim' ? true : false;
 };
 
-export const appointmentStateStringToInteger = (appointmentState: string) => {
+export const onTreatmentStringToString = (onTreatment: string) => {
+  return onTreatment === 'sim' ? 'Sim' : 'Não';
+};
+
+export const appointmentStateStringToNumber = (appointmentState: string) => {
   switch (appointmentState) {
   case 'rascunho':
     return 1;
@@ -282,6 +342,8 @@ export const appointmentStateStringToInteger = (appointmentState: string) => {
     return 32;
   case 'excluida':
     return 64;
+  default:
+    return 0;
   }
 };
 
@@ -301,10 +363,31 @@ export const appointmentStateNumberToString = (appointmentState: number) => {
     return 'paga';
   case 64:
     return 'excluida';
+  default:
+    return '';
   }
 };
 
-export const paymentMethodStringToInteger = (paymentMethod: string) => {
+export const appointmentStateStringToString = (appointmentState: string) => {
+  switch (appointmentState) {
+  case 'rascunho':
+    return 'Rascunho';
+  case 'registrada':
+    return 'Registrada';
+  case 'agendada':
+    return 'Agendada';
+  case 'realizada':
+    return 'Realizada';
+  case 'cancelada':
+    return 'Cancelada';
+  case 'paga':
+    return 'Paga';
+  case 'excluida':
+    return 'Excluída';
+  }
+};
+
+export const paymentMethodStringToNumber = (paymentMethod: string) => {
   switch (paymentMethod) {
   case 'cartao-credito':
     return 1;
@@ -314,6 +397,8 @@ export const paymentMethodStringToInteger = (paymentMethod: string) => {
     return 4;
   case 'pix':
     return 8;
+  default:
+    return 0;
   }
 };
 
@@ -327,10 +412,25 @@ export const paymentMethodNumberToString = (paymentMethod: number) => {
     return 'dinheiro';
   case 8:
     return 'pix';
+  default:
+    return '';
   }
 };
 
-export const reasonStringToInteger = (reason: string) => {
+export const paymentMethodStringToString = (paymentMethod: string) => {
+  switch (paymentMethod) {
+  case 'cartao-credito':
+    return 'Cartão de Crédito';
+  case 'cartao-debito':
+    return 'Cartão de Débito';
+  case 'dinheiro':
+    return 'Dinheiro';
+  case 'pix':
+    return 'Pix';
+  }
+};
+
+export const reasonStringToNumber = (reason: string) => {
   switch (reason) {
   case 'emergencia':
     return 1;
@@ -342,6 +442,8 @@ export const reasonStringToInteger = (reason: string) => {
     return 8;
   case 'cirurgia':
     return 16;
+  default:
+    return 0;
   }
 };
 
@@ -357,5 +459,22 @@ export const reasonNumberToString = (reason: number) => {
     return 'exame';
   case 16:
     return 'cirurgia';
+  default:
+    return '';
+  }
+};
+
+export const reasonStringToString = (reason: string) => {
+  switch (reason) {
+  case 'emergencia':
+    return 'Emergência';
+  case 'rotina':
+    return 'Rotina';
+  case 'check-up':
+    return 'Check-Up';
+  case 'exame':
+    return 'Exame';
+  case 'cirurgia':
+    return 'Cirurgia';
   }
 };

@@ -51,7 +51,7 @@ export const EmployeeDetails: React.FC = () => {
         } else if (result.status === 403) {
           navigate('/403');
         } else if (result.status === 404) {
-          navigate('/404');
+          navigate('/500');
         } else if (result.status === 500) {
           navigate('/500');
         } else if (result.status === 200) {

@@ -6,8 +6,8 @@ interface IAuthContextData {
   getCurrentUser: () => any;
   isAuthenticated: () => boolean;
   login: (email: string, password: string | undefined) => Promise<number | string | void>;
-  forgotPassword: (email: string) => Promise<string | void>;
-  resetPassword: (password: string | undefined, confirmPassword: string | undefined) => Promise<string | void>;
+  forgotPassword: (email: string) => Promise<number | string | void>;
+  resetPassword: (password: string | undefined) => Promise<number | string | void>;
 }
 
 const AuthContext = createContext({} as IAuthContextData);
@@ -46,11 +46,27 @@ export const AuthProvider: React.FC<IAuthProviderProps> = ({ children }) => {
   }, []);
 
   const handleForgotPassword = useCallback(async (email: string) => {
-    // todo
+    const result = await AuthService.forgotPassword(email);
+
+    if (result.message === 'Network Error') {
+      return result.message;
+    } else if (result.status !== 200) {
+      return result.status;
+    } else {
+      return result.status;
+    }
   }, []);
 
-  const handleResetPassword = useCallback(async (password: string | undefined, confirmPassword: string | undefined) => {
-    // todo
+  const handleResetPassword = useCallback(async (password: string | undefined) => {
+    const result = await AuthService.resetPassword(password);
+
+    if (result.message === 'Network Error') {
+      return result.message;
+    } else if (result.status !== 200) {
+      return result.status;
+    } else {
+      return result.status;
+    }
   }, []);
 
   const handleLogout = useCallback(() => {

@@ -31,11 +31,56 @@ export const ForgotPassword: React.FC = () => {
       .validate({ email }, { abortEarly: false })
       .then(dadosValidados => {
         forgotPassword(dadosValidados.email)
-          .then(() => {
-            setIsLoading(false);
-            toast.success('Verifique seu e-mail!', {
-              position: toast.POSITION.BOTTOM_CENTER
-            });
+          .then((result) => {
+            if (result === 'Network Error') {
+              setIsLoading(false);
+              setEmail('');
+              toast.error('Ocorreu um problema, tente novamente!', {
+                position: toast.POSITION.BOTTOM_CENTER
+              });
+              navigate('/400');
+            } else if (result === 400) {
+              setIsLoading(false);
+              setEmail('');
+              toast.error('Ocorreu um problema, tente novamente!', {
+                position: toast.POSITION.BOTTOM_CENTER
+              });
+              navigate('/400');
+            } else if (result === 401) {
+              setIsLoading(false);
+              setEmail('');
+              toast.error('Ocorreu um problema, tente novamente!', {
+                position: toast.POSITION.BOTTOM_CENTER
+              });
+              navigate('/401');
+            } else if (result === 403) {
+              setIsLoading(false);
+              setEmail('');
+              toast.error('Ocorreu um problema, tente novamente!', {
+                position: toast.POSITION.BOTTOM_CENTER
+              });
+              navigate('/403');
+            } else if (result === 404) {
+              setIsLoading(false);
+              setEmail('');
+              toast.error('Ocorreu um problema, tente novamente!', {
+                position: toast.POSITION.BOTTOM_CENTER
+              });
+              navigate('/500');
+            } else if (result === 500) {
+              setIsLoading(false);
+              setEmail('');
+              toast.error('Ocorreu um problema, tente novamente!', {
+                position: toast.POSITION.BOTTOM_CENTER
+              });
+              navigate('/500');
+            } else if (result === 200) {
+              setIsLoading(false);
+              toast.success('Verifique seu e-mail!', {
+                position: toast.POSITION.BOTTOM_CENTER
+              });
+              navigate('/login');
+            }
           })
           .catch(() => {
             toast.error('Ocorreu um problema, tente novamente!', {

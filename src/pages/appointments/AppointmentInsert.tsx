@@ -6,58 +6,65 @@ import * as yup from 'yup';
 import { VTextField, VForm, useVForm, IVFormErrors, VSelect, VNumericFormat } from '../../shared/forms';
 import { BaseLayoutPage } from '../../shared/layouts';
 import { DetailTools } from '../../shared/components';
-import { AutoCompleteTutor } from './components/AutocompleteTutor';
 import { AppointmentsService } from '../../shared/services/api/appointments/AppointmentsService';
+import { AutoCompleteTutor } from './components/AutocompleteTutor';
 import { AutocompletePatient } from './components/AutocompletePatient';
 import { AutocompleteEmployee } from './components/AutocompleteEmployee';
 import { toast } from 'react-toastify';
+import { appointmentStateStringToNumber, paymentMethodStringToNumber, reasonStringToNumber } from '../../shared/helpers';
 
 interface IFormData {
-  tutorId: number;
-  patientId: number;
-  employeeId: number;
-  date: string; 
+  patientId: string;
+  ownerId: string;
+  employeeId: string;
+  appointmentState: string;
+  observation: string | undefined;
+  paymentMethod: string;
   reason: string;
   value: number;
-  appointmentState: string;
-  paymentMethod: string;
-  observation: string | undefined;
+  date: Date;
 }
 
 const formValidationSchema: yup.SchemaOf<IFormData> = yup.object().shape({
-  tutorId: yup.number().required(),
-  patientId: yup.number().required(),
-  employeeId: yup.number().required(),
-  date: yup.string().required().min(3),
+  patientId: yup.string().required(),
+  ownerId: yup.string().required(),
+  employeeId: yup.string().required(),
+  appointmentState: yup.mixed().required().oneOf(['rascunho', 'registrada', 'agendada', 'realizada', 'cancelada', 'paga', 'excluida']).label('Selecione Uma Opção'),
+  observation: yup.string().notRequired(),
+  paymentMethod: yup.mixed().required().oneOf(['cartao-credito', 'cartao-debito', 'dinheiro', 'pix']).label('Selecione Uma Opção'),
   reason: yup.mixed().required().oneOf(['emergencia', 'rotina', 'check-up', 'exame', 'cirurgia']).label('Selecione Uma Opção'),
   value: yup.number().required(),
-  appointmentState: yup.mixed().required().oneOf(['rascunho', 'registrada', 'agendada', 'realizada', 'cancelada', 'paga', 'excluida']).label('Selecione Uma Opção'),
-  paymentMethod: yup.mixed().required().oneOf(['cartao-credito', 'cartao-debito', 'dinheiro', 'pix']).label('Selecione Uma Opção'),
-  observation: yup.string().notRequired(),
+  date: yup.date().min('1900-01-01T08:00').max(new Date().toLocaleDateString()).required(),
 });
 
 export const AppointmentInsert: React.FC = () => {
   const { formRef, save } = useVForm();
   const navigate = useNavigate();
 
-  const MAX_LIMIT = 50000;
-
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     formRef.current?.setData({
-      tutorId: undefined,
-      patientId: undefined,
-      employeeId: undefined,
+      patientId:  '',
+      ownerId:  '',
+      employeeId:  '',
+      appointmentState:  '',
+      observation:  '',
+      paymentMethod:  '',
+      reason:  '',
+      value: 0,
       date: '',
-      reason: '',
-      value: undefined,
-      appointmentState: '',
-      paymentMethod: '',
-      observation: '',
     });
   }, []);
 
+  const getTokenCurrentUser = () => {
+    const _user = localStorage.getItem('APP_USER');
+  
+    if (_user) {
+      const obj = JSON.parse(_user);
+      return obj.token;
+    }
+  };
 
   const handleSave = (dados: IFormData) => {
     formValidationSchema.
@@ -65,20 +72,44 @@ export const AppointmentInsert: React.FC = () => {
       .then((dadosValidados) => {
         setIsLoading(true);
 
-        AppointmentsService
-          .create(dadosValidados)
-          .then((result) => {
-            setIsLoading(false);
+        const data = {
+          id: '',
+          patientId: dadosValidados.patientId,
+          ownerId: dadosValidados.ownerId,
+          employeeId: dadosValidados.employeeId,
+          appointmentState: appointmentStateStringToNumber(dadosValidados.appointmentState),
+          observation: dadosValidados.observation,
+          paymentMethod: paymentMethodStringToNumber(dadosValidados.paymentMethod),
+          reason: reasonStringToNumber(dadosValidados.reason),
+          value: dadosValidados.value,
+          date: dadosValidados.date,
+        };
 
-            if (result instanceof Error) {
-              // alert(result.message);
-            } else {
-              navigate('/consultas');
-              toast.success('Cadastro realizado com Sucesso!', {
-                position: toast.POSITION.BOTTOM_CENTER
-              });
-            }
-          });
+        AppointmentsService
+        .create(data, getTokenCurrentUser())
+        .then((result) => {
+          setIsLoading(false);
+
+          if (result === 'Network Error') {
+            navigate('/400');
+          } else if (result.status === 400) {
+            navigate('/400');
+          } else if (result.status === 401) {
+            localStorage.removeItem('APP_USER');
+            navigate('/401');
+          } else if (result.status === 403) {
+            navigate('/403');
+          } else if (result.status === 404) {
+            navigate('/500');
+          } else if (result.status === 500) {
+            navigate('/500');
+          } else if (result.status === 200) {
+            navigate('/consultas');
+            toast.success('Cadastro realizado com Sucesso!', {
+              position: toast.POSITION.BOTTOM_CENTER
+            });
+          }
+        });
       })
       .catch((errors: yup.ValidationError) => {
         toast.error('Informações inválidas, tente novamente!', {
@@ -142,7 +173,7 @@ export const AppointmentInsert: React.FC = () => {
                 <VTextField
                   fullWidth
                   name='date'
-                  id='data-hora'
+                  id='date'
                   label='Data e Hora'
                   type="datetime-local"
                   InputLabelProps={{
@@ -155,7 +186,7 @@ export const AppointmentInsert: React.FC = () => {
               <Grid item xs={12} sm={12} md={6} lg={6} xl={6} >
                 <VSelect
                   fullWidth
-                  id='motivo'
+                  id='reason'
                   name='reason'
                   label='Motivo'
                   disabled={isLoading}
@@ -182,7 +213,7 @@ export const AppointmentInsert: React.FC = () => {
                   fullWidth
                   name='value'
                   label='Valor'
-                  id='valor'
+                  id='value'
                   disabled={isLoading}
                   InputProps={{
                     startAdornment: <InputAdornment position="start">R$</InputAdornment>,
@@ -207,7 +238,7 @@ export const AppointmentInsert: React.FC = () => {
               <Grid item xs={12} sm={12} md={6} lg={6} xl={6} >
                 <VSelect
                   fullWidth
-                  id='pagamento'
+                  id='paymentMethod'
                   name='paymentMethod'
                   label='Pagamento'
                   disabled={isLoading}
@@ -226,7 +257,7 @@ export const AppointmentInsert: React.FC = () => {
                   name='appointmentState'
                   label='Status'
                   disabled={isLoading}
-                  id='status'
+                  id='appointmentState'
                 >
                   <MenuItem value=''><em>Selecione Uma Opção</em></MenuItem>
                   <MenuItem value='rascunho'>Rascunho</MenuItem>
@@ -248,7 +279,7 @@ export const AppointmentInsert: React.FC = () => {
                   fullWidth
                   name='observation'
                   label='Observação'
-                  id='observacao'
+                  id='observation'
                   disabled={isLoading}
                 />
               </Grid> 

@@ -102,7 +102,7 @@ export const Login: React.FC = () => {
               toast.error('Ocorreu um problema, tente novamente!', {
                 position: toast.POSITION.BOTTOM_CENTER
               });
-              navigate('/404');
+              navigate('/500');
             } else if (result === 500) {
               setIsLoading(false);
               setEmail('');

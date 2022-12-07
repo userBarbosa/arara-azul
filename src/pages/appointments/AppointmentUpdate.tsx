@@ -11,29 +11,30 @@ import { AppointmentsService } from '../../shared/services/api/appointments/Appo
 import { AutocompletePatient } from './components/AutocompletePatient';
 import { AutocompleteEmployee } from './components/AutocompleteEmployee';
 import { toast } from 'react-toastify';
+import { appointmentStateNumberToString, appointmentStateStringToNumber, formatDateToDateTimePicker, paymentMethodNumberToString, paymentMethodStringToNumber, reasonNumberToString, reasonStringToNumber } from '../../shared/helpers';
 
 interface IFormData {
-  tutorId: number;
-  patientId: number;
-  employeeId: number;
-  date: string; 
+  patientId: string;
+  ownerId: string;
+  employeeId: string;
+  appointmentState: string;
+  observation: string | undefined;
+  paymentMethod: string;
   reason: string;
   value: number;
-  appointmentState: string;
-  paymentMethod: string;
-  observation: string | undefined;
+  date: Date;
 }
 
 const formValidationSchema: yup.SchemaOf<IFormData> = yup.object().shape({
-  tutorId: yup.number().required(),
-  patientId: yup.number().required(),
-  employeeId: yup.number().required(),
-  date: yup.string().required().min(3),
+  patientId: yup.string().required(),
+  ownerId: yup.string().required(),
+  employeeId: yup.string().required(),
+  appointmentState: yup.mixed().required().oneOf(['rascunho', 'registrada', 'agendada', 'realizada', 'cancelada', 'paga', 'excluida']).label('Selecione Uma Opção'),
+  observation: yup.string().notRequired(),
+  paymentMethod: yup.mixed().required().oneOf(['cartao-credito', 'cartao-debito', 'dinheiro', 'pix']).label('Selecione Uma Opção'),
   reason: yup.mixed().required().oneOf(['emergencia', 'rotina', 'check-up', 'exame', 'cirurgia']).label('Selecione Uma Opção'),
   value: yup.number().required(),
-  appointmentState: yup.mixed().required().oneOf(['rascunho', 'registrada', 'agendada', 'realizada', 'cancelada', 'paga', 'excluida']).label('Selecione Uma Opção'),
-  paymentMethod: yup.mixed().required().oneOf(['cartao-credito', 'cartao-debito', 'dinheiro', 'pix']).label('Selecione Uma Opção'),
-  observation: yup.string().notRequired(),
+  date: yup.date().min('1900-01-01T08:00').max(new Date().toLocaleDateString()).required(),
 });
 
 export const AppointmentUpdate: React.FC = () => {
@@ -43,17 +44,46 @@ export const AppointmentUpdate: React.FC = () => {
 
   const [isLoading, setIsLoading] = useState(false);
 
+  const getTokenCurrentUser = () => {
+    const _user = localStorage.getItem('APP_USER');
+  
+    if (_user) {
+      const obj = JSON.parse(_user);
+      return obj.token;
+    }
+  };
+
   useEffect(() => {
-    formRef.current?.setData({
-      tutorId: 1,
-      patientId: 1,
-      employeeId: 1,
-      date: '2022-08-20T15:30',
-      reason: 'emergencia',
-      value: 150.00,
-      appointmentState: 'realizada',
-      paymentMethod: 'pix',
-      observation: '',
+    AppointmentsService.getById(id!, getTokenCurrentUser())
+    .then((result) => {
+
+      if (result === 'Network Error') {
+        navigate('/400');
+      } else if (result.status === 400) {
+        navigate('/400');
+      } else if (result.status === 401) {
+        localStorage.removeItem('APP_USER');
+        navigate('/401');
+      } else if (result.status === 403) {
+        navigate('/403');
+      } else if (result.status === 404) {
+        navigate('/500');
+      } else if (result.status === 500) {
+        navigate('/500');
+      } else if (result.status === 200) {
+        const data = result.data;
+        formRef.current?.setData({
+          patientId:  data.patientId === undefined || data.patientId === null ? '' : data.patientId,
+          ownerId:  data.ownerId === undefined || data.ownerId === null ? '' : data.ownerId,
+          employeeId:   data.employeeId === undefined || data.employeeId === null ? '' : data.employeeId,
+          appointmentState:  data.appointmentState === undefined || data.appointmentState === null ? '' : appointmentStateNumberToString(data.appointmentState),
+          observation:  data.observation === undefined || data.observation === null ? '' : data.observation,
+          paymentMethod:  data.paymentMethod === undefined || data.paymentMethod === null ? '' : paymentMethodNumberToString(data.paymentMethod),
+          reason:  data.reason === undefined || data.reason === null ? '' : reasonNumberToString(data.reason),
+          value: data.value === undefined || data.value === null ? '' : data.value,
+          date: data.birthDate === undefined || data.birthDate === null ? '' : formatDateToDateTimePicker(data.birthDate),
+        });
+      }
     });
   }, []);
 
@@ -64,14 +94,38 @@ export const AppointmentUpdate: React.FC = () => {
       .then((dadosValidados) => {
         setIsLoading(true);
         
+        const data = {
+          id: id!,
+          patientId: dadosValidados.patientId,
+          ownerId: dadosValidados.ownerId,
+          employeeId: dadosValidados.employeeId,
+          appointmentState: appointmentStateStringToNumber(dadosValidados.appointmentState),
+          observation: dadosValidados.observation,
+          paymentMethod: paymentMethodStringToNumber(dadosValidados.paymentMethod),
+          reason: reasonStringToNumber(dadosValidados.reason),
+          value: dadosValidados.value,
+          date: dadosValidados.date,
+        };
+
         AppointmentsService
-          .updateById(Number(id), { id: Number(id), ...dadosValidados })
+        .updateById(id!, data, getTokenCurrentUser())
           .then((result) => {
             setIsLoading(false);
 
-            if (result instanceof Error) {
-              // alert(result.message);
-            } else {
+            if (result === 'Network Error') {
+              navigate('/400');
+            } else if (result.status === 400) {
+              navigate('/400');
+            } else if (result.status === 401) {
+              localStorage.removeItem('APP_USER');
+              navigate('/401');
+            } else if (result.status === 403) {
+              navigate('/403');
+            } else if (result.status === 404) {
+              navigate('/500');
+            } else if (result.status === 500) {
+              navigate('/500');
+            } else if (result.status === 200) {
               navigate('/consultas');
               toast.success('Alteração realizada com Sucesso!', {
                 position: toast.POSITION.BOTTOM_CENTER
@@ -142,7 +196,7 @@ export const AppointmentUpdate: React.FC = () => {
                 <VTextField
                   fullWidth
                   name='date'
-                  id='data-hora'
+                  id='date'
                   label='Data e Hora'
                   type="datetime-local"
                   InputLabelProps={{
@@ -155,7 +209,7 @@ export const AppointmentUpdate: React.FC = () => {
               <Grid item xs={12} sm={12} md={6} lg={6} xl={6} >
                 <VSelect
                   fullWidth
-                  id='motivo'
+                  id='reason'
                   name='reason'
                   label='Motivo'
                   disabled={isLoading}
@@ -182,7 +236,7 @@ export const AppointmentUpdate: React.FC = () => {
                   fullWidth
                   name='value'
                   label='Valor'
-                  id='valor'
+                  id='value'
                   disabled={isLoading}
                   InputProps={{
                     startAdornment: <InputAdornment position="start">R$</InputAdornment>,
@@ -210,7 +264,7 @@ export const AppointmentUpdate: React.FC = () => {
                   name='paymentMethod'
                   label='Pagamento'
                   disabled={isLoading}
-                  id='pagamento'
+                  id='paymentMethod'
                 >
                   <MenuItem value=''><em>Selecione Uma Opção</em></MenuItem>
                   <MenuItem value='cartao-credito'>Cartão de Crédito</MenuItem>
@@ -226,7 +280,7 @@ export const AppointmentUpdate: React.FC = () => {
                   name='appointmentState'
                   label='Status'
                   disabled={isLoading}
-                  id='status'
+                  id='appointmentState'
                 >
                   <MenuItem value=''><em>Selecione Uma Opção</em></MenuItem>
                   <MenuItem value='rascunho'>Rascunho</MenuItem>
@@ -249,7 +303,7 @@ export const AppointmentUpdate: React.FC = () => {
                   name='observation'
                   label='Observação'
                   disabled={isLoading}
-                  id='observacao'
+                  id='observation'
                 />
               </Grid> 
 

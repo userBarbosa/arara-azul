@@ -1,67 +1,167 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Box, Grid, Icon, IconButton, LinearProgress, Pagination, Paper, Table, TableBody, TableCell, TableContainer, TableFooter, TableHead, TableRow, Theme, Typography, useMediaQuery } from '@mui/material';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import { ListTools } from '../../shared/components';
 import { BaseLayoutPage } from '../../shared/layouts';
 
-import { useDebounce } from '../../shared/hooks';
 import { Environment } from '../../shared/environment';
-import { AppointmentsService, IListAppointment } from '../../shared/services/api/appointments/AppointmentsService';
+import { IListPatient, PatientsService } from '../../shared/services/api/patients/PatientsService';
+import { IListTutor, TutorsService } from '../../shared/services/api/tutors/TutorsService';
+import { IListEmployee, EmployeesService } from '../../shared/services/api/employees/EmployeesService';
+import { IListAppointment, AppointmentsService } from '../../shared/services/api/appointments/AppointmentsService';
+import { appointmentStateNumberToString, appointmentStateStringToString, formatDateToString, paymentMethodNumberToString, paymentMethodStringToString, reasonNumberToString, reasonStringToString } from '../../shared/helpers';
 
 
 export const AppointmentsList: React.FC = () => {
   const xldown = useMediaQuery((theme: Theme) => theme.breakpoints.down('xl'));
   const xlup = useMediaQuery((theme: Theme) => theme.breakpoints.up('xl'));
 
-  const [searchParams, setSearchParams] = useSearchParams();
-  const { debounce } = useDebounce();
+  const [name, setName] = useState('');
   const navigate = useNavigate();
 
-  const [rows, setRows] = useState<IListAppointment[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [data, setData] = useState<IListAppointment[]>([]);
   const [totalCount, setTotalCount] = useState(0);
+  const [foundAppointments, setFoundAppointments] = useState(data);
 
+  const [tutors, setTutors] = useState<IListTutor[]>([]);
+  const [patients, setPatients] = useState<IListPatient[]>([]);
+  const [employees, setEmployees] = useState<IListEmployee[]>([]);
 
-  const search = useMemo(() => {
-    return searchParams.get('search') || '';
-  }, [searchParams]);
+  const [page, setPage] = useState(1);
+  const handlePageChange = (
+    event: React.ChangeEvent<unknown>,
+    newPage: number,
+  ) => {
+    setPage(newPage);
+  };
 
-  const page = useMemo(() => {
-    return Number(searchParams.get('page') || '1');
-  }, [searchParams]);
+  const filter = (text: string) => {
+    const keyword = text;
+
+    if (keyword !== '') {
+      const results = data.filter((appointment) => {
+        const name = appointment.patientId === undefined || appointment.patientId === null ? '' : appointment.patientId
+        return name.toLowerCase().startsWith(keyword.toLowerCase());
+      });
+      setTotalCount(results.length);
+      setFoundAppointments(results);
+    } else {
+      setTotalCount(data.length);
+      setFoundAppointments(data);
+    }
+
+    setName(keyword);
+  };
+
+  const indexOfLastData = page * Environment.LIMIT;
+  const indexOfFirstData = indexOfLastData - Environment.LIMIT;
+  const currentData = foundAppointments.slice(indexOfFirstData, indexOfLastData);
+
+  const [isLoading, setIsLoading] = useState(true);
+
+  const getTokenCurrentUser = () => {
+    const _user = localStorage.getItem('APP_USER');
+  
+    if (_user) {
+      const obj = JSON.parse(_user);
+      return obj.token;
+    }
+  };
 
 
   useEffect(() => {
     setIsLoading(true);
 
-    debounce(() => {
-      AppointmentsService.getAll(page, search)
-        .then((result) => {
-          setIsLoading(false);
+    AppointmentsService.getAll(getTokenCurrentUser())
+      .then((result) => {
+        setIsLoading(false);
 
-          if (result instanceof Error) {
-            // console.log(result.message);
-          } else {
-            setTotalCount(result.totalCount);
-            setRows(result.data);
-          }
-        });
-    });
-  }, [search, page]);
+        if (result === 'Network Error') {
+          navigate('/400');
+        } else if (result.status === 400) {
+          navigate('/400');
+        } else if (result.status === 401) {
+          localStorage.removeItem('APP_USER');
+          navigate('/401');
+        } else if (result.status === 403) {
+          navigate('/403');
+        } else if (result.status === 404) {
+          navigate('/500');
+        } else if (result.status === 500) {
+          navigate('/500');
+        } else if (result.status === 200) {
+          setTotalCount(result.data.length);
+          setData(result.data);
+          setFoundAppointments(result.data);
+        }
+      });
+      
+      TutorsService.getAll(getTokenCurrentUser())
+      .then((result) => {
+        setIsLoading(false);
 
-  // remover
-  const [data, setData] = useState<IListAppointment[]>([]);
+        if (result === 'Network Error') {
+          navigate('/400');
+        } else if (result.status === 400) {
+          navigate('/400');
+        } else if (result.status === 401) {
+          localStorage.removeItem('APP_USER');
+          navigate('/401');
+        } else if (result.status === 403) {
+          navigate('/403');
+        } else if (result.status === 404) {
+          navigate('/500');
+        } else if (result.status === 500) {
+          navigate('/500');
+        } else if (result.status === 200) {
+          setTutors(result.data);
+        }
+      });
 
-  useEffect(() => {
-    const getData = async () => {
-      const data = await (
-        await fetch('https://finalspaceapi.com/api/v0/character/')
-      ).json();
-      setData(data);
-    };
+      PatientsService.getAll(getTokenCurrentUser())
+      .then((result) => {
+        setIsLoading(false);
 
-    getData();
+        if (result === 'Network Error') {
+          navigate('/400');
+        } else if (result.status === 400) {
+          navigate('/400');
+        } else if (result.status === 401) {
+          localStorage.removeItem('APP_USER');
+          navigate('/401');
+        } else if (result.status === 403) {
+          navigate('/403');
+        } else if (result.status === 404) {
+          navigate('/500');
+        } else if (result.status === 500) {
+          navigate('/500');
+        } else if (result.status === 200) {
+          setPatients(result.data);
+        }
+      });
+
+      EmployeesService.getAll(getTokenCurrentUser())
+      .then((result) => {
+        setIsLoading(false);
+
+        if (result === 'Network Error') {
+          navigate('/400');
+        } else if (result.status === 400) {
+          navigate('/400');
+        } else if (result.status === 401) {
+          localStorage.removeItem('APP_USER');
+          navigate('/401');
+        } else if (result.status === 403) {
+          navigate('/403');
+        } else if (result.status === 404) {
+          navigate('/500');
+        } else if (result.status === 500) {
+          navigate('/500');
+        } else if (result.status === 200) {
+          setEmployees(result.data);
+        }
+      });
   }, []);
 
   return (
@@ -70,9 +170,9 @@ export const AppointmentsList: React.FC = () => {
       toolbar={
         <ListTools
           showInputSearch
-          searchText={search}
+          searchText={name}
           onClickButtonAdd={() => navigate('/consultas/inserir')}
-          onChangeSearchText={text => setSearchParams({ search: text, page: '1' }, { replace: true })}
+          onChangeSearchText={text => filter(text)}
         />
       }
     >
@@ -173,116 +273,26 @@ export const AppointmentsList: React.FC = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {/* {rows.map(row => (
-              <TableRow key={row.id}>
-                <TableCell>{row.date}</TableCell>
-                <TableCell>{row.date}</TableCell>
-                <TableCell>{row.reason}</TableCell>
-                <TableCell>{row.employeeId}</TableCell>
-                <TableCell>{row.ownerId}</TableCell>
-                <TableCell>{row.patientId}</TableCell>
-                <TableCell>{row.appointmentState}</TableCell>
-                <TableCell>{row.paymentMethod}</TableCell>
+              {currentData.map(appointment => (
+              <TableRow key={appointment.id}>
+                <TableCell>{appointment.date === undefined || appointment.date === null ? '' : formatDateToString(appointment.date)}</TableCell>
+                <TableCell>{appointment.reason === undefined || appointment.reason === null ? '' : reasonStringToString(reasonNumberToString(appointment.reason))}</TableCell>
+                <TableCell>{appointment.employeeId === undefined || appointment.employeeId === null ? '' : employees.find(employee => employee?.id === appointment?.employeeId)?.name}</TableCell>
+                <TableCell>{appointment.ownerId === undefined || appointment.ownerId === null ? '' : tutors.find(tutor => tutor?.id === appointment?.ownerId)?.name}</TableCell>
+                <TableCell>{appointment.patientId === undefined || appointment.patientId === null ? '' : patients.find(patient => patient?.id === appointment?.patientId)?.name}</TableCell>
+                <TableCell>{appointment.appointmentState === undefined || appointment.appointmentState === null ? '' : appointmentStateStringToString(appointmentStateNumberToString(appointment.appointmentState))}</TableCell>
+                <TableCell>{appointment.paymentMethod === undefined || appointment.paymentMethod === null ? '' : paymentMethodStringToString(paymentMethodNumberToString(appointment.paymentMethod))}</TableCell>
 
                 <TableCell>
-                  <IconButton size="small" onClick={() => navigate(`/tutores/atualizar//${row.id}`)}>
+                  <IconButton size="small" onClick={() => navigate(`/tutores/atualizar/${appointment.id}`)}>
                     <Icon>edit</Icon>
                   </IconButton>
-                  <IconButton size="small" onClick={() => navigate(`/tutores/detalhe/${row.id}`)}>
+                  <IconButton size="small" onClick={() => navigate(`/tutores/detalhe/${appointment.id}`)}>
                     <Icon>visibility</Icon>
                   </IconButton>
                 </TableCell>
               </TableRow>
-            ))} */}
-              <TableRow>
-
-                <TableCell>
-                  <Typography
-                    variant='body2'
-                    overflow='hidden'
-                    whiteSpace='nowrap'
-                    textOverflow='ellipsis'
-                  >
-                  20/08/2022 15:30
-                  </Typography>
-                </TableCell>
-
-                <TableCell>
-                  <Typography
-                    variant='body2'
-                    overflow='hidden'
-                    whiteSpace='nowrap'
-                    textOverflow='ellipsis'
-                  >
-                  Acupuntura
-                  </Typography>
-                </TableCell>
-
-                <TableCell>
-                  <Typography
-                    variant='body2'
-                    overflow='hidden'
-                    whiteSpace='nowrap'
-                    textOverflow='ellipsis'
-                  >
-                  Lorenna Veiga Salomão
-                  </Typography>
-                </TableCell>
-
-                <TableCell>
-                  <Typography
-                    variant='body2'
-                    overflow='hidden'
-                    whiteSpace='nowrap'
-                    textOverflow='ellipsis'
-                  >
-                  Kauã Claudino Loureiro
-                  </Typography>
-                </TableCell>
-
-                <TableCell>
-                  <Typography
-                    variant='body2'
-                    overflow='hidden'
-                    whiteSpace='nowrap'
-                    textOverflow='ellipsis'
-                  >
-                  Rex
-                  </Typography>
-                </TableCell>
-
-                <TableCell>
-                  <Typography
-                    variant='body2'
-                    overflow='hidden'
-                    whiteSpace='nowrap'
-                    textOverflow='ellipsis'
-                  >
-                    Realizada
-                  </Typography>
-                </TableCell>
-
-                <TableCell>
-                  <Typography
-                    variant='body2'
-                    overflow='hidden'
-                    whiteSpace='nowrap'
-                    textOverflow='ellipsis'
-                  >
-                  PIX
-                  </Typography>
-                </TableCell>
-
-                <TableCell sx={{ display: 'flex', flexDirection: 'row' }}>
-                  <IconButton size="small" onClick={() => navigate('/consultas/atualizar/1')}>
-                    <Icon>edit</Icon>
-                  </IconButton>
-                  <IconButton size="small" onClick={() => navigate('/consultas/detalhe/1')}>
-                    <Icon>visibility</Icon>
-                  </IconButton>
-                </TableCell>
-                
-              </TableRow>
+            ))}
             </TableBody>
 
             {totalCount === 0 && !isLoading && (
@@ -297,13 +307,13 @@ export const AppointmentsList: React.FC = () => {
                   </TableCell>
                 </TableRow>
               )}
-              {(totalCount > 0 && totalCount > Environment.ROW_LIMIT) && (
+              {(totalCount > 0 && totalCount > Environment.LIMIT) && (
                 <TableRow>
                   <TableCell colSpan={8}>
                     <Pagination
                       page={page}
-                      count={Math.ceil(totalCount / Environment.ROW_LIMIT)}
-                      onChange={(_, newPage) => setSearchParams({ search, page: newPage.toString() }, { replace: true })}
+                      count={Math.ceil(totalCount / Environment.LIMIT)}
+                      onChange={handlePageChange}
                     />
                   </TableCell>
                 </TableRow>
@@ -316,7 +326,7 @@ export const AppointmentsList: React.FC = () => {
         <Box display='flex' flexDirection='column' alignItems='center' margin={2}>
 
           <Box>
-            {data.length < 1 && !isLoading && (
+            {totalCount === 0 && !isLoading && (
               <Box>
                 <Typography variant='h6' sx={{ color: '#006BBF' }}>
                   {Environment.EMPTY_LIST}
@@ -331,7 +341,7 @@ export const AppointmentsList: React.FC = () => {
           </Box>
           <Box>
             <Grid container justifyContent="center">
-              {data.map(appointment => (
+              {currentData.map(appointment => (
                 <Grid key={appointment.id} item xs={12} sm={8} md={4} lg={3} maxWidth={'300px'} margin={1} padding={2} borderRadius={5} bgcolor={'background.paper'}>
                   
                   <Box display='flex' flexDirection='column'>
@@ -353,7 +363,7 @@ export const AppointmentsList: React.FC = () => {
                         whiteSpace='nowrap'
                         textOverflow='ellipsis'
                       >
-                          20/08/2022 15:30
+                        {appointment.date === undefined || appointment.date === null ? '' : formatDateToString(appointment.date)}
                       </Typography>
                     </Box>
 
@@ -379,7 +389,7 @@ export const AppointmentsList: React.FC = () => {
                         whiteSpace='nowrap'
                         textOverflow='ellipsis'
                       >
-                          Acupuntura
+                        {appointment.reason === undefined || appointment.reason === null ? '' : reasonStringToString(reasonNumberToString(appointment.reason))}
                       </Typography>
                     </Box>
 
@@ -404,7 +414,7 @@ export const AppointmentsList: React.FC = () => {
                         whiteSpace='nowrap'
                         textOverflow='ellipsis'
                       >
-                          Lorenna Veiga Salomão
+                        {appointment.employeeId === undefined || appointment.employeeId === null ? '' : employees.find(employee => employee?.id === appointment?.employeeId)?.name}
                       </Typography>
                     </Box>
 
@@ -429,7 +439,7 @@ export const AppointmentsList: React.FC = () => {
                         whiteSpace='nowrap'
                         textOverflow='ellipsis'
                       >
-                          Kauã Claudino Loureiro
+                        {appointment.ownerId === undefined || appointment.ownerId === null ? '' : tutors.find(tutor => tutor?.id === appointment?.ownerId)?.name}
                       </Typography>
                     </Box>
 
@@ -454,7 +464,7 @@ export const AppointmentsList: React.FC = () => {
                         whiteSpace='nowrap'
                         textOverflow='ellipsis'
                       >
-                          Rex
+                        {appointment.patientId === undefined || appointment.patientId === null ? '' : patients.find(patient => patient?.id === appointment?.patientId)?.name}
                       </Typography>
                     </Box>
 
@@ -479,7 +489,7 @@ export const AppointmentsList: React.FC = () => {
                         whiteSpace='nowrap'
                         textOverflow='ellipsis'
                       >
-                        Realizada
+                        {appointment.appointmentState === undefined || appointment.appointmentState === null ? '' : appointmentStateStringToString(appointmentStateNumberToString(appointment.appointmentState))}
                       </Typography>
                     </Box>
 
@@ -504,7 +514,7 @@ export const AppointmentsList: React.FC = () => {
                         whiteSpace='nowrap'
                         textOverflow='ellipsis'
                       >
-                      PIX
+                        {appointment.paymentMethod === undefined || appointment.paymentMethod === null ? '' : paymentMethodStringToString(paymentMethodNumberToString(appointment.paymentMethod))}
                       </Typography>
                     </Box>
 
@@ -536,13 +546,13 @@ export const AppointmentsList: React.FC = () => {
             </Grid>
           </Box>
           
-          {(totalCount > 0 && totalCount > Environment.CARD_LIMIT) && (
+          {(totalCount > 0 && totalCount > Environment.LIMIT) && (
             <Box width='100%' margin={1} bgcolor={'background.paper'} padding={1} display='flex' alignItems='center' justifyContent="center">
               <Pagination
                 size="small"
                 page={page}
-                count={Math.ceil(totalCount / Environment.CARD_LIMIT)}
-                onChange={(_, newPage) => setSearchParams({ search, page: newPage.toString() }, { replace: true })}
+                count={Math.ceil(totalCount / Environment.LIMIT)}
+                onChange={handlePageChange}
               />
             </Box>
           )}

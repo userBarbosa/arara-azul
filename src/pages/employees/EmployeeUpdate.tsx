@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Box, Grid, LinearProgress, MenuItem, Paper } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
 import * as yup from 'yup';
@@ -9,18 +9,20 @@ import { DetailTools } from '../../shared/components';
 import { EmployeesService } from '../../shared/services/api/employees/EmployeesService';
 import { toast } from 'react-toastify';
 import { isValid as isValidCPF } from '@fnando/cpf';
+import { typeStringToStringEnUs, removeInvalidCharacters, specialtyStringToNumber, activeStringToBoolean, specialtyNumberToString, activeBooleanToString, typeStringEnUsToStringPtBr, formatDateToDatePicker } from '../../shared/helpers';
+
 
 interface IFormData {
   name: string;
   email: string;
-  telephoneNumber: string;
-  identificationNumber: string;
-  birthDate: Date; 
   type: string;
-  specialty: string;
+  phoneNumber: string;
+  documentNumber: string;
   medicalLicense: string | undefined;
-  status: string;
-  observation: string | undefined;
+  specialty: string;
+  active: string;
+  birthDate: Date;
+  observation: string | undefined; 
 }
 
 const getFormatedDate = (currentDate: string) => {
@@ -30,22 +32,22 @@ const getFormatedDate = (currentDate: string) => {
 const formValidationSchema: yup.SchemaOf<IFormData> = yup.object().shape({
   name: yup.string().required(),
   email: yup.string().email().required(),
-  telephoneNumber: yup.string().required(),
-  identificationNumber: yup.string().required().test('test-cpf-invalido', 'CPF inválido', (identificationNumber) => isValidCPF(identificationNumber!)),
-  birthDate: yup.date().min(getFormatedDate('01/01/1900')).max(getFormatedDate(new Date().toLocaleDateString())).required(),
   type: yup.mixed().oneOf(['administrador', 'recepcionista', 'veterinario']).label('Selecione Uma Opção'),
-  specialty: yup.mixed()
-    .oneOf(['', 'gatos', 'cachorros', 'aves', 'peixes', 'roedores', 'repteis', 'selvagens', 'fazenda', 'marinhos'])
-    .label('Selecione Uma Opção')
-    .when('type', {
-      is: 'veterinario',
-      then: yup.mixed().oneOf(['gatos', 'cachorros', 'aves', 'peixes', 'roedores', 'repteis', 'selvagens', 'fazenda', 'marinhos']).notOneOf([''], 'Este campo é obrigatório').label('Selecione Uma Opção'),
-    }),
+  phoneNumber: yup.string().required(),
+  documentNumber: yup.string().required().test('test-cpf-invalido', 'CPF inválido', (documentNumber) => isValidCPF(documentNumber!)),
   medicalLicense: yup.string().when('type', {
     is: 'veterinario',
     then: yup.string().required()
   }),
-  status: yup.mixed().oneOf(['ativo', 'inativo']).label('Selecione Uma Opção'),
+  specialty: yup.mixed()
+  .oneOf(['', 'gatos', 'cachorros', 'aves', 'peixes', 'roedores', 'repteis', 'selvagens', 'fazenda', 'marinhos'])
+  .label('Selecione Uma Opção')
+  .when('type', {
+    is: 'veterinario',
+    then: yup.mixed().oneOf(['gatos', 'cachorros', 'aves', 'peixes', 'roedores', 'repteis', 'selvagens', 'fazenda', 'marinhos']).notOneOf([''], 'Este campo é obrigatório').label('Selecione Uma Opção'),
+  }),
+  active: yup.mixed().oneOf(['ativo', 'inativo']).label('Selecione Uma Opção'),
+  birthDate: yup.date().min(getFormatedDate('01/01/1900')).max(getFormatedDate(new Date().toLocaleDateString())).required(),
   observation: yup.string(),
 });
 
@@ -56,32 +58,49 @@ export const EmployeeUpdate: React.FC = () => {
 
   const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    formRef.current?.setData({
-      name: 'Tatiana Dutra Ferreira',
-      email: 'tatiana.ferreira@gmail.com.br',
-      telephoneNumber: '11982477223',
-      identificationNumber: '86822461809',
-      birthDate: '1989-10-17',
-      type: 'recepcionista',
-      specialty: '',
-      medicalLicense: '',
-      status: 'ativo',
-      observation: '',
-    });
-  }, []);
-
-  const [disableFields, setDisableFields] = useState(true);
-  const handleSelectAssistantOrAdmin= (event: ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.value as string;
-    if (value === '' || value === 'administrador' || value === 'recepcionista') {
-      formRef.current?.setFieldValue('specialty', '');
-      formRef.current?.setFieldValue('medicalLicense', '');
-      setDisableFields(true);
-    } else {
-      setDisableFields(false);
+  const getTokenCurrentUser = () => {
+    const _user = localStorage.getItem('APP_USER');
+  
+    if (_user) {
+      const obj = JSON.parse(_user);
+      return obj.token;
     }
   };
+
+  useEffect(() => {
+    EmployeesService.getById(id!, getTokenCurrentUser())
+    .then((result) => {
+
+      if (result === 'Network Error') {
+        navigate('/400');
+      } else if (result.status === 400) {
+        navigate('/400');
+      } else if (result.status === 401) {
+        localStorage.removeItem('APP_USER');
+        navigate('/401');
+      } else if (result.status === 403) {
+        navigate('/403');
+      } else if (result.status === 404) {
+        navigate('/500');
+      } else if (result.status === 500) {
+        navigate('/500');
+      } else if (result.status === 200) {
+        const data = result.data;
+        formRef.current?.setData({
+          name: data.name === undefined || data.name === null ? '' : data.name,
+          email: data.email === undefined || data.email === null ? '' : data.email,
+          phoneNumber: data.phoneNumber === undefined || data.phoneNumber === null ? '' : removeInvalidCharacters(data.phoneNumber),
+          documentNumber: data.documentNumber === undefined || data.documentNumber === null ? '' : removeInvalidCharacters(data.documentNumber),
+          birthDate: data.birthDate === undefined || data.birthDate === null ? '' : formatDateToDatePicker(data.birthDate),
+          type: data.type === undefined || data.type === null ? '' : typeStringEnUsToStringPtBr(data.type),
+          specialty: data.specialty === undefined || data.specialty === null ? '' : specialtyNumberToString(data.specialty),
+          medicalLicense: data.medicalLicense === undefined || data.medicalLicense === null ? '' : data.medicalLicense,
+          active: data.active === undefined || data.active === null ? '' : activeBooleanToString(data.active),
+          observation: data.observation === undefined || data.observation === null ? '' : data.observation,
+        });
+      }
+    });
+  }, []);
 
   const handleSave = (dados: IFormData) => {
     formValidationSchema.
@@ -89,14 +108,39 @@ export const EmployeeUpdate: React.FC = () => {
       .then((dadosValidados) => {
         setIsLoading(true);
 
+        const data = {
+          id: id!,
+          name: dadosValidados.name,
+          email: dadosValidados.email,
+          type: typeStringToStringEnUs(dadosValidados.type),
+          phoneNumber: removeInvalidCharacters(dadosValidados.phoneNumber),
+          documentNumber: removeInvalidCharacters(dadosValidados.documentNumber),
+          medicalLicense: dadosValidados.medicalLicense,
+          specialty: specialtyStringToNumber(dadosValidados.specialty),
+          active: activeStringToBoolean(dadosValidados.active),
+          birthDate: dadosValidados.birthDate,
+          observation: dadosValidados.observation,
+        };
+
         EmployeesService
-          .updateById(Number(id), { id: Number(id), ...dadosValidados })
+          .updateById(id!, data, getTokenCurrentUser())
           .then((result) => {
             setIsLoading(false);
 
-            if (result instanceof Error) {
-              // alert(result.message);
-            } else {
+            if (result === 'Network Error') {
+              navigate('/400');
+            } else if (result.status === 400) {
+              navigate('/400');
+            } else if (result.status === 401) {
+              localStorage.removeItem('APP_USER');
+              navigate('/401');
+            } else if (result.status === 403) {
+              navigate('/403');
+            } else if (result.status === 404) {
+              navigate('/500');
+            } else if (result.status === 500) {
+              navigate('/500');
+            } else if (result.status === 200) {
               navigate('/funcionarios');
               toast.success('Alteração realizada com Sucesso!', {
                 position: toast.POSITION.BOTTOM_CENTER
@@ -178,7 +222,7 @@ export const EmployeeUpdate: React.FC = () => {
                 <VPatternFormat
                   fullWidth
                   id='telefone'
-                  name='telephoneNumber'
+                  name='phoneNumber'
                   label='Telefone'
                   disabled={isLoading}
                   valueIsNumericString 
@@ -191,7 +235,7 @@ export const EmployeeUpdate: React.FC = () => {
                 <VPatternFormat
                   fullWidth
                   id='cpf'
-                  name='identificationNumber'
+                  name='documentNumber'
                   label='CPF'
                   disabled={isLoading}
                   valueIsNumericString 
@@ -210,7 +254,7 @@ export const EmployeeUpdate: React.FC = () => {
                   id='data-nascimento'
                   name='birthDate'
                   label='Data de Nascimento'
-                  disabled={true}
+                  disabled={isLoading}
                   type="date"
                   InputLabelProps={{
                     shrink: true,
@@ -224,8 +268,7 @@ export const EmployeeUpdate: React.FC = () => {
                   id='cargo'
                   name='type'
                   label='Cargo'
-                  disabled={isLoading}
-                  onChange={handleSelectAssistantOrAdmin}
+                  disabled={true}
                 >
                   <MenuItem value=""><em>Selecione Uma Opção</em></MenuItem>
                   <MenuItem value='administrador'>Administrador</MenuItem>
@@ -244,7 +287,7 @@ export const EmployeeUpdate: React.FC = () => {
                   id='especialidade'
                   name='specialty'
                   label='Especialidade'
-                  disabled={disableFields}
+                  disabled={true}
                 >
                   <MenuItem value=""><em>Selecione Uma Opção</em></MenuItem>
                   <MenuItem value='gatos'>Gatos</MenuItem>
@@ -265,7 +308,7 @@ export const EmployeeUpdate: React.FC = () => {
                   id='crmv'
                   name='medicalLicense'
                   label='CRMV'
-                  disabled={disableFields}
+                  disabled={true}
                 />
               </Grid>
                
@@ -276,10 +319,10 @@ export const EmployeeUpdate: React.FC = () => {
               <Grid item xs={12} sm={12} md={6} lg={6} xl={6} >
                 <VSelect
                   fullWidth
-                  id='status'
-                  name='status'
+                  id='active'
+                  name='active'
                   label='Status'
-                  disabled={isLoading}
+                  disabled={true}
                 >
                   <MenuItem value=""><em>Selecione Uma Opção</em></MenuItem>
                   <MenuItem value="ativo">Ativo</MenuItem>

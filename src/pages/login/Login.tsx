@@ -52,22 +52,81 @@ export const Login: React.FC = () => {
     loginSchema
       .validate({ email, password }, { abortEarly: false })
       .then(dadosValidados => {
+        if (dadosValidados.password === 'Mudar@123' || dadosValidados.password === 'mudar@123') {
+          setIsLoading(false);
+          setEmail('');
+          setPassword('');
+          toast.error('Por favor, altere sua senha para logar!', {
+            position: toast.POSITION.BOTTOM_CENTER
+          });
+          navigate('/esqueceu-sua-senha');
+        } else {
         login(dadosValidados.email, dadosValidados.password)
-          .then(() => {
-            setIsLoading(false);
-            toast.success('Seja Bem-vindo(a)!', {
-              position: toast.POSITION.BOTTOM_CENTER
-            });
-            setEmail('');
-            setPassword('');
-            navigate('/home');
+          .then((result) => {
+            if (result === 'Network Error') {
+              setIsLoading(false);
+              setEmail('');
+              setPassword('');
+              toast.error('Ocorreu um problema, tente novamente!', {
+                position: toast.POSITION.BOTTOM_CENTER
+              });
+              navigate('/400');
+            } else if (result === 400) {
+              setIsLoading(false);
+              setEmail('');
+              setPassword('');
+              toast.error('Ocorreu um problema, tente novamente!', {
+                position: toast.POSITION.BOTTOM_CENTER
+              });
+              navigate('/400');
+            } else if (result === 401) {
+              setIsLoading(false);
+              setEmail('');
+              setPassword('');
+              toast.error('Ocorreu um problema, tente novamente!', {
+                position: toast.POSITION.BOTTOM_CENTER
+              });
+              navigate('/401');
+            } else if (result === 403) {
+              setIsLoading(false);
+              setEmail('');
+              setPassword('');
+              toast.error('Ocorreu um problema, tente novamente!', {
+                position: toast.POSITION.BOTTOM_CENTER
+              });
+              navigate('/403');
+            } else if (result === 404) {
+              setIsLoading(false);
+              setEmail('');
+              setPassword('');
+              toast.error('Ocorreu um problema, tente novamente!', {
+                position: toast.POSITION.BOTTOM_CENTER
+              });
+              navigate('/500');
+            } else if (result === 500) {
+              setIsLoading(false);
+              setEmail('');
+              setPassword('');
+              toast.error('Ocorreu um problema, tente novamente!', {
+                position: toast.POSITION.BOTTOM_CENTER
+              });
+              navigate('/500');
+            } else if (result === 200) {
+              setIsLoading(false);
+              toast.success('Seja Bem-vindo(a)!', {
+                position: toast.POSITION.BOTTOM_CENTER
+              });
+              setEmail('');
+              setPassword('');
+              navigate('/home');
+            }
           })
           .catch(() => {
             toast.error('Ocorreu um problema, tente novamente!', {
               position: toast.POSITION.BOTTOM_CENTER
             });
           });
-      })
+      }})
       .catch((errors: yup.ValidationError) => {
         setIsLoading(false);
 

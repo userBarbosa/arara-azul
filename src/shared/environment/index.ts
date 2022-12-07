@@ -2,12 +2,7 @@ export const Environment = {
   /**
    * Define a quantidade de linhas a ser carregada por padrão nas listagens
    */
-  ROW_LIMIT: 6,
-
-  /**
-   * Define a quantidade de cards a ser carregada por padrão nas listagens
-   */
-  CARD_LIMIT: 6,
+  LIMIT: 10,
 
   /**
     * Placeholder exibido nas inputs
@@ -22,5 +17,8 @@ export const Environment = {
   /**
     * Url base de consultado dos dados dessa aplicação
     */
-  BASE_URL: 'http://localhost:3333',
+  // local
+  BASE_URL: 'http://localhost:3001',
+  // prod
+  //BASE_URL: 'https://api.petshealth.com.br',
 };

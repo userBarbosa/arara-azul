@@ -13,8 +13,8 @@ export const Error403: React.FC = () => {
   
   const navigate = useNavigate();
 
-  const navigateHome = () => {
-    navigate('/home');
+  const goBack = () => {
+    navigate(-1);
   };
 
   return (
@@ -23,8 +23,8 @@ export const Error403: React.FC = () => {
         height={theme.spacing(down350 ? 30 : mddown ? 40 : mdUp ? 70 : lgUp ? 80 : 100)} 
         width={theme.spacing(down350 ? 30 : mddown ? 40 : mdUp ? 70 : lgUp ? 80 : 100)}/>}
       showButton 
-      buttonText='Home'
-      onClickButton={navigateHome}
+      buttonText='Voltar'
+      onClickButton={goBack}
     ></LayoutPageError>
   );
 };

@@ -4,6 +4,7 @@ import { LayoutPageAuth } from '../../shared/layouts';
 import { Box, Button, Card, CardActions, CardContent, TextField, Typography, CircularProgress } from '@mui/material';
 import { useAuthContext } from '../../shared/contexts';
 import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
 const forgotPasswordSchema = yup.object().shape({
   email: yup.string().email().required(),
@@ -16,6 +17,12 @@ export const ForgotPassword: React.FC = () => {
 
   const [emailError, setEmailError] = useState('');
   const [email, setEmail] = useState('');
+
+  const navigate = useNavigate();
+
+  const goBack = () => {
+    navigate(-1);
+  };
   
   const handleSubmit = () => {
     setIsLoading(true);
@@ -24,11 +31,56 @@ export const ForgotPassword: React.FC = () => {
       .validate({ email }, { abortEarly: false })
       .then(dadosValidados => {
         forgotPassword(dadosValidados.email)
-          .then(() => {
-            setIsLoading(false);
-            toast.success('Verifique seu e-mail!', {
-              position: toast.POSITION.BOTTOM_CENTER
-            });
+          .then((result) => {
+            if (result === 'Network Error') {
+              setIsLoading(false);
+              setEmail('');
+              toast.error('Ocorreu um problema, tente novamente!', {
+                position: toast.POSITION.BOTTOM_CENTER
+              });
+              navigate('/400');
+            } else if (result === 400) {
+              setIsLoading(false);
+              setEmail('');
+              toast.error('Ocorreu um problema, tente novamente!', {
+                position: toast.POSITION.BOTTOM_CENTER
+              });
+              navigate('/400');
+            } else if (result === 401) {
+              setIsLoading(false);
+              setEmail('');
+              toast.error('Ocorreu um problema, tente novamente!', {
+                position: toast.POSITION.BOTTOM_CENTER
+              });
+              navigate('/401');
+            } else if (result === 403) {
+              setIsLoading(false);
+              setEmail('');
+              toast.error('Ocorreu um problema, tente novamente!', {
+                position: toast.POSITION.BOTTOM_CENTER
+              });
+              navigate('/403');
+            } else if (result === 404) {
+              setIsLoading(false);
+              setEmail('');
+              toast.error('Ocorreu um problema, tente novamente!', {
+                position: toast.POSITION.BOTTOM_CENTER
+              });
+              navigate('/500');
+            } else if (result === 500) {
+              setIsLoading(false);
+              setEmail('');
+              toast.error('Ocorreu um problema, tente novamente!', {
+                position: toast.POSITION.BOTTOM_CENTER
+              });
+              navigate('/500');
+            } else if (result === 200) {
+              setIsLoading(false);
+              toast.success('Verifique seu e-mail!', {
+                position: toast.POSITION.BOTTOM_CENTER
+              });
+              navigate('/login');
+            }
           })
           .catch(() => {
             toast.error('Ocorreu um problema, tente novamente!', {
@@ -85,12 +137,28 @@ export const ForgotPassword: React.FC = () => {
             <Box 
               width='100%' 
               display='flex' 
-              flexDirection='column' 
               gap={2} 
               alignItems='center' 
               justifyContent='center' 
-              sx={{ marginLeft: { xs: 1, sm: 2 }, marginRight: { xs: 1, sm: 2 }, marginBottom: { xs: 1, sm: 2 }  }}
+              sx={{ marginLeft: { xs: 1, sm: 2 }, marginRight: { xs: 1, sm: 2 }, marginBottom: { xs: 1, sm: 2 }, flexDirection: { xs: 'column', md: 'row'}  }}
             >
+
+              <Button
+                variant='contained'
+                disabled={isLoading}
+                onClick={goBack}
+                disableElevation
+                fullWidth
+              >
+                <Typography
+                  variant='button'
+                  overflow='hidden'
+                  whiteSpace='nowrap'
+                  textOverflow='ellipsis'
+                >
+                Voltar
+                </Typography>
+              </Button>
 
               <Button
                 variant='contained'

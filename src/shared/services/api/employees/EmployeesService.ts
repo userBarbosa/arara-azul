@@ -1,92 +1,106 @@
-import { Environment } from '../../../environment';
 import { Api } from '../axios-config';
 
 export interface IListEmployee {
-    id: number;
-    name: string;
-    email: string;
-    telephoneNumber: string;
-    identificationNumber: string;
-    birthDate: Date; 
-    type: string;
-    specialty: string;
-    medicalLicense: string | undefined;
-    status: string;
-    observation: string | undefined;
+    id: string;
+    name?: string;
+    email?: string;
+    type?: string;
+    emailConfirmed?: Date;
+    phoneNumber?: string;
+    documentNumber?: string;
+    medicalLicense?: string;
+    specialty?: number;
+    active?: boolean;
+    birthDate?: Date;
+    observation?: string;
   }
   
 export interface IDetailEmployee {
-    id: number;
-    name: string;
-    email: string;
-    telephoneNumber: string;
-    identificationNumber: string;
-    birthDate: Date; 
-    type: string;
-    specialty: string;
-    medicalLicense: string | undefined;
-    status: string;
-    observation: string | undefined;
+    id: string;
+    name?: string;
+    email?: string;
+    type?: string;
+    emailConfirmed?: Date;
+    phoneNumber?: string;
+    documentNumber?: string;
+    medicalLicense?: string;
+    specialty?: number;
+    active?: boolean;
+    birthDate?: Date;
+    observation?: string;
   }
-  
-type TEmployeesWithTotalCount = {
-    data: IListEmployee[];
-    totalCount: number;
-}
 
-const getAll = async (page = 1, filter = '', id = ''): Promise<TEmployeesWithTotalCount | Error> => {
-  try {
-    const relative_url  = `/users?_page=${page}&_limit=${Environment.ROW_LIMIT}&name_like=${filter}&id_like=${id}`;
-    
-    const { data, headers } = await Api.get(relative_url);
-    
-    if (data) {
-      return {
-        data,
-        totalCount: Number(headers['x-total-count'] || Environment.ROW_LIMIT),
-      };
-    }
-    
-    return new Error('Erro ao listar os registros.');
-  } catch (error) {
-    return new Error((error as { message: string }).message || 'Erro ao listar os registros.');
-  }
+const CREATE_USER = '/users/signup';
+const UPDATE_USER_BY_ID = '/users/';
+const GET_USER_BY_ID = '/users/';
+const GET_ALL_USERS = '/users';
+
+const getAll = async (token: string) => {
+  return await Api
+    .get(GET_ALL_USERS, {
+      headers: {
+        'x-api-token': token
+    }})
+    .then(response => {
+      return response;
+    })
+    .catch(error => {
+      if (error.message === 'Network Error') {
+        return error.message;
+      }
+      return error.response;
+    });
 };
 
-const getById = async (id: number): Promise<IDetailEmployee | Error> => {
-  try {
-    const { data } = await Api.get(`/users/${id}`);
-  
-    if (data) {
-      return data;
-    }
-  
-    return new Error('Erro ao consultar o registro.');
-  } catch (error) {
-    return new Error((error as { message: string }).message || 'Erro ao consultar o registro.');
-  }
+const getById = async (id: string, token: string) => {
+  return await Api
+    .get(`${GET_USER_BY_ID}${id}`, {
+      headers: {
+        'x-api-token': token
+    }})
+    .then(response => {
+      return response;
+    })
+    .catch(error => {
+      if (error.message === 'Network Error') {
+        return error.message;
+      }
+      return error.response;
+    });
 };
 
-const create = async (details: Omit<IDetailEmployee, 'id'>): Promise<number | Error> => {
-  try {
-    const { data } = await Api.post<IDetailEmployee>('/users', details);
-  
-    if (data) {
-      return data.id;
-    }
-  
-    return new Error('Erro ao criar o registro.');
-  } catch (error) {
-    return new Error((error as { message: string }).message || 'Erro ao criar o registro.');
-  }
+const create = async (dados: Omit<IDetailEmployee, 'id'>, token: string) => {
+  return await Api
+    .post(CREATE_USER, dados, {
+      headers: {
+        'x-api-token': token
+    }})
+    .then(response => {
+      return response;
+    })
+    .catch(error => {
+      if (error.message === 'Network Error') {
+        return error.message;
+      }
+      return error.response;
+    });
 };
 
-const updateById = async (id: number, dados: IDetailEmployee): Promise<void | Error> => {
-  try {
-    await Api.put(`/users/${id}`, dados);
-  } catch (error) {
-    return new Error((error as { message: string }).message || 'Erro ao atualizar o registro.');
-  }
+const updateById = async (id: string, dados: IDetailEmployee, token: string) => {
+  return await Api
+    .patch(`${UPDATE_USER_BY_ID}${id}`, dados, {
+      headers: {
+        'x-api-token': token
+    }})
+    .then(response => {
+      return response;
+    })
+    .catch(error => {
+      if (error.message === 'Network Error') {
+        return error.message;
+      }
+      return error.response;
+    });
 };
 
 export const EmployeesService = { 

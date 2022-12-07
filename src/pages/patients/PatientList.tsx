@@ -1,66 +1,116 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Box, Grid, Icon, IconButton, LinearProgress, Pagination, Paper, Table, TableBody, TableCell, TableContainer, TableFooter, TableHead, TableRow, Theme, Typography, useMediaQuery } from '@mui/material';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import { ListTools } from '../../shared/components';
 import { BaseLayoutPage } from '../../shared/layouts';
 
-import { useDebounce } from '../../shared/hooks';
 import { Environment } from '../../shared/environment';
 import { IListPatient, PatientsService } from '../../shared/services/api/patients/PatientsService';
-
+import { formatDateToString, onTreatmentBooleanToString, onTreatmentStringToString, sexNumberToString, sexStringToString, specieNumberToString, specieStringToString } from '../../shared/helpers';
+import { IListTutor, TutorsService } from '../../shared/services/api/tutors/TutorsService';
 
 export const PatientsList: React.FC = () => {
   const xldown = useMediaQuery((theme: Theme) => theme.breakpoints.down('xl'));
   const xlup = useMediaQuery((theme: Theme) => theme.breakpoints.up('xl'));
 
-  const [searchParams, setSearchParams] = useSearchParams();
-  const { debounce } = useDebounce();
+  const [name, setName] = useState('');
   const navigate = useNavigate();
 
-  const [rows, setRows] = useState<IListPatient[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [data, setData] = useState<IListPatient[]>([]);
+  const [tutors, setTutors] = useState<IListTutor[]>([]);
   const [totalCount, setTotalCount] = useState(0);
+  const [foundPatients, setFoundPatients] = useState(data);
 
+  const [page, setPage] = useState(1);
+  const handlePageChange = (
+    event: React.ChangeEvent<unknown>,
+    newPage: number,
+  ) => {
+    setPage(newPage);
+  };
 
-  const search = useMemo(() => {
-    return searchParams.get('search') || '';
-  }, [searchParams]);
+  const filter = (text: string) => {
+    const keyword = text;
 
-  const page = useMemo(() => {
-    return Number(searchParams.get('page') || '1');
-  }, [searchParams]);
+    if (keyword !== '') {
+      const results = data.filter((patient) => {
+        const name = patient.name === undefined || patient.name === null ? '' : patient.name
+        return name.toLowerCase().startsWith(keyword.toLowerCase());
+      });
+      setTotalCount(results.length);
+      setFoundPatients(results);
+    } else {
+      setTotalCount(data.length);
+      setFoundPatients(data);
+    }
 
+    setName(keyword);
+  };
+
+  const indexOfLastData = page * Environment.LIMIT;
+  const indexOfFirstData = indexOfLastData - Environment.LIMIT;
+  const currentData = foundPatients.slice(indexOfFirstData, indexOfLastData);
+
+  const [isLoading, setIsLoading] = useState(true);
+
+  const getTokenCurrentUser = () => {
+    const _user = localStorage.getItem('APP_USER');
+  
+    if (_user) {
+      const obj = JSON.parse(_user);
+      return obj.token;
+    }
+  };
 
   useEffect(() => {
     setIsLoading(true);
 
-    debounce(() => {
-      PatientsService.getAll(page, search)
-        .then((result) => {
-          setIsLoading(false);
+    PatientsService.getAll(getTokenCurrentUser())
+      .then((result) => {
+        setIsLoading(false);
 
-          if (result instanceof Error) {
-            // console.log(result.message);
-          } else {
-            setTotalCount(result.totalCount);
-            setRows(result.data);
-          }
-        });
-    });
-  }, [search, page]);
+        if (result === 'Network Error') {
+          navigate('/400');
+        } else if (result.status === 400) {
+          navigate('/400');
+        } else if (result.status === 401) {
+          localStorage.removeItem('APP_USER');
+          navigate('/401');
+        } else if (result.status === 403) {
+          navigate('/403');
+        } else if (result.status === 404) {
+          navigate('/500');
+        } else if (result.status === 500) {
+          navigate('/500');
+        } else if (result.status === 200) {
+          setTotalCount(result.data.length);
+          setData(result.data);
+          setFoundPatients(result.data);
+        }
+      });
+      
+      TutorsService.getAll(getTokenCurrentUser())
+      .then((result) => {
+        setIsLoading(false);
 
-  const [data, setData] = useState<IListPatient[]>([]);
-
-  useEffect(() => {
-    const getData = async () => {
-      const data = await (
-        await fetch('https://finalspaceapi.com/api/v0/character/')
-      ).json();
-      setData(data);
-    };
-
-    getData();
+        if (result === 'Network Error') {
+          navigate('/400');
+        } else if (result.status === 400) {
+          navigate('/400');
+        } else if (result.status === 401) {
+          localStorage.removeItem('APP_USER');
+          navigate('/401');
+        } else if (result.status === 403) {
+          navigate('/403');
+        } else if (result.status === 404) {
+          navigate('/500');
+        } else if (result.status === 500) {
+          navigate('/500');
+        } else if (result.status === 200) {
+          setTutors(result.data);
+        }
+      });
   }, []);
 
   return (
@@ -69,9 +119,9 @@ export const PatientsList: React.FC = () => {
       toolbar={
         <ListTools
           showInputSearch
-          searchText={search}
+          searchText={name}
           onClickButtonAdd={() => navigate('/pacientes/inserir')}
-          onChangeSearchText={text => setSearchParams({ search: text, page: '1' }, { replace: true })}
+          onChangeSearchText={text => filter(text)}
         />
       }
     >
@@ -161,102 +211,24 @@ export const PatientsList: React.FC = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {/* {rows.map(row => (
-              <TableRow key={row.id}>
-                <TableCell>{row.name}</TableCell>
-                <TableCell>{row.tutor}</TableCell>
-                <TableCell>{row.specie}</TableCell>
-                <TableCell>{row.birthDate}</TableCell>
-                <TableCell>{row.sex}</TableCell>
-                <TableCell>{row.treatment}</TableCell>
+              {currentData.map(patient => (
+              <TableRow key={patient.id}>
+                <TableCell>{patient.name === undefined || patient.name === null ? '' : patient.name}</TableCell>
+                <TableCell>{patient.tutorId === undefined || patient.tutorId === null ? '' : tutors.find(tutor => tutor?.id === patient?.tutorId)?.name}</TableCell>
+                <TableCell>{patient.species === undefined || patient.species === null ? '' : specieStringToString(specieNumberToString(patient.species))}</TableCell>
+                <TableCell>{patient.birthDate === undefined || patient.birthDate === null ? '' : formatDateToString(patient.birthDate)}</TableCell>
+                <TableCell>{patient.sex === undefined || patient.sex === null ? '' : sexStringToString(sexNumberToString(patient.sex))}</TableCell>
+                <TableCell>{patient.onTreatment === undefined || patient.onTreatment === null ? '' : onTreatmentStringToString(onTreatmentBooleanToString(patient.onTreatment))}</TableCell>
                 <TableCell>
-                  <IconButton size="small" onClick={() => navigate(`/tutores/atualizar//${row.id}`)}>
+                  <IconButton size="small" onClick={() => navigate(`/tutores/atualizar/${patient.id}`)}>
                     <Icon>edit</Icon>
                   </IconButton>
-                  <IconButton size="small" onClick={() => navigate(`/tutores/detalhe/${row.id}`)}>
+                  <IconButton size="small" onClick={() => navigate(`/tutores/detalhe/${patient.id}`)}>
                     <Icon>visibility</Icon>
                   </IconButton>
                 </TableCell>
               </TableRow>
-            ))} */}
-              <TableRow>
-
-                <TableCell>
-                  <Typography
-                    variant='body2'
-                    overflow='hidden'
-                    whiteSpace='nowrap'
-                    textOverflow='ellipsis'
-                  >
-                  Maia
-                  </Typography>
-                </TableCell>
-
-                <TableCell>
-                  <Typography
-                    variant='body2'
-                    overflow='hidden'
-                    whiteSpace='nowrap'
-                    textOverflow='ellipsis'
-                  >
-                  Kauã Claudino Loureiro
-                  </Typography>
-                </TableCell>
-
-                <TableCell>
-                  <Typography
-                    variant='body2'
-                    overflow='hidden'
-                    whiteSpace='nowrap'
-                    textOverflow='ellipsis'
-                  >
-                  Cachorro
-                  </Typography>
-                </TableCell>
-
-                <TableCell>
-                  <Typography
-                    variant='body2'
-                    overflow='hidden'
-                    whiteSpace='nowrap'
-                    textOverflow='ellipsis'
-                  >
-                  30/11/2020
-                  </Typography>
-                </TableCell>
-
-                <TableCell>
-                  <Typography
-                    variant='body2'
-                    overflow='hidden'
-                    whiteSpace='nowrap'
-                    textOverflow='ellipsis'
-                  >
-                  Fêmea
-                  </Typography>
-                </TableCell>
-
-                <TableCell>
-                  <Typography
-                    variant='body2'
-                    overflow='hidden'
-                    whiteSpace='nowrap'
-                    textOverflow='ellipsis'
-                  >
-                  Não
-                  </Typography>
-                </TableCell>
-
-                <TableCell sx={{ display: 'flex', flexDirection: 'row' }}>
-                  <IconButton size="small" onClick={() => navigate('/pacientes/atualizar/1')}>
-                    <Icon>edit</Icon>
-                  </IconButton>
-                  <IconButton size="small" onClick={() => navigate('/pacientes/detalhe/1')}>
-                    <Icon>visibility</Icon>
-                  </IconButton>
-                </TableCell>
-
-              </TableRow>
+            ))}
             </TableBody>
 
             {totalCount === 0 && !isLoading && (
@@ -271,13 +243,13 @@ export const PatientsList: React.FC = () => {
                   </TableCell>
                 </TableRow>
               )}
-              {(totalCount > 0 && totalCount > Environment.ROW_LIMIT) && (
+              {(totalCount > 0 && totalCount > Environment.LIMIT) && (
                 <TableRow>
                   <TableCell colSpan={7}>
                     <Pagination
                       page={page}
-                      count={Math.ceil(totalCount / Environment.ROW_LIMIT)}
-                      onChange={(_, newPage) => setSearchParams({ search, page: newPage.toString() }, { replace: true })}
+                      count={Math.ceil(totalCount / Environment.LIMIT)}
+                      onChange={handlePageChange}
                     />
                   </TableCell>
                 </TableRow>
@@ -291,7 +263,7 @@ export const PatientsList: React.FC = () => {
         <Box display='flex' flexDirection='column' alignItems='center' margin={2}>
 
           <Box>
-            {data.length < 1 && !isLoading && (
+            {totalCount === 0 && !isLoading && (
               <Box>
                 <Typography variant='h6' sx={{ color: '#006BBF' }}>
                   {Environment.EMPTY_LIST}
@@ -306,7 +278,7 @@ export const PatientsList: React.FC = () => {
           </Box>
           <Box>
             <Grid container justifyContent="center">
-              {data.map(patient => (
+              {currentData.map(patient => (
                 <Grid key={patient.id} item xs={12} sm={8} md={4} lg={3} maxWidth={'300px'} margin={1} padding={2} borderRadius={5} bgcolor={'background.paper'}>
                   
                   <Box display='flex' flexDirection='column'>
@@ -328,7 +300,7 @@ export const PatientsList: React.FC = () => {
                         whiteSpace='nowrap'
                         textOverflow='ellipsis'
                       >
-                        Maia
+                        {patient.name === undefined || patient.name === null ? '' : patient.name}
                       </Typography>
                     </Box>
 
@@ -354,7 +326,7 @@ export const PatientsList: React.FC = () => {
                         whiteSpace='nowrap'
                         textOverflow='ellipsis'
                       >
-                        Kauã Claudino Loureiro
+                        {patient.tutorId === undefined || patient.tutorId === null ? '' : tutors.find(tutor => tutor?.id === patient?.tutorId)?.name}
                       </Typography>
                     </Box>
 
@@ -379,7 +351,7 @@ export const PatientsList: React.FC = () => {
                         whiteSpace='nowrap'
                         textOverflow='ellipsis'
                       >
-                        Cachorro
+                        {patient.species === undefined || patient.species === null ? '' : specieStringToString(specieNumberToString(patient.species))}
                       </Typography>
                     </Box>
 
@@ -404,7 +376,7 @@ export const PatientsList: React.FC = () => {
                         whiteSpace='nowrap'
                         textOverflow='ellipsis'
                       >
-                        30/11/2020
+                        {patient.birthDate === undefined || patient.birthDate === null ? '' : formatDateToString(patient.birthDate)}
                       </Typography>
                     </Box>
 
@@ -429,7 +401,7 @@ export const PatientsList: React.FC = () => {
                         whiteSpace='nowrap'
                         textOverflow='ellipsis'
                       >
-                        Fêmea
+                        {patient.sex === undefined || patient.sex === null ? '' : sexStringToString(sexNumberToString(patient.sex))}
                       </Typography>
                     </Box>
 
@@ -454,7 +426,7 @@ export const PatientsList: React.FC = () => {
                         whiteSpace='nowrap'
                         textOverflow='ellipsis'
                       >
-                          Não
+                        {patient.onTreatment === undefined || patient.onTreatment === null ? '' : onTreatmentStringToString(onTreatmentBooleanToString(patient.onTreatment))}
                       </Typography>
                     </Box>
 
@@ -486,13 +458,13 @@ export const PatientsList: React.FC = () => {
             </Grid>
           </Box>
           
-          {(totalCount > 0 && totalCount > Environment.ROW_LIMIT) && (
+          {(totalCount > 0 && totalCount > Environment.LIMIT) && (
             <Box width='100%' margin={1} bgcolor={'background.paper'} padding={1} display='flex' alignItems='center' justifyContent="center">
               <Pagination
                 size="small"
                 page={page}
-                count={Math.ceil(totalCount / Environment.ROW_LIMIT)}
-                onChange={(_, newPage) => setSearchParams({ search, page: newPage.toString() }, { replace: true })}
+                count={Math.ceil(totalCount / Environment.LIMIT)}
+                onChange={handlePageChange}
               />
             </Box>
           )}

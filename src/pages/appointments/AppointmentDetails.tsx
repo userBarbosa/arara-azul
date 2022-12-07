@@ -1,7 +1,13 @@
+import { useEffect, useState } from 'react';
 import { Box, Paper, Theme, Typography, useMediaQuery, useTheme } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { DetailTools } from '../../shared/components';
 import { BaseLayoutPage } from '../../shared/layouts';
+import { IDetailPatient, PatientsService } from '../../shared/services/api/patients/PatientsService';
+import { IDetailTutor, TutorsService } from '../../shared/services/api/tutors/TutorsService';
+import { IDetailEmployee, EmployeesService } from '../../shared/services/api/employees/EmployeesService';
+import { IDetailAppointment, AppointmentsService } from '../../shared/services/api/appointments/AppointmentsService';
+import { appointmentStateNumberToString, appointmentStateStringToString, formatDateToString, formatNumberToString, paymentMethodNumberToString, paymentMethodStringToString, reasonNumberToString, reasonStringToString } from '../../shared/helpers';
 
 export const AppointmentDetails: React.FC = () => {
   const mddown = useMediaQuery((theme: Theme) => theme.breakpoints.down('md'));
@@ -9,6 +15,164 @@ export const AppointmentDetails: React.FC = () => {
 
   const theme = useTheme();
   const navigate = useNavigate();
+
+  const { id } = useParams<'id'>();
+
+  const [data, setData] = useState<IDetailAppointment>({
+    id: id!,
+    patientId: '',
+    ownerId: '',
+    employeeId: '',
+    appointmentState: 0,
+    observation: '',
+    paymentMethod: 0,
+    reason: 0,
+    value: 0,
+    date: undefined,
+  });
+
+  const [patient, setPatient] = useState<IDetailPatient>({
+    id: data.patientId!,
+    tutorId: '',
+    name: '',
+    bloodType: '',
+    observation: '',
+    species: 0,
+    allergy: 0,
+    sex: 0,
+    birthDate: undefined,
+    onTreatment: true,
+    weight: 0,
+  });
+
+  const [tutor, setTutor] = useState<IDetailTutor>({
+    id: data.ownerId!,
+    name: '',
+    email: '',
+    documentNumber: '',
+    phoneNumber: '',
+    observation: '',
+    patientsName: [''],
+    address: {
+      zipCode: '',
+      state: '',
+      city: '',
+      neighborhood: '',
+      streetName: '',
+      number: '',
+      complement: '',
+    }
+  });
+
+  const [employee, setEmployee] = useState<IDetailEmployee>({
+    id: data.employeeId!,
+    name: '',
+    email: '',
+    type: '',
+    phoneNumber: '',
+    documentNumber: '',
+    medicalLicense: '',
+    specialty:0,
+    active: true,
+    birthDate: undefined,
+    observation: '',
+  });
+
+  const getTokenCurrentUser = () => {
+    const _user = localStorage.getItem('APP_USER');
+  
+    if (_user) {
+      const obj = JSON.parse(_user);
+      return obj.token;
+    }
+  };
+
+  useEffect(() => {
+
+    AppointmentsService.getById(id!, getTokenCurrentUser())
+    .then((result) => {
+
+      if (result === 'Network Error') {
+        navigate('/400');
+      } else if (result.status === 400) {
+        navigate('/400');
+      } else if (result.status === 401) {
+        localStorage.removeItem('APP_USER');
+        navigate('/401');
+      } else if (result.status === 403) {
+        navigate('/403');
+      } else if (result.status === 404) {
+        navigate('/500');
+      } else if (result.status === 500) {
+        navigate('/500');
+      } else if (result.status === 200) {
+        setData(result.data);
+      }
+    });
+
+    PatientsService.getById(data.patientId!, getTokenCurrentUser())
+      .then((result) => {
+
+        if (result === 'Network Error') {
+          navigate('/400');
+        } else if (result.status === 400) {
+          navigate('/400');
+        } else if (result.status === 401) {
+          localStorage.removeItem('APP_USER');
+          navigate('/401');
+        } else if (result.status === 403) {
+          navigate('/403');
+        } else if (result.status === 404) {
+          navigate('/500');
+        } else if (result.status === 500) {
+          navigate('/500');
+        } else if (result.status === 200) {
+          setPatient(result.data);
+        }
+      });
+
+    TutorsService.getById(data.ownerId!, getTokenCurrentUser())
+    .then((result) => {
+
+      if (result === 'Network Error') {
+        navigate('/400');
+      } else if (result.status === 400) {
+        navigate('/400');
+      } else if (result.status === 401) {
+        localStorage.removeItem('APP_USER');
+        navigate('/401');
+      } else if (result.status === 403) {
+        navigate('/403');
+      } else if (result.status === 404) {
+        navigate('/500');
+      } else if (result.status === 500) {
+        navigate('/500');
+      } else if (result.status === 200) {
+        setTutor(result.data);
+      }
+    });
+
+    EmployeesService.getById(data.ownerId!, getTokenCurrentUser())
+    .then((result) => {
+
+      if (result === 'Network Error') {
+        navigate('/400');
+      } else if (result.status === 400) {
+        navigate('/400');
+      } else if (result.status === 401) {
+        localStorage.removeItem('APP_USER');
+        navigate('/401');
+      } else if (result.status === 403) {
+        navigate('/403');
+      } else if (result.status === 404) {
+        navigate('/500');
+      } else if (result.status === 500) {
+        navigate('/500');
+      } else if (result.status === 200) {
+        setEmployee(result.data);
+      }
+    });
+  }, []);
 
   return (
     <BaseLayoutPage
@@ -35,7 +199,7 @@ export const AppointmentDetails: React.FC = () => {
               Data e Hora:
             </Typography>
             <Typography variant='body2' sx={{ color: '#000000' }}>
-              20/08/2022 15:30
+              {data.date === undefined || data.date === null ? '' : formatDateToString(data.date)}
             </Typography>
           </Box>
 
@@ -44,7 +208,7 @@ export const AppointmentDetails: React.FC = () => {
               Tutor:
             </Typography>
             <Typography variant='body2' sx={{ color: '#000000' }}>
-              Kauã Claudino Loureiro
+              {tutor.name === undefined || tutor.name === null ? '' : tutor.name}
             </Typography>
           </Box>
 
@@ -53,7 +217,7 @@ export const AppointmentDetails: React.FC = () => {
               Paciente:
             </Typography>
             <Typography variant='body2' sx={{ color: '#000000' }}>
-              Rex
+              {patient.name === undefined || patient.name === null ? '' : patient.name}
             </Typography>
           </Box>
 
@@ -62,7 +226,7 @@ export const AppointmentDetails: React.FC = () => {
               Motivo:
             </Typography>
             <Typography variant='body2' sx={{ color: '#000000' }}>
-              Acupuntura
+              {data.reason === undefined || data.reason === null ? '' : reasonStringToString(reasonNumberToString(data.reason))}
             </Typography>
           </Box>
 
@@ -71,7 +235,7 @@ export const AppointmentDetails: React.FC = () => {
               Médico:
             </Typography>
             <Typography variant='body2' sx={{ color: '#000000' }}>
-              Lorenna Veiga Salomão
+              {employee.name === undefined || employee.name === null ? '' : employee.name}
             </Typography>
           </Box>
 
@@ -80,7 +244,7 @@ export const AppointmentDetails: React.FC = () => {
               Valor:
             </Typography>
             <Typography variant='body2' sx={{ color: '#000000' }}>
-              R$ 250,00
+              {data.value === undefined || data.value === null ? '' : `R$ ${formatNumberToString(data.value)}`}
             </Typography>
           </Box>
 
@@ -89,7 +253,7 @@ export const AppointmentDetails: React.FC = () => {
               Pagamento:
             </Typography>
             <Typography variant='body2' sx={{ color: '#000000' }}>
-              PIX
+              {data.paymentMethod === undefined || data.paymentMethod === null ? '' : paymentMethodStringToString(paymentMethodNumberToString(data.paymentMethod))}
             </Typography>
           </Box>
 
@@ -98,7 +262,7 @@ export const AppointmentDetails: React.FC = () => {
               Status:
             </Typography>
             <Typography variant='body2' sx={{ color: '#000000' }}>
-              Realizada
+              {data.appointmentState === undefined || data.appointmentState === null ? '' : appointmentStateStringToString(appointmentStateNumberToString(data.appointmentState))}
             </Typography>
           </Box>
 
@@ -107,6 +271,7 @@ export const AppointmentDetails: React.FC = () => {
               Observação:
             </Typography>
             <Typography variant='body2' sx={{ color: '#000000' }}>
+              {data.observation === undefined || data.observation === null ? '' : data.observation}
             </Typography>
           </Box>
           

@@ -9,17 +9,18 @@ import { DetailTools } from '../../shared/components';
 import { AutoCompleteTutor } from './components/AutocompleteTutor';
 import { PatientsService } from '../../shared/services/api/patients/PatientsService';
 import { toast } from 'react-toastify';
+import { allergyStringToNumber, onTreatmentStringToBoolean, sexStringToNumber, specieStringToNumber } from '../../shared/helpers';
 
 interface IFormData {
-  tutorId: number;
+  tutorId: string;
   name: string;
-  birthDate: Date; 
-  bloodType: string;
+  bloodType: string | undefined;
+  observation: string | undefined;
   species: string;
   allergy: string;
   sex: string;
-  treatment: string;
-  observation: string | undefined;
+  birthDate: Date;
+  onTreatment: string;
   weight: number;
 }
 
@@ -28,16 +29,16 @@ const getFormatedDate = (currentDate: string) => {
 };
 
 const formValidationSchema: yup.SchemaOf<IFormData> = yup.object().shape({
-  tutorId: yup.number().required(),
+  tutorId: yup.string().required(),
   name: yup.string().required(),
-  birthDate: yup.date().min(getFormatedDate('01/01/1900')).max(getFormatedDate(new Date().toLocaleDateString())).required(),
-  bloodType: yup.string().required(),
+  bloodType: yup.string().notRequired(),
+  observation: yup.string().notRequired(),
   species: yup.mixed().required().oneOf(['gato', 'cachorro', 'ave', 'peixe', 'roedor', 'reptil', 'selvagem', 'fazenda', 'marinho']).label('Selecione Uma Opção'),
   allergy: yup.mixed().required().oneOf(['alergia-pulga', 'alergia-dermatologica', 'alergia-alimentar', 'alergia-medicamento', 'outras']).label('Selecione Uma Opção'),
   sex: yup.mixed().required().oneOf(['femea', 'macho']).label('Selecione Uma Opção'),
-  treatment: yup.mixed().required().oneOf(['nao', 'sim']).label('Selecione Uma Opção'),
+  birthDate: yup.date().min(getFormatedDate('01/01/1900')).max(getFormatedDate(new Date().toLocaleDateString())).required(),
+  onTreatment: yup.mixed().required().oneOf(['nao', 'sim']).label('Selecione Uma Opção'),
   weight: yup.number().required(),
-  observation: yup.string().notRequired(),
 });
 
 export const PatientInsert: React.FC = () => {
@@ -48,19 +49,27 @@ export const PatientInsert: React.FC = () => {
 
   useEffect(() => {
     formRef.current?.setData({
-      tutorId: undefined,
+      tutorId: '',
       name: '',
-      birthDate: '',
       bloodType: '',
+      observation: '',
       species: '',
       allergy: '',
-      sex: '',
-      treatment: '',
-      weight: 0,
-      observation: '',
+      sex:  '',
+      birthDate:  '',
+      onTreatment: '',
+      weight:  0,
     });
   }, []);
 
+  const getTokenCurrentUser = () => {
+    const _user = localStorage.getItem('APP_USER');
+  
+    if (_user) {
+      const obj = JSON.parse(_user);
+      return obj.token;
+    }
+  };
 
   const handleSave = (dados: IFormData) => {
     formValidationSchema.
@@ -68,21 +77,46 @@ export const PatientInsert: React.FC = () => {
       .then((dadosValidados) => {
         setIsLoading(true);
 
-        PatientsService
-          .create(dadosValidados)
-          .then((result) => {
-            setIsLoading(false);
+        const data = {
+          id: '',
+          tutorId: dadosValidados.tutorId,
+          name: dadosValidados.name,
+          bloodType: dadosValidados.bloodType,
+          observation: dadosValidados.observation,
+          species: specieStringToNumber(dadosValidados.species),
+          allergy: allergyStringToNumber(dadosValidados.allergy),
+          sex:  sexStringToNumber(dadosValidados.sex),
+          birthDate: dadosValidados.birthDate,
+          onTreatment: onTreatmentStringToBoolean(dadosValidados.onTreatment),
+          weight: dadosValidados.weight,
+        };
 
-            if (result instanceof Error) {
-              // alert(result.message);
-            } else {
-              navigate('/pacientes');
-              toast.success('Cadastro realizado com Sucesso!', {
-                position: toast.POSITION.BOTTOM_CENTER
-              });
-            }
-          });
-      })
+        PatientsService
+        .create(data, getTokenCurrentUser())
+        .then((result) => {
+          setIsLoading(false);
+
+          if (result === 'Network Error') {
+            navigate('/400');
+          } else if (result.status === 400) {
+            navigate('/400');
+          } else if (result.status === 401) {
+            localStorage.removeItem('APP_USER');
+            navigate('/401');
+          } else if (result.status === 403) {
+            navigate('/403');
+          } else if (result.status === 404) {
+            navigate('/500');
+          } else if (result.status === 500) {
+            navigate('/500');
+          } else if (result.status === 200) {
+            navigate('/pacientes');
+            toast.success('Cadastro realizado com Sucesso!', {
+              position: toast.POSITION.BOTTOM_CENTER
+            });
+          }
+        });
+    })
       .catch((errors: yup.ValidationError) => {
         toast.error('Informações inválidas, tente novamente!', {
           position: toast.POSITION.BOTTOM_CENTER
@@ -97,7 +131,7 @@ export const PatientInsert: React.FC = () => {
 
         formRef.current?.setErrors(validationErrors);
       });
-  };
+    };
 
   return (
     <BaseLayoutPage
@@ -136,7 +170,7 @@ export const PatientInsert: React.FC = () => {
               <Grid item xs={12} sm={12} md={6} lg={6} xl={6} >
                 <VTextField
                   fullWidth
-                  id='nome'
+                  id='name'
                   name='name'
                   label='Nome'
                   disabled={isLoading}
@@ -150,7 +184,7 @@ export const PatientInsert: React.FC = () => {
               <Grid item xs={12} sm={12} md={6} lg={6} xl={6} >
                 <VTextField
                   fullWidth
-                  id='data-nascimento'
+                  id='birthDate'
                   name='birthDate'
                   label='Data de Nascimento'
                   disabled={isLoading}
@@ -164,7 +198,7 @@ export const PatientInsert: React.FC = () => {
               <Grid item xs={12} sm={12} md={6} lg={6} xl={6} >
                 <VTextField
                   fullWidth
-                  id='tipo-sanguineo'
+                  id='bloodType'
                   name='bloodType'
                   label='Tipo Sanguíneo'
                   disabled={isLoading}
@@ -178,7 +212,7 @@ export const PatientInsert: React.FC = () => {
               <Grid item xs={12} sm={12} md={6} lg={6} xl={6} >
                 <VSelect
                   fullWidth
-                  id='especie'
+                  id='species'
                   name='species'
                   label='Espécie'
                   disabled={isLoading}
@@ -199,7 +233,7 @@ export const PatientInsert: React.FC = () => {
               <Grid item xs={12} sm={12} md={6} lg={6} xl={6} >
                 <VSelect
                   fullWidth
-                  id='sexo'
+                  id='sex'
                   name='sex'
                   label='Sexo'
                   disabled={isLoading}
@@ -217,8 +251,8 @@ export const PatientInsert: React.FC = () => {
               <Grid item xs={12} sm={12} md={6} lg={6} xl={6} >
                 <VSelect
                   fullWidth
-                  id='em-tratamento'
-                  name='treatment'
+                  id='onTreatment'
+                  name='onTreatment'
                   label='Em Tratamento'
                   disabled={isLoading}
                 >
@@ -231,7 +265,7 @@ export const PatientInsert: React.FC = () => {
               <Grid item xs={12} sm={12} md={6} lg={6} xl={6} >
                 <VSelect
                   fullWidth
-                  id='alergias'
+                  id='allergy'
                   name='allergy'
                   label='Alergias'
                   disabled={isLoading}
@@ -252,7 +286,7 @@ export const PatientInsert: React.FC = () => {
               <Grid item xs={12} sm={12} md={6} lg={6} xl={6} >
                 <VTextField
                   fullWidth
-                  id='peso'
+                  id='weight'
                   name='weight'
                   label='Peso'
                   disabled={isLoading}

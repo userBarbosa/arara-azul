@@ -1,7 +1,10 @@
+import { useEffect, useState } from 'react';
 import { Box, Paper, Theme, Typography, useMediaQuery, useTheme } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { DetailTools } from '../../shared/components';
 import { BaseLayoutPage } from '../../shared/layouts';
+import { EmployeesService, IDetailEmployee } from '../../shared/services/api/employees/EmployeesService';
+import { activeBooleanToString, activeStringToString, formatDateToString, formatDocumentNumber, formatPhoneNumber, removeInvalidCharacters, typeStringToStringPtBr, specialtyStringToString, specialtyNumberToString } from '../../shared/helpers';
 
 export const EmployeeDetails: React.FC = () => {
   const mddown = useMediaQuery((theme: Theme) => theme.breakpoints.down('md'));
@@ -9,6 +12,53 @@ export const EmployeeDetails: React.FC = () => {
 
   const theme = useTheme();
   const navigate = useNavigate();
+
+  const { id } = useParams<'id'>();
+  const [data, setData] = useState<IDetailEmployee>({
+    id: id!,
+    name: '',
+    email: '',
+    type: '',
+    phoneNumber: '',
+    documentNumber: '',
+    medicalLicense: '',
+    specialty:0,
+    active: true,
+    birthDate: undefined,
+    observation: '',
+  });
+
+  const getTokenCurrentUser = () => {
+    const _user = localStorage.getItem('APP_USER');
+  
+    if (_user) {
+      const obj = JSON.parse(_user);
+      return obj.token;
+    }
+  };
+
+  useEffect(() => {
+    EmployeesService.getById(id!, getTokenCurrentUser())
+      .then((result) => {
+
+        if (result === 'Network Error') {
+          navigate('/400');
+        } else if (result.status === 400) {
+          navigate('/400');
+        } else if (result.status === 401) {
+          localStorage.removeItem('APP_USER');
+          navigate('/401');
+        } else if (result.status === 403) {
+          navigate('/403');
+        } else if (result.status === 404) {
+          navigate('/500');
+        } else if (result.status === 500) {
+          navigate('/500');
+        } else if (result.status === 200) {
+          setData(result.data);
+        }
+      });
+  }, []);
 
   return (
     <BaseLayoutPage
@@ -35,7 +85,7 @@ export const EmployeeDetails: React.FC = () => {
               Nome: 
             </Typography>
             <Typography variant='body2' sx={{ color: '#000000' }}>
-              Tatiana Dutra Ferreira
+              {data.name === undefined || data.name === null ? '' : data.name}
             </Typography>
           </Box>
 
@@ -44,7 +94,7 @@ export const EmployeeDetails: React.FC = () => {
               E-mail:
             </Typography>
             <Typography variant='body2' sx={{ color: '#000000' }}>
-              tatiana.ferreira@gmail.com.br
+            {data.email === undefined || data.email === null ? '' : data.email}
             </Typography>
           </Box>
 
@@ -53,7 +103,7 @@ export const EmployeeDetails: React.FC = () => {
               Telefone:
             </Typography>
             <Typography variant='body2' sx={{ color: '#000000' }}>
-              (11) 98247-7223
+              {data.phoneNumber === undefined || data.phoneNumber === null ? '' : formatPhoneNumber(removeInvalidCharacters(data.phoneNumber))}
             </Typography>
           </Box>
 
@@ -62,7 +112,7 @@ export const EmployeeDetails: React.FC = () => {
               CPF:
             </Typography>
             <Typography variant='body2' sx={{ color: '#000000' }}>
-              868.224.618-09
+              {data.documentNumber === undefined || data.documentNumber === null ? '' : formatDocumentNumber(removeInvalidCharacters(data.documentNumber))}
             </Typography>
           </Box>
 
@@ -71,7 +121,7 @@ export const EmployeeDetails: React.FC = () => {
               Data de Nascimento:
             </Typography>
             <Typography variant='body2' sx={{ color: '#000000' }}>
-              17/10/1989
+             {data.birthDate === undefined || data.birthDate === null ? '' : formatDateToString(data.birthDate)}
             </Typography>
           </Box>
 
@@ -80,7 +130,7 @@ export const EmployeeDetails: React.FC = () => {
               Cargo:
             </Typography>
             <Typography variant='body2' sx={{ color: '#000000' }}>
-              Recepcionista
+            {data.type === undefined || data.type === null ? '' : typeStringToStringPtBr(data.type)}
             </Typography>
           </Box>
 
@@ -89,6 +139,7 @@ export const EmployeeDetails: React.FC = () => {
               Especialidade:
             </Typography>
             <Typography variant='body2' sx={{ color: '#000000' }}>
+              {data.specialty === undefined || data.specialty === null ? '' : specialtyStringToString(specialtyNumberToString(data.specialty!))}
             </Typography>
           </Box>
 
@@ -97,6 +148,7 @@ export const EmployeeDetails: React.FC = () => {
               CRMV:
             </Typography>
             <Typography variant='body2' sx={{ color: '#000000' }}>
+              {data.medicalLicense === undefined || data.medicalLicense === null ? '' : data.medicalLicense}
             </Typography>
           </Box>
 
@@ -105,7 +157,7 @@ export const EmployeeDetails: React.FC = () => {
               Status:
             </Typography>
             <Typography variant='body2' sx={{ color: '#000000' }}>
-              Ativo
+            {data.active === undefined || data.active === null ? '' : activeStringToString(activeBooleanToString(data.active))}
             </Typography>
           </Box>
 
@@ -114,6 +166,7 @@ export const EmployeeDetails: React.FC = () => {
               Observação:
             </Typography>
             <Typography variant='body2' sx={{ color: '#000000' }}>
+              {data.observation === undefined || data.observation === null ? '' : data.observation}
             </Typography>
           </Box>
           

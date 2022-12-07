@@ -18,7 +18,7 @@ export const Environment = {
     * Url base de consultado dos dados dessa aplicação
     */
   // local
-  BASE_URL: 'http://localhost:3001',
+  // BASE_URL: 'http://localhost:3001',
   // prod
-  //BASE_URL: 'https://api.petshealth.com.br',
+  BASE_URL: 'https://api.petshealth.com.br',
 };

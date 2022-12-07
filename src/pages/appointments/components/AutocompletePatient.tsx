@@ -65,7 +65,7 @@ export const AutocompletePatient: React.FC<IAutocompletePatientProps> = ({ isExt
           } else if (result.status === 500) {
             navigate('/500');
           } else if (result.status === 200) {
-            setOptions(result.data.map((tutor: { id: string; name: string; }) => ({ id: tutor.id, label: tutor.name })));
+            setOptions(result.data.map((patient: { id: string; name: string; }) => ({ id: patient.id, label: patient.name })));
           }
         });
     });

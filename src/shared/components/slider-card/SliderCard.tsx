@@ -134,7 +134,7 @@ export const SliderCard: React.FC = () => {
   return (
     <>
       <Slider {...SliderProps}>
-        {data.map(appointment => (
+        {data.filter((appointment)  => formatDateToString(appointment.date!) === formatDateToString(new Date())).map(appointment => (
           <Box key={appointment.id} onClick={() => navigate(`/consultas/detalhe/${appointment.id}`)} borderRadius={5} bgcolor={'background.paper'}>
             <Box bgcolor={'#E8F9FC'} margin={2} padding={1} borderRadius={5} maxHeight={200}>
               <img className='random-image' src={require('../../../assets/card-images/image-' + [Math.floor(Math.random() * (54 - 1 + 1) + 1)] + '.svg')} alt='appointment' />

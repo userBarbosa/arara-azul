@@ -4,6 +4,11 @@ import { Box, Typography } from '@mui/material';
 import Slider from './slider/index';
 import './styles.css';
 import { Environment } from '../../environment';
+import { IListAppointment, AppointmentsService } from '../../services/api/appointments/AppointmentsService';
+import { appointmentStateNumberToString, appointmentStateStringToString, formatDateToString, formatNumberToString } from '../../helpers';
+import { IListTutor, TutorsService } from '../../services/api/tutors/TutorsService';
+import { IListEmployee, EmployeesService } from '../../services/api/employees/EmployeesService';
+import { IListPatient, PatientsService } from '../../services/api/patients/PatientsService';
 
 const SliderProps = {
   zoomFactor: 30,
@@ -12,30 +17,108 @@ const SliderProps = {
   pageTransition: 500
 };
 
-// Types
-export type Appointment = {
-  id: string;
-  patiend: string;
-  tutor: string;
-  employee: string;
-  appointmentState: string;
-  value: number;
-  date: Date;
-};
-
 export const SliderCard: React.FC = () => {
-  const [data, setData] = useState<Appointment[]>([]);
+  const [data, setData] = useState<IListAppointment[]>([]);
+
+  const [tutors, setTutors] = useState<IListTutor[]>([]);
+  const [patients, setPatients] = useState<IListPatient[]>([]);
+  const [employees, setEmployees] = useState<IListEmployee[]>([]);
+
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const getData = async () => {
-      const data = await (
-        await fetch('https://finalspaceapi.com/api/v0/character/')
-      ).json();
-      setData(data);
-    };
+  const getTokenCurrentUser = () => {
+    const _user = localStorage.getItem('APP_USER');
+  
+    if (_user) {
+      const obj = JSON.parse(_user);
+      return obj.token;
+    }
+  };
 
-    getData();
+  useEffect(() => {
+    AppointmentsService.getAll(getTokenCurrentUser())
+      .then((result) => {
+        if (result === 'Network Error') {
+          navigate('/400');
+        } else if (result.status === 400) {
+          navigate('/400');
+        } else if (result.status === 401) {
+          localStorage.removeItem('APP_USER');
+          navigate('/401');
+        } else if (result.status === 403) {
+          navigate('/403');
+        } else if (result.status === 404) {
+          navigate('/500');
+        } else if (result.status === 500) {
+          navigate('/500');
+        } else if (result.status === 200) {
+          setData(result.data);
+        }
+      });
+
+      TutorsService.getAll(getTokenCurrentUser())
+      .then((result) => {
+
+        if (result === 'Network Error') {
+          navigate('/400');
+        } else if (result.status === 400) {
+          navigate('/400');
+        } else if (result.status === 401) {
+          localStorage.removeItem('APP_USER');
+          navigate('/401');
+        } else if (result.status === 403) {
+          navigate('/403');
+        } else if (result.status === 404) {
+          navigate('/500');
+        } else if (result.status === 500) {
+          navigate('/500');
+        } else if (result.status === 200) {
+          setTutors(result.data);
+        }
+      });
+
+      PatientsService.getAll(getTokenCurrentUser())
+      .then((result) => {
+
+        if (result === 'Network Error') {
+          navigate('/400');
+        } else if (result.status === 400) {
+          navigate('/400');
+        } else if (result.status === 401) {
+          localStorage.removeItem('APP_USER');
+          navigate('/401');
+        } else if (result.status === 403) {
+          navigate('/403');
+        } else if (result.status === 404) {
+          navigate('/500');
+        } else if (result.status === 500) {
+          navigate('/500');
+        } else if (result.status === 200) {
+          setPatients(result.data);
+        }
+      });
+
+      EmployeesService.getAll(getTokenCurrentUser())
+      .then((result) => {
+
+        if (result === 'Network Error') {
+          navigate('/400');
+        } else if (result.status === 400) {
+          navigate('/400');
+        } else if (result.status === 401) {
+          localStorage.removeItem('APP_USER');
+          navigate('/401');
+        } else if (result.status === 403) {
+          navigate('/403');
+        } else if (result.status === 404) {
+          navigate('/500');
+        } else if (result.status === 500) {
+          navigate('/500');
+        } else if (result.status === 200) {
+          setEmployees(result.data);
+        }
+      });
+
   }, []);
 
   if (data.length < 1) {
@@ -59,10 +142,10 @@ export const SliderCard: React.FC = () => {
             <Box margin={2} padding={1}>
               <Box display='flex' alignItems='center' justifyContent='space-between' flexDirection={'row'}>
                 <Typography variant='subtitle2' sx={{ color: '#006BBF' }}>
-                  20/08/2022 09:00
+                  {appointment.date === undefined || appointment.date === null ? '' : formatDateToString(appointment.date)}
                 </Typography>
                 <Typography variant='h3' sx={{ color: '#006BBF' }}>
-                  #1
+                    {`#${data.indexOf(appointment)+1}`}
                 </Typography>
               </Box>
 
@@ -71,7 +154,7 @@ export const SliderCard: React.FC = () => {
                   Médico: 
                 </Typography>
                 <Typography variant='body2' sx={{ color: '#00569C' }}>
-                  Ignácio Faria Theodoro
+                  {appointment.employeeId === undefined || appointment.employeeId === null ? '' : employees.find(employee => employee?.id === appointment?.employeeId)?.name}
                 </Typography>
               </Box>
 
@@ -80,7 +163,7 @@ export const SliderCard: React.FC = () => {
                   Paciente:
                 </Typography>
                 <Typography variant='body2' sx={{ color: '#00569C' }}>
-                  Floquinho
+                  {appointment.patientId === undefined || appointment.patientId === null ? '' : patients.find(patient => patient?.id === appointment?.patientId)?.name}
                 </Typography>
               </Box>
 
@@ -89,7 +172,7 @@ export const SliderCard: React.FC = () => {
                   Tutor: 
                 </Typography>
                 <Typography variant='body2' sx={{ color: '#00569C' }}>
-                  Oliver Fausto Marcello
+                {appointment.ownerId === undefined || appointment.ownerId === null ? '' : tutors.find(tutor => tutor?.id === appointment?.ownerId)?.name}
                 </Typography>
               </Box>
 
@@ -98,7 +181,7 @@ export const SliderCard: React.FC = () => {
                   Valor:
                 </Typography>
                 <Typography variant='h4' sx={{ color: '#00569C' }}>
-                  R$ 150,00
+                  {appointment.value === undefined || appointment.value === null ? '' : `R$ ${formatNumberToString(appointment.value)}`}
                 </Typography>
               </Box>
 
@@ -107,7 +190,7 @@ export const SliderCard: React.FC = () => {
                   Status:
                 </Typography>
                 <Typography variant='body2' sx={{ color: '#00569C' }}>
-                  Agendada
+                  {appointment.appointmentState === undefined || appointment.appointmentState === null ? '' : appointmentStateStringToString(appointmentStateNumberToString(appointment.appointmentState))}
                 </Typography>
               </Box>
 

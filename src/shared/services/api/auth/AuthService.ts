@@ -32,9 +32,9 @@ const forgotPassword = async (email: string) => {
   });
 };
 
-const resetPassword = async (password: string | undefined) => {
+const resetPassword = async (password: string, token: string) => {
   return await Api
-  .post(RESET_PASSWORD_URL, JSON.stringify({password}))
+  .post(RESET_PASSWORD_URL, JSON.stringify({password}), {headers: {"x-api-token": token}})
   .then(response => {
     return response;
   })

@@ -7,7 +7,7 @@ import * as yup from 'yup';
 import YupPassword from 'yup-password';
 import { useAuthContext } from '../../shared/contexts';
 import { toast } from 'react-toastify';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 YupPassword(yup);
 
@@ -37,6 +37,7 @@ export const ResetPassword: React.FC = () => {
   const [newPasswordError, setNewPasswordError] = useState('');
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
   const [confirmNewPasswordError, setConfirmNewPasswordError] = useState('');
+  const [tokenParams] = useSearchParams();
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -66,7 +67,7 @@ export const ResetPassword: React.FC = () => {
     resetPasswordSchema
       .validate({ newPassword, confirmNewPassword }, { abortEarly: false })
       .then(dadosValidados => {
-        resetPassword(dadosValidados.newPassword)
+        resetPassword(dadosValidados.newPassword, String(tokenParams.get("token")))
           .then((result) => {
             if (result === 'Network Error') {
               setIsLoading(false);

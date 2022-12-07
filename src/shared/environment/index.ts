@@ -15,10 +15,13 @@ export const Environment = {
   EMPTY_LIST: 'Nenhum registro encontrado.',
 
   /**
-    * Url base de consultado dos dados dessa aplicação
+    * Url base de consultado dos dados dessa aplicação (BASE_URL)
+    * local: 'http://localhost:3001'
+    * prod: 'https://api.petshealth.com.br',
     */
-  // local
-  // BASE_URL: 'http://localhost:3001',
-  // prod
-  BASE_URL: 'https://api.petshealth.com.br',
+   BASE_URL: isProduction() ? 'https://api.petshealth.com.br' :  'http://localhost:3001'
 };
+
+function isProduction() : boolean {
+  return process.env.REACT_APP_ENVIRONMENT === "production"
+}

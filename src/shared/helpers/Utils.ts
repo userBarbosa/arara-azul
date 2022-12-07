@@ -18,11 +18,19 @@ export const formatDateToString = (date: Date) => {
 };
 
 export const formatDateToDatePicker = (date: Date) => {
-  return new Date(date).toLocaleDateString('en-CA');
+  return new Date(date).toLocaleDateString('en-US');
+};
+
+export const formatDateTimeToString = (date: Date) => {
+  return format(parseISO(date.toString()), 'dd\'/\'MM\'/\'yyyy HH\':\'mm', {
+    locale: ptBR,
+  });
 };
 
 export const formatDateToDateTimePicker = (date: Date) => {
-  return new Date(date).toLocaleDateString('nl-NL');
+  return format(parseISO(date.toString()), 'yyyy\'-\'MM\'-\'dd\'T\'HH\':\'mm', {
+    locale: ptBR,
+  });
 };
 
 export const formatStringToArray = (value: string) => {
@@ -46,7 +54,7 @@ export const formatDocumentNumber = (documentNumber: string) => {
 };
 
 export const formatZipCode = (zipCode: string) => {
-  return `${zipCode.substring(0,5)})-${zipCode.substring(5,8)}`;
+  return `${zipCode.substring(0,5)}-${zipCode.substring(5,8)}`;
 };
 
 export const activeBooleanToString = (active: boolean) => {

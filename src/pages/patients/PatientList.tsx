@@ -220,10 +220,10 @@ export const PatientsList: React.FC = () => {
                 <TableCell>{patient.sex === undefined || patient.sex === null ? '' : sexStringToString(sexNumberToString(patient.sex))}</TableCell>
                 <TableCell>{patient.onTreatment === undefined || patient.onTreatment === null ? '' : onTreatmentStringToString(onTreatmentBooleanToString(patient.onTreatment))}</TableCell>
                 <TableCell>
-                  <IconButton size="small" onClick={() => navigate(`/tutores/atualizar/${patient.id}`)}>
+                  <IconButton size="small" onClick={() => navigate(`/pacientes/atualizar/${patient.id}`)}>
                     <Icon>edit</Icon>
                   </IconButton>
-                  <IconButton size="small" onClick={() => navigate(`/tutores/detalhe/${patient.id}`)}>
+                  <IconButton size="small" onClick={() => navigate(`/pacientes/detalhe/${patient.id}`)}>
                     <Icon>visibility</Icon>
                   </IconButton>
                 </TableCell>

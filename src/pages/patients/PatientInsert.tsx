@@ -34,7 +34,7 @@ const formValidationSchema: yup.SchemaOf<IFormData> = yup.object().shape({
   bloodType: yup.string().notRequired(),
   observation: yup.string().notRequired(),
   species: yup.mixed().required().oneOf(['gato', 'cachorro', 'ave', 'peixe', 'roedor', 'reptil', 'selvagem', 'fazenda', 'marinho']).label('Selecione Uma Opção'),
-  allergy: yup.mixed().required().oneOf(['alergia-pulga', 'alergia-dermatologica', 'alergia-alimentar', 'alergia-medicamento', 'outras']).label('Selecione Uma Opção'),
+  allergy: yup.mixed().required().oneOf(['', 'alergia-pulga', 'alergia-dermatologica', 'alergia-alimentar', 'alergia-medicamento', 'outras']).label('Selecione Uma Opção'),
   sex: yup.mixed().required().oneOf(['femea', 'macho']).label('Selecione Uma Opção'),
   birthDate: yup.date().min(getFormatedDate('01/01/1900')).max(getFormatedDate(new Date().toLocaleDateString())).required(),
   onTreatment: yup.mixed().required().oneOf(['nao', 'sim']).label('Selecione Uma Opção'),

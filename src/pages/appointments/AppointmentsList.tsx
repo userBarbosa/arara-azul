@@ -10,7 +10,7 @@ import { IListPatient, PatientsService } from '../../shared/services/api/patient
 import { IListTutor, TutorsService } from '../../shared/services/api/tutors/TutorsService';
 import { IListEmployee, EmployeesService } from '../../shared/services/api/employees/EmployeesService';
 import { IListAppointment, AppointmentsService } from '../../shared/services/api/appointments/AppointmentsService';
-import { appointmentStateNumberToString, appointmentStateStringToString, formatDateToString, paymentMethodNumberToString, paymentMethodStringToString, reasonNumberToString, reasonStringToString } from '../../shared/helpers';
+import { appointmentStateNumberToString, appointmentStateStringToString, formatDateTimeToString, paymentMethodNumberToString, paymentMethodStringToString, reasonNumberToString, reasonStringToString } from '../../shared/helpers';
 
 
 export const AppointmentsList: React.FC = () => {
@@ -275,7 +275,7 @@ export const AppointmentsList: React.FC = () => {
             <TableBody>
               {currentData.map(appointment => (
               <TableRow key={appointment.id}>
-                <TableCell>{appointment.date === undefined || appointment.date === null ? '' : formatDateToString(appointment.date)}</TableCell>
+                <TableCell>{appointment.date === undefined || appointment.date === null ? '' : formatDateTimeToString(appointment.date)}</TableCell>
                 <TableCell>{appointment.reason === undefined || appointment.reason === null ? '' : reasonStringToString(reasonNumberToString(appointment.reason))}</TableCell>
                 <TableCell>{appointment.employeeId === undefined || appointment.employeeId === null ? '' : employees.find(employee => employee?.id === appointment?.employeeId)?.name}</TableCell>
                 <TableCell>{appointment.ownerId === undefined || appointment.ownerId === null ? '' : tutors.find(tutor => tutor?.id === appointment?.ownerId)?.name}</TableCell>
@@ -284,10 +284,10 @@ export const AppointmentsList: React.FC = () => {
                 <TableCell>{appointment.paymentMethod === undefined || appointment.paymentMethod === null ? '' : paymentMethodStringToString(paymentMethodNumberToString(appointment.paymentMethod))}</TableCell>
 
                 <TableCell>
-                  <IconButton size="small" onClick={() => navigate(`/tutores/atualizar/${appointment.id}`)}>
+                  <IconButton size="small" onClick={() => navigate(`/consultas/atualizar/${appointment.id}`)}>
                     <Icon>edit</Icon>
                   </IconButton>
-                  <IconButton size="small" onClick={() => navigate(`/tutores/detalhe/${appointment.id}`)}>
+                  <IconButton size="small" onClick={() => navigate(`/consultas/detalhe/${appointment.id}`)}>
                     <Icon>visibility</Icon>
                   </IconButton>
                 </TableCell>
@@ -363,7 +363,7 @@ export const AppointmentsList: React.FC = () => {
                         whiteSpace='nowrap'
                         textOverflow='ellipsis'
                       >
-                        {appointment.date === undefined || appointment.date === null ? '' : formatDateToString(appointment.date)}
+                        {appointment.date === undefined || appointment.date === null ? '' : formatDateTimeToString(appointment.date)}
                       </Typography>
                     </Box>
 

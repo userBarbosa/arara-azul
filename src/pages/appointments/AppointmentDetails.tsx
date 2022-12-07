@@ -3,11 +3,11 @@ import { Box, Paper, Theme, Typography, useMediaQuery, useTheme } from '@mui/mat
 import { useNavigate, useParams } from 'react-router-dom';
 import { DetailTools } from '../../shared/components';
 import { BaseLayoutPage } from '../../shared/layouts';
-import { IDetailPatient, PatientsService } from '../../shared/services/api/patients/PatientsService';
-import { IDetailTutor, TutorsService } from '../../shared/services/api/tutors/TutorsService';
-import { IDetailEmployee, EmployeesService } from '../../shared/services/api/employees/EmployeesService';
+import { IListPatient, PatientsService } from '../../shared/services/api/patients/PatientsService';
+import { IListTutor, TutorsService } from '../../shared/services/api/tutors/TutorsService';
+import { IListEmployee, EmployeesService } from '../../shared/services/api/employees/EmployeesService';
 import { IDetailAppointment, AppointmentsService } from '../../shared/services/api/appointments/AppointmentsService';
-import { appointmentStateNumberToString, appointmentStateStringToString, formatDateToString, formatNumberToString, paymentMethodNumberToString, paymentMethodStringToString, reasonNumberToString, reasonStringToString } from '../../shared/helpers';
+import { appointmentStateNumberToString, appointmentStateStringToString, formatDateTimeToString, formatNumberToString, paymentMethodNumberToString, paymentMethodStringToString, reasonNumberToString, reasonStringToString } from '../../shared/helpers';
 
 export const AppointmentDetails: React.FC = () => {
   const mddown = useMediaQuery((theme: Theme) => theme.breakpoints.down('md'));
@@ -31,52 +31,9 @@ export const AppointmentDetails: React.FC = () => {
     date: undefined,
   });
 
-  const [patient, setPatient] = useState<IDetailPatient>({
-    id: data.patientId!,
-    tutorId: '',
-    name: '',
-    bloodType: '',
-    observation: '',
-    species: 0,
-    allergy: 0,
-    sex: 0,
-    birthDate: undefined,
-    onTreatment: true,
-    weight: 0,
-  });
-
-  const [tutor, setTutor] = useState<IDetailTutor>({
-    id: data.ownerId!,
-    name: '',
-    email: '',
-    documentNumber: '',
-    phoneNumber: '',
-    observation: '',
-    patientsName: [''],
-    address: {
-      zipCode: '',
-      state: '',
-      city: '',
-      neighborhood: '',
-      streetName: '',
-      number: '',
-      complement: '',
-    }
-  });
-
-  const [employee, setEmployee] = useState<IDetailEmployee>({
-    id: data.employeeId!,
-    name: '',
-    email: '',
-    type: '',
-    phoneNumber: '',
-    documentNumber: '',
-    medicalLicense: '',
-    specialty:0,
-    active: true,
-    birthDate: undefined,
-    observation: '',
-  });
+  const [tutors, setTutors] = useState<IListTutor[]>([]);
+  const [patients, setPatients] = useState<IListPatient[]>([]);
+  const [employees, setEmployees] = useState<IListEmployee[]>([]);
 
   const getTokenCurrentUser = () => {
     const _user = localStorage.getItem('APP_USER');
@@ -109,29 +66,8 @@ export const AppointmentDetails: React.FC = () => {
         setData(result.data);
       }
     });
-
-    PatientsService.getById(data.patientId!, getTokenCurrentUser())
-      .then((result) => {
-
-        if (result === 'Network Error') {
-          navigate('/400');
-        } else if (result.status === 400) {
-          navigate('/400');
-        } else if (result.status === 401) {
-          localStorage.removeItem('APP_USER');
-          navigate('/401');
-        } else if (result.status === 403) {
-          navigate('/403');
-        } else if (result.status === 404) {
-          navigate('/500');
-        } else if (result.status === 500) {
-          navigate('/500');
-        } else if (result.status === 200) {
-          setPatient(result.data);
-        }
-      });
-
-    TutorsService.getById(data.ownerId!, getTokenCurrentUser())
+      
+    TutorsService.getAll(getTokenCurrentUser())
     .then((result) => {
 
       if (result === 'Network Error') {
@@ -148,11 +84,11 @@ export const AppointmentDetails: React.FC = () => {
       } else if (result.status === 500) {
         navigate('/500');
       } else if (result.status === 200) {
-        setTutor(result.data);
+        setTutors(result.data);
       }
     });
 
-    EmployeesService.getById(data.ownerId!, getTokenCurrentUser())
+    PatientsService.getAll(getTokenCurrentUser())
     .then((result) => {
 
       if (result === 'Network Error') {
@@ -169,7 +105,28 @@ export const AppointmentDetails: React.FC = () => {
       } else if (result.status === 500) {
         navigate('/500');
       } else if (result.status === 200) {
-        setEmployee(result.data);
+        setPatients(result.data);
+      }
+    });
+
+    EmployeesService.getAll(getTokenCurrentUser())
+    .then((result) => {
+
+      if (result === 'Network Error') {
+        navigate('/400');
+      } else if (result.status === 400) {
+        navigate('/400');
+      } else if (result.status === 401) {
+        localStorage.removeItem('APP_USER');
+        navigate('/401');
+      } else if (result.status === 403) {
+        navigate('/403');
+      } else if (result.status === 404) {
+        navigate('/500');
+      } else if (result.status === 500) {
+        navigate('/500');
+      } else if (result.status === 200) {
+        setEmployees(result.data);
       }
     });
   }, []);
@@ -199,7 +156,7 @@ export const AppointmentDetails: React.FC = () => {
               Data e Hora:
             </Typography>
             <Typography variant='body2' sx={{ color: '#000000' }}>
-              {data.date === undefined || data.date === null ? '' : formatDateToString(data.date)}
+              {data.date === undefined || data.date === null ? '' : formatDateTimeToString(data.date)}
             </Typography>
           </Box>
 
@@ -208,7 +165,7 @@ export const AppointmentDetails: React.FC = () => {
               Tutor:
             </Typography>
             <Typography variant='body2' sx={{ color: '#000000' }}>
-              {tutor.name === undefined || tutor.name === null ? '' : tutor.name}
+            {data.ownerId === undefined || data.ownerId === null ? '' : tutors.find(tutor => tutor?.id === data?.ownerId)?.name}
             </Typography>
           </Box>
 
@@ -217,7 +174,7 @@ export const AppointmentDetails: React.FC = () => {
               Paciente:
             </Typography>
             <Typography variant='body2' sx={{ color: '#000000' }}>
-              {patient.name === undefined || patient.name === null ? '' : patient.name}
+              {data.patientId === undefined || data.patientId === null ? '' : patients.find(patient => patient?.id === data?.patientId)?.name}
             </Typography>
           </Box>
 
@@ -235,7 +192,7 @@ export const AppointmentDetails: React.FC = () => {
               Médico:
             </Typography>
             <Typography variant='body2' sx={{ color: '#000000' }}>
-              {employee.name === undefined || employee.name === null ? '' : employee.name}
+              {data.employeeId === undefined || data.employeeId === null ? '' : employees.find(employee => employee?.id === data?.employeeId)?.name}
             </Typography>
           </Box>
 

@@ -65,7 +65,7 @@ export const AutocompleteEmployee: React.FC<IAutocompleteEmployeeProps> = ({ isE
           } else if (result.status === 500) {
             navigate('/500');
           } else if (result.status === 200) {
-            setOptions(result.data.map((employee: { id: string; name: string; }) => ({ id: employee.id, label: employee.name })));
+            setOptions(result.data.filter((employee: { type: string; }) => employee.type === 'doctor').map((employee: { id: string; name: string; }) => ({ id: employee.id, label: employee.name })));
           }
         });
     });

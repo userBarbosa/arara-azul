@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
-import { Box, Paper, Theme, Typography, useMediaQuery, useTheme } from '@mui/material';
+import { Box, getButtonGroupUtilityClass, Paper, Theme, Typography, useMediaQuery, useTheme } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
 import { DetailTools } from '../../shared/components';
 import { BaseLayoutPage } from '../../shared/layouts';
 import { IDetailPatient, PatientsService } from '../../shared/services/api/patients/PatientsService';
 import { allergyNumberToString, allergyStringToString, formatDateToString, onTreatmentBooleanToString, onTreatmentStringToString, sexNumberToString, sexStringToString, specieNumberToString, specieStringToString } from '../../shared/helpers';
-import { IDetailTutor, TutorsService } from '../../shared/services/api/tutors/TutorsService';
+import { IListTutor, TutorsService } from '../../shared/services/api/tutors/TutorsService';
 
 export const PatientDetails: React.FC = () => {
   const mddown = useMediaQuery((theme: Theme) => theme.breakpoints.down('md'));
@@ -29,24 +29,7 @@ export const PatientDetails: React.FC = () => {
     weight: 0,
   });
 
-  const [tutor, setTutor] = useState<IDetailTutor>({
-    id: data.tutorId!,
-    name: '',
-    email: '',
-    documentNumber: '',
-    phoneNumber: '',
-    observation: '',
-    patientsName: [''],
-    address: {
-      zipCode: '',
-      state: '',
-      city: '',
-      neighborhood: '',
-      streetName: '',
-      number: '',
-      complement: '',
-    }
-  });
+  const [tutors, setTutors] = useState<IListTutor[]>([]);
 
   const getTokenCurrentUser = () => {
     const _user = localStorage.getItem('APP_USER');
@@ -79,28 +62,27 @@ export const PatientDetails: React.FC = () => {
         }
       });
 
-    TutorsService.getById(data.tutorId!, getTokenCurrentUser())
-    .then((result) => {
+      TutorsService.getAll(getTokenCurrentUser())
+      .then((result) => {
 
-      if (result === 'Network Error') {
-        navigate('/400');
-      } else if (result.status === 400) {
-        navigate('/400');
-      } else if (result.status === 401) {
-        localStorage.removeItem('APP_USER');
-        navigate('/401');
-      } else if (result.status === 403) {
-        navigate('/403');
-      } else if (result.status === 404) {
-        navigate('/500');
-      } else if (result.status === 500) {
-        navigate('/500');
-      } else if (result.status === 200) {
-        setTutor(result.data);
-      }
-    });
+        if (result === 'Network Error') {
+          navigate('/400');
+        } else if (result.status === 400) {
+          navigate('/400');
+        } else if (result.status === 401) {
+          localStorage.removeItem('APP_USER');
+          navigate('/401');
+        } else if (result.status === 403) {
+          navigate('/403');
+        } else if (result.status === 404) {
+          navigate('/500');
+        } else if (result.status === 500) {
+          navigate('/500');
+        } else if (result.status === 200) {
+          setTutors(result.data);
+        }
+      });
   }, []);
-
 
   return (
     <BaseLayoutPage
@@ -127,7 +109,7 @@ export const PatientDetails: React.FC = () => {
               Tutor:
             </Typography>
             <Typography variant='body2' sx={{ color: '#000000' }}>
-              {tutor.name === undefined || tutor.name === null ? '' : tutor.name}
+            {data.tutorId === undefined || data.tutorId === null ? '' : tutors.find(tutor => tutor?.id === data?.tutorId)?.name}
             </Typography>
           </Box>
 

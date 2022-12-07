@@ -34,7 +34,7 @@ const formValidationSchema: yup.SchemaOf<IFormData> = yup.object().shape({
   paymentMethod: yup.mixed().required().oneOf(['cartao-credito', 'cartao-debito', 'dinheiro', 'pix']).label('Selecione Uma Opção'),
   reason: yup.mixed().required().oneOf(['emergencia', 'rotina', 'check-up', 'exame', 'cirurgia']).label('Selecione Uma Opção'),
   value: yup.number().required(),
-  date: yup.date().min('1900-01-01T08:00').max(new Date().toLocaleDateString()).required(),
+  date: yup.date().required(),
 });
 
 export const AppointmentUpdate: React.FC = () => {
@@ -81,7 +81,7 @@ export const AppointmentUpdate: React.FC = () => {
           paymentMethod:  data.paymentMethod === undefined || data.paymentMethod === null ? '' : paymentMethodNumberToString(data.paymentMethod),
           reason:  data.reason === undefined || data.reason === null ? '' : reasonNumberToString(data.reason),
           value: data.value === undefined || data.value === null ? '' : data.value,
-          date: data.birthDate === undefined || data.birthDate === null ? '' : formatDateToDateTimePicker(data.birthDate),
+          date: data.date === undefined || data.date === null ? '' : formatDateToDateTimePicker(data.date),
         });
       }
     });

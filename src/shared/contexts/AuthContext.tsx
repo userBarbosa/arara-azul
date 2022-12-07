@@ -7,7 +7,7 @@ interface IAuthContextData {
   isAuthenticated: () => boolean;
   login: (email: string, password: string | undefined) => Promise<number | string | void>;
   forgotPassword: (email: string) => Promise<number | string | void>;
-  resetPassword: (password: string | undefined) => Promise<number | string | void>;
+  resetPassword: (password: string, token: string) => Promise<number | string | void>;
 }
 
 const AuthContext = createContext({} as IAuthContextData);
@@ -57,8 +57,8 @@ export const AuthProvider: React.FC<IAuthProviderProps> = ({ children }) => {
     }
   }, []);
 
-  const handleResetPassword = useCallback(async (password: string | undefined) => {
-    const result = await AuthService.resetPassword(password);
+  const handleResetPassword = useCallback(async (password: string, token: string) => {
+    const result = await AuthService.resetPassword(password, token);
 
     if (result.message === 'Network Error') {
       return result.message;

@@ -5,7 +5,7 @@ import Slider from './slider/index';
 import './styles.css';
 import { Environment } from '../../environment';
 import { IListAppointment, AppointmentsService } from '../../services/api/appointments/AppointmentsService';
-import { appointmentStateNumberToString, appointmentStateStringToString, formatDateToString, formatNumberToString } from '../../helpers';
+import { appointmentStateNumberToString, appointmentStateStringToString, formatDateToString, formatDateTimeToString, formatNumberToString } from '../../helpers';
 import { IListTutor, TutorsService } from '../../services/api/tutors/TutorsService';
 import { IListEmployee, EmployeesService } from '../../services/api/employees/EmployeesService';
 import { IListPatient, PatientsService } from '../../services/api/patients/PatientsService';
@@ -142,7 +142,7 @@ export const SliderCard: React.FC = () => {
             <Box margin={2} padding={1}>
               <Box display='flex' alignItems='center' justifyContent='space-between' flexDirection={'row'}>
                 <Typography variant='subtitle2' sx={{ color: '#006BBF' }}>
-                  {appointment.date === undefined || appointment.date === null ? '' : formatDateToString(appointment.date)}
+                  {appointment.date === undefined || appointment.date === null ? '' : formatDateTimeToString(appointment.date)}
                 </Typography>
                 <Typography variant='h3' sx={{ color: '#006BBF' }}>
                     {`#${data.indexOf(appointment)+1}`}

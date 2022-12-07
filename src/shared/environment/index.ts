@@ -19,9 +19,5 @@ export const Environment = {
     * local: 'http://localhost:3001'
     * prod: 'https://api.petshealth.com.br',
     */
-   BASE_URL: isProduction() ? 'https://api.petshealth.com.br' :  'http://localhost:3001'
+   BASE_URL: 'https://api.petshealth.com.br'
 };
-
-function isProduction() : boolean {
-  return process.env.REACT_APP_ENVIRONMENT === "production"
-}

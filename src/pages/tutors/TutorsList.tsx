@@ -106,112 +106,113 @@ export const TutorsList: React.FC = () => {
       {xlup && (
         <TableContainer component={Paper} variant="outlined" sx={{ m: 2, width: 'auto' }}>
           <Table>
-            <TableHead>
-              <TableRow>
+              <TableHead>
+                <TableRow>
+                  
+                  <TableCell>
+                    <Typography
+                      variant='subtitle2'
+                      overflow='hidden'
+                      whiteSpace='nowrap'
+                      textOverflow='ellipsis'
+                    >
+                    Nome
+                    </Typography>
+                  </TableCell>
 
-                <TableCell>
-                  <Typography
-                    variant='subtitle2'
-                    overflow='hidden'
-                    whiteSpace='nowrap'
-                    textOverflow='ellipsis'
-                  >
-                  Nome
-                  </Typography>
-                </TableCell>
+                  <TableCell>
+                    <Typography
+                      variant='subtitle2'
+                      overflow='hidden'
+                      whiteSpace='nowrap'
+                      textOverflow='ellipsis'
+                    >
+                    Email
+                    </Typography>
+                  </TableCell>
 
-                <TableCell>
-                  <Typography
-                    variant='subtitle2'
-                    overflow='hidden'
-                    whiteSpace='nowrap'
-                    textOverflow='ellipsis'
-                  >
-                  Email
-                  </Typography>
-                </TableCell>
+                  <TableCell>
+                    <Typography
+                      variant='subtitle2'
+                      overflow='hidden'
+                      whiteSpace='nowrap'
+                      textOverflow='ellipsis'
+                    >
+                    Telefone
+                    </Typography>
+                  </TableCell>
 
-                <TableCell>
-                  <Typography
-                    variant='subtitle2'
-                    overflow='hidden'
-                    whiteSpace='nowrap'
-                    textOverflow='ellipsis'
-                  >
-                  Telefone
-                  </Typography>
-                </TableCell>
+                  <TableCell>
+                    <Typography
+                      variant='subtitle2'
+                      overflow='hidden'
+                      whiteSpace='nowrap'
+                      textOverflow='ellipsis'
+                    >
+                    CPF
+                    </Typography>
+                  </TableCell>
 
-                <TableCell>
-                  <Typography
-                    variant='subtitle2'
-                    overflow='hidden'
-                    whiteSpace='nowrap'
-                    textOverflow='ellipsis'
-                  >
-                  CPF
-                  </Typography>
-                </TableCell>
+                  <TableCell>
+                    <Typography
+                      variant='subtitle2'
+                      overflow='hidden'
+                      whiteSpace='nowrap'
+                      textOverflow='ellipsis'
+                    >
+                    Endereço
+                    </Typography>
+                  </TableCell>
 
-                <TableCell>
-                  <Typography
-                    variant='subtitle2'
-                    overflow='hidden'
-                    whiteSpace='nowrap'
-                    textOverflow='ellipsis'
-                  >
-                  Endereço
-                  </Typography>
-                </TableCell>
+                  <TableCell>
+                    <Typography
+                      variant='subtitle2'
+                      overflow='hidden'
+                      whiteSpace='nowrap'
+                      textOverflow='ellipsis'
+                    >
+                    Pacientes
+                    </Typography>
+                  </TableCell>
 
-                <TableCell>
-                  <Typography
-                    variant='subtitle2'
-                    overflow='hidden'
-                    whiteSpace='nowrap'
-                    textOverflow='ellipsis'
-                  >
-                  Pacientes
-                  </Typography>
-                </TableCell>
+                  <TableCell>
+                    <Typography
+                      variant='subtitle2'
+                      overflow='hidden'
+                      whiteSpace='nowrap'
+                      textOverflow='ellipsis'
+                    >
+                    Opções
+                    </Typography>
+                  </TableCell>
 
-                <TableCell>
-                  <Typography
-                    variant='subtitle2'
-                    overflow='hidden'
-                    whiteSpace='nowrap'
-                    textOverflow='ellipsis'
-                  >
-                  Opções
-                  </Typography>
-                </TableCell>
+                </TableRow>
+              </TableHead>
 
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {currentData.map(tutor => (
-              <TableRow key={tutor.id}>
-                <TableCell>{tutor.name === undefined || tutor.name === null ? '' : tutor.name}</TableCell>
-                <TableCell>{tutor.email === undefined || tutor.email === null ? '' : tutor.email}</TableCell>
-                <TableCell>{tutor.phoneNumber === undefined || tutor.phoneNumber === null ? '' : formatPhoneNumber(removeInvalidCharacters(tutor.phoneNumber))}</TableCell>
-                <TableCell>{tutor.documentNumber === undefined || tutor.documentNumber === null ? '' : formatDocumentNumber(removeInvalidCharacters(tutor.documentNumber))}</TableCell>
-                <TableCell>{tutor.address === undefined || tutor.address === null ? '' : `${tutor.address.streetName}, ${tutor.address.number}, ${tutor.address.neighborhood} - ${formatZipCode(removeInvalidCharacters(tutor.address.zipCode!))}, ${tutor.address.city} - ${tutor.address.state}`}</TableCell>
-                <TableCell>{tutor.patientsName === undefined || tutor.patientsName === null ? '' : tutor.patientsName.join(' | ')}</TableCell>
-                <TableCell>
-                  <IconButton size="small" onClick={() => navigate(`/tutores/atualizar/${tutor.id}`)}>
-                    <Icon>edit</Icon>
-                  </IconButton>
-                  <IconButton size="small" onClick={() => navigate(`/tutores/detalhe/${tutor.id}`)}>
-                    <Icon>visibility</Icon>
-                  </IconButton>
-                </TableCell>
-              </TableRow>
-            ))}
-            </TableBody>
-
-            {totalCount === 0 && !isLoading && (
-              <caption>{Environment.EMPTY_LIST}</caption>
-            )}
+              <TableBody>
+                {currentData.map(tutor => (
+                  <TableRow key={tutor.id}>
+                    <TableCell>{tutor.name === undefined || tutor.name === null ? '' : tutor.name}</TableCell>
+                    <TableCell>{tutor.email === undefined || tutor.email === null ? '' : tutor.email}</TableCell>
+                    <TableCell>{tutor.phoneNumber === undefined || tutor.phoneNumber === null ? '' : formatPhoneNumber(removeInvalidCharacters(tutor.phoneNumber))}</TableCell>
+                    <TableCell>{tutor.documentNumber === undefined || tutor.documentNumber === null ? '' : formatDocumentNumber(removeInvalidCharacters(tutor.documentNumber))}</TableCell>
+                    <TableCell>{tutor.address === undefined || tutor.address === null ? '' : `${tutor.address.streetName}, ${tutor.address.number}, ${tutor.address.neighborhood} - ${formatZipCode(removeInvalidCharacters(tutor.address.zipCode!))}, ${tutor.address.city} - ${tutor.address.state}`}</TableCell>
+                    <TableCell>{tutor.patientsName === undefined || tutor.patientsName === null ? '' : tutor.patientsName.join(' | ')}</TableCell>
+                    <TableCell>
+                      <IconButton size="small" onClick={() => navigate(`/tutores/atualizar/${tutor.id}`)}>
+                        <Icon>edit</Icon>
+                      </IconButton>
+                      <IconButton size="small" onClick={() => navigate(`/tutores/detalhe/${tutor.id}`)}>
+                      <Icon>visibility</Icon>
+                      </IconButton>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+              
+              {totalCount === 0 && !isLoading && (
+                <caption>{Environment.EMPTY_LIST}</caption>
+              )}  
 
             <TableFooter>
               {isLoading && (
@@ -342,7 +343,7 @@ export const TutorsList: React.FC = () => {
                         whiteSpace='nowrap'
                         textOverflow='ellipsis'
                       >
-                          CPF:
+                        CPF:
                       </Typography>
                     </Box>
 
@@ -417,7 +418,7 @@ export const TutorsList: React.FC = () => {
                         whiteSpace='nowrap'
                         textOverflow='ellipsis'
                       >
-                        Opções:
+                      Opções:
                       </Typography>
                     </Box>
 
@@ -436,7 +437,7 @@ export const TutorsList: React.FC = () => {
           </Box>
           
           {(totalCount > 0 && totalCount > Environment.LIMIT) && (
-            <Box width='100%' margin={1} bgcolor={'background.paper'} padding={1} display='flex' alignItems='center' justifyContent="center">
+            <Box width='auto' margin={1} bgcolor={'background.paper'} padding={1} display='flex' alignItems='center' justifyContent="center">
               <Pagination
                 size="small"
                 page={page}
@@ -449,7 +450,7 @@ export const TutorsList: React.FC = () => {
 
         </Box>
       )}
-      
+
     </BaseLayoutPage>
   );
 };

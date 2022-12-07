@@ -14,4 +14,4 @@ RUN yarn install
 COPY . ./
 
 # start app
-CMD ["npm","start:prod"]
+CMD npm run start:prod
